@@ -1,16 +1,21 @@
 Package: globalqfme
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
+Title: Global and Qualitative Formal Model Evaluation
+Version: 0.0.0.1000
 Authors@R: 
-    person(given = "First",
-           family = "Last",
+    person(given = "Lenard",
+           family = "Dome",
            role = c("aut", "cre"),
-           email = "first.last@example.com",
+           email = "lenard.dome@plymouth.ac.uk",
            comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to
-    pick a license
+Description: Implements global model evaluations for formal computational models in the cognitive sciences, and evaluation archive.
+License: `use_gpl3_license()`
+Imports:
+    parallel,
+    volesti,
+    SphericalCubature
 Encoding: UTF-8
 LazyData: true
+Suggests: testthat
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.1.1.9000
+Depends: R (>= 4.0)
