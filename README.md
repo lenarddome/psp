@@ -2,6 +2,13 @@
 
 Parameter Space Partitioning MCMC for Global Model Evaluation
 
+## TODO
+
+1. [priority] implement stopping criterion (each region is sampled n times)
+2. [done][priority] 2D model test unit
+3. [essential] describe the process mathematically
+4. [done][optional] nonoverlapping hypercube model: evaluate which cube the sampled coordinates belong
+
 ## PSPglobal
 
 Partition Parameter Space according to input parameters.
@@ -15,16 +22,9 @@ Probably will depend on [volesti](https://cran.r-project.org/web/packages/volest
 
 Not feasible to implement a method that generalizes to n-dimensional polyhedra
 or convex polytope. Leave it for the user. The method of calculating the
-volume/area of each region should be an analytic choice.
+volume/area of each region should be an analysis choice.
 
-# TODO
-
-1. [priority] implement stopping criterion (each region is sampled n times)
-2. [done][priority] 2D model test unit
-3. [essential] describe the process mathematically
-4. [done][optional] nonoverlapping hypercube model: evaluate which cube the sampled coordinates belong
-
-# BURN-IN
+## BURN-IN [will not be implemented]
 
 If you have a decent starting point (params EXIT uses to produce IBRE),
 burn-in might be unnecessary.

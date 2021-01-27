@@ -71,7 +71,8 @@ PSPcontrol <- function(radius = 0.01, init = NULL, lower, upper,
                 lower = lower,
                 upper = upper,
                 param_names = param_names,
-                cluster_names = cluster_names)
+                cluster_names = cluster_names,
+                iterations = iterations)
     return(out)
 }
 
@@ -184,8 +185,9 @@ PSPglobal <- function(fn, control = PSPcontrol()) {
         } else {
             parameter_filled <- TRUE
         }
+        # print is only for debugging as of 2021-01-27T13:08:40+0000
         print(table(parmat_big[, length(init) + 1]))
-        if (while_count == iterations) parameter_filled <- TRUE
+        if (while_count == ctrl$iterations) parameter_filled <- TRUE
     }
     ordinal_size <- table(parmat_big[, length(init) + 1])
     colnames(parmat_big) <- c(pnames, "pattern", "iteration")

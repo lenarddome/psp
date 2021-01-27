@@ -18,13 +18,6 @@ hypercube <- function(dim, ticks) {
             replicate(dim, seq(0, 1, length.out = ticks), simplify = FALSE))
 }
 
-regs <- hypercube(5, 20)
-regs <- cbind(regs, rep(1:20, each = 20))
-colnames(regs) <- c("x", "y", "z", "v", "t", "group")
-ggplot(regs, aes(x = x, y = y, colour = as.factor(group))) +
-    geom_point() +
-    cowplot::theme_cowplot()
-
 #' dummy model using hypercubes to test the PSP function
 #' The model takes in a set of coordinates, calculates its distance from all
 #' all of available coordinates, then return closest region number
@@ -34,7 +27,7 @@ ggplot(regs, aes(x = x, y = y, colour = as.factor(group))) +
 #' @examples
 #' model(runif(5))
 model <- function(x) {
-    cube <- hypercube(10, 20) 
+    cube <- hypercube(5, 20) 
     test <- cbind(cube, region = rep(1:ticks, each = ticks))
     colnames(test) <- NULL
     region_index <- which.min(rowSums(abs(x - as.matrix(test[, 1:dim]))))
