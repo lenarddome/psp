@@ -1,5 +1,5 @@
-Package: globalqfme
-Title: Global and Qualitative Formal Model Evaluation
+Package: psp
+Title: Parameter Space Partitioning MCMC for Global Model Evaluation
 Version: 0.0.0.1000
 Authors@R: 
     person(given = "Lenard",
@@ -11,7 +11,6 @@ Description: Implements global model evaluations for formal computational models
 License: `use_gpl3_license()`
 Imports:
     parallel,
-    volesti,
     SphericalCubature
 Encoding: UTF-8
 LazyData: true

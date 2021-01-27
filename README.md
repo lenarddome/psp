@@ -1,44 +1,40 @@
-# globalqfme
+# PSP
 
-Global and Qualitative Formal Model Evaluations
-
-
-```R
-set up parameter space
-define first region
-
-while (parameter space is not filled) {
-    loop through regions (pick region)
-        sample from parameter space
-        use polar coordinates
-        loop through each region chain output in given state in paralell
-            pick parameters that produce ordinally different response
-                are there new ordinal responses:
-                    yes: define regions around new parameters
-                    no: sample convolutionally for each region
-        check if each parameter has been sampled from their boundaries
-        is parameter space filled:
-            yes -> then set while condition to false
-            no -> then set while condition to true
-    }
-```
+Parameter Space Partitioning MCMC for Global Model Evaluation
 
 ## PSPglobal
 
 Partition Parameter Space according to input parameters.
 
-Sampling method will probably depend on adaptMCMC
+## PSPvolume [will not be included]
 
-## PSPvolume
-
-Calculate volume of polytope partitions as defined by PSPglobal.
+Calculate volume of the polytope partitions as defined by PSPglobal.
 Probably will depend on [volesti](https://cran.r-project.org/web/packages/volesti/index.html)
 
-## PSPcontrol
+### REPORT 2021-01-27T12:39:54+0000
+
+Not feasible to implement a method that generalizes to n-dimensional polyhedra
+or convex polytope. Leave it for the user. The method of calculating the
+volume/area of each region should be an analytic choice.
 
 # TODO
 
-1. [v1] what is the stopping criterion?
-2. [v1] how do you know that the parameter space is filled up?
-3. [v2] parellelization
-4. [!H] replicate figure 5 plus table 1
+1. [priority] implement stopping criterion (each region is sampled n times)
+2. [done][priority] 2D model test unit
+3. [essential] describe the process mathematically
+4. [done][optional] nonoverlapping hypercube model: evaluate which cube the sampled coordinates belong
+
+# BURN-IN
+
+If you have a decent starting point (params EXIT uses to produce IBRE),
+burn-in might be unnecessary.
+
+I am also not sure why burn-in is necessary for parameter space partitioning.
+This option might be optional, but it seems counterintuitive to discard areas
+you explored in the parameter space if you'd like to explore said parameter
+space.
+
+Resources to look through:
+* https://stats.stackexchange.com/questions/88819/mcmc-methods-burning-samples
+* http://users.stat.umn.edu/%7Egeyer/mcmc/burn.html
+* https://www.johndcook.com/blog/2016/01/25/mcmc-burn-in/
