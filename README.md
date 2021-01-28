@@ -9,6 +9,10 @@ Parameter Space Partitioning MCMC for Global Model Evaluation
 3. [essential] describe the process mathematically
 4. [done][optional] nonoverlapping hypercube model: evaluate which cube the sampled coordinates belong
 
+## Testing PSP
+
+Go to file `R/hypercube.R` and run it line by line.
+
 ## PSPglobal
 
 Partition Parameter Space according to input parameters.

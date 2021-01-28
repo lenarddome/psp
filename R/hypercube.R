@@ -1,6 +1,7 @@
+# This function tests whether the PSP finds all ordinal patterns in the
+# parameter space
+
 source("PSPglobal.R")
-library(ggplot2)
-library(cowplot)
 
 # https://stackoverflow.com/questions/15367565/creating-hypercube-in-r-for-any-dim-d
 # https://stackoverflow.com/users/980833/josh-obrien
@@ -27,7 +28,7 @@ hypercube <- function(dim, ticks) {
 #' @examples
 #' model(runif(5))
 model <- function(x) {
-    cube <- hypercube(5, 20) 
+    cube <- hypercube(5, 20)
     test <- cbind(cube, region = rep(1:ticks, each = ticks))
     colnames(test) <- NULL
     region_index <- which.min(rowSums(abs(x - as.matrix(test[, 1:dim]))))
@@ -46,20 +47,12 @@ out <- PSPglobal(model, PSPcontrol(lower = rep(0, 5),
 if (length(out[[2]]) == 20) {
     print(paste("Test is successful, as PSP found 20 out of 20 patterns."))
     print(out[[2]])
+} else {
+    print(paste("PSP did not find all patterns, pls increasing either the",
+                "radius or the pop parameter. Alternatively, contact hacker."))
 }
 
-### for 2D and 3D hypercube tests
-### TO BE REMOVED
-
-colnames(matr) <- c("x", "y", "group", "iterations")
-
-library(ggplot2)
-library(ggsci)
-
-gg <- ggplot(matr, aes(x = x, y = y, colour = as.factor(group))) +
-    geom_point(size = 1) +
-    scale_colour_d3() +
-    theme_cowplot()
+### Create a graph for fun
 
 library(scatterplot3d)
 
@@ -70,10 +63,7 @@ s3d <- with(regs, scatterplot3d(x, y, z, color = as.factor(group),
                                 angle = 45, pch = 19))
 
 model <- function(x) {
-    dim = 3
-    ticks = 20
-    cube <- do.call(expand.grid,
-                    replicate(dim, seq_len(ticks) / ticks, simplify = FALSE))
+    cube <- hypercube(3, 5)
     test <- cbind(cube, region = rep(1:ticks, each = ticks))
     colnames(test) <- NULL
     region_index <- which.min(rowSums(abs(x - as.matrix(test[, 1:dim]))))
@@ -84,11 +74,14 @@ model <- function(x) {
 out <- PSPglobal(model, control = PSPcontrol(lower = rep(0,3),
                                              upper = rep(1, 3),
                                              init = rep(0.5, 3),
-                                             radius = rep(0.1, 3)))
+                                             radius = rep(0.1, 3),
+                                             cluster_names = c("hypercube"),
+                                             pop = 200))
 
 matr <- out[[1]]
 
 colnames(matr) <- c("x", "y", "z", "group", "iterations")
+
 pdf("scatter3D.pdf")
 s3d <- with(matr, scatterplot3d(x, y, z, color = as.factor(group), pch = 19,
                                 angle = -45))
