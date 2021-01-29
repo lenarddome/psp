@@ -76,11 +76,11 @@ PSPcontrol <- function(radius = 0.01, init = NULL, lower, upper,
     return(out)
 }
 
+## NOT IN USE
 ## generate points in the current state from given jumping distribution
 ## converts polar to Cartesian and adds it to the jumping distribution
 ## second row in out is omitted as the second row is only a residual
-## not used -> TO BE REMOVED
-PSPsample <-function(init, bounds, radius) {
+PSPsample <- function(init, bounds, radius) {
     phi <- matrix(runif(length(init), min = -2 * pi, max = 2 * pi),
                   byrow = TRUE,
                   nrow = 1)
@@ -147,15 +147,12 @@ PSPglobal <- function(fn, control = PSPcontrol()) {
                                                 while_count,
                                                 deparse.level = 0)))
 
-    pop_check <- data.frame(pattern = unique(parmat_big[, length(init) + 1]),
-                            pop = 1)
-
     while (!parameter_filled) {
         while_count <- while_count + 1
         ## construct new set of parameters to search
         new_points <- t(apply(parmat_current, 1,
                               function(x) {
-                                  PSPhyper(init = x[1:length(init)],
+                                  PSPhyper(init = x[seq_len(length(init))],
                                            radius = radius)
                               }))
         ## constrain parameters within bounds
@@ -165,6 +162,7 @@ PSPglobal <- function(fn, control = PSPcontrol()) {
             cbounds[cbounds < lower[i]] <- lower[i]
             new_points[, i] <- cbounds
         }
+        # evaluate new_points and record ordinal patterns
         evaluate <- parallel::parApply(cl, new_points, 1, FUN)
         ordinal <- type.convert(cbind(new_points, evaluate, while_count,
                                       deparse.level = 0))
