@@ -29,10 +29,10 @@ hypercube <- function(dim, ticks) {
 #' model(runif(5))
 model <- function(x) {
     cube <- hypercube(5, 20)
-    test <- cbind(cube, region = rep(1:ticks, each = ticks))
+    test <- cbind(cube, region = rep(1:20, each = 20))
     colnames(test) <- NULL
-    region_index <- which.min(rowSums(abs(x - as.matrix(test[, 1:dim]))))
-    region <- test[region_index, dim + 1]
+    region_index <- which.min(rowSums(abs(x - as.matrix(test[, 1:5]))))
+    region <- test[region_index, 5 + 1]
     return(as.character(region))
 }
 
