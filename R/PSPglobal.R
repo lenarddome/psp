@@ -1,6 +1,3 @@
-require(SphericalCubature)
-require(parallel)
-
 # function tuning the behaviour of the parameter space partitioning
 # see documentation
 PSPcontrol <- function(radius = 0.01, init = NULL, lower, upper,
@@ -74,19 +71,6 @@ PSPcontrol <- function(radius = 0.01, init = NULL, lower, upper,
                 cluster_names = cluster_names,
                 iterations = iterations)
     return(out)
-}
-
-## NOT IN USE
-## generate points in the current state from given jumping distribution
-## converts polar to Cartesian and adds it to the jumping distribution
-## second row in out is omitted as the second row is only a residual
-PSPsample <- function(init, bounds, radius) {
-    phi <- matrix(runif(length(init), min = -2 * pi, max = 2 * pi),
-                  byrow = TRUE,
-                  nrow = 1)
-    r <- rep(radius, length(init))
-    out <- SphericalCubature::polar2rect(r, phi)
-    return(init + out[1, ])
 }
 
 ## Weisstein, Eric W. "Hypersphere Point Picking." From
@@ -184,7 +168,9 @@ PSPglobal <- function(fn, control = PSPcontrol()) {
             parameter_filled <- TRUE
         }
         # print is only for debugging as of 2021-01-27T13:08:40+0000
-        print(table(parmat_big[, length(init) + 1]))
+        print(paste("iteration [", while_count, "]: found ",
+                    length(table(parmat_big[, length(init) + 1])),
+                    sep = ""))
         if (while_count == ctrl$iterations) parameter_filled <- TRUE
     }
     ordinal_size <- table(parmat_big[, length(init) + 1])
