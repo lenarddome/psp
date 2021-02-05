@@ -1,8 +1,15 @@
 # PSP
 
-Parameter Space Partitioning MCMC for Global Model Evaluation
+Parameter Space Partitioning MCMC for Global Model Evaluation (Pitt, Kim, Navarro
+& Myung, 2006)
 
-# Design
+# Install
+
+```
+devtools::install_github("lenarddome/psp")
+```
+
+## Design
 
 The design of this implementation was heavily influenced by
 [DEoptim](https://github.com/ArdiaD/DEoptim). It is a great package and it
@@ -13,13 +20,14 @@ The implementation consists of two function: `PSPglobal` and `PSPcontrol`.
 specified by Pitt, Kim, Navarro and Myung (2006). PSPcontrol controls
 the set of parameters that constrains and tunes this exploration.
 
-# Example
+## Example
 
 Here is an example, using a two parameter model. We want PSP to find 10 distinct
 predefined regions.
 
+```r
+library(psp)
 
-```{r}
 #' euclidean distance
 #'
 #' @param a vector coordinate 1
@@ -71,7 +79,7 @@ out <- PSPglobal(model, PSPcontrol(lower = rep(0, 2),
 
 This process produces us the following result:
 
-```{r}
+```r
 $ps_patterns
 
   1   2   3   4   5   6   7   8   9  10
@@ -81,36 +89,38 @@ $ps_patterns
 In this case, PSPglobal stopped before it reached the 500th iteration, because
 all regions reached at least 300 `pop`. We can also see that some regions have a
 population larger than 300. This is because even though the sampling from that
-population stopped, new points can still belong to those regions.
+regions stopped, new points can still be classed as members of those regions.
 
 This is how it looks under the hood in real time:
 
 ![](./docs/figures/psp.gif)
 
-# Notes for the curious
+Each colour is a separate region.
 
-## PSPvolume \[will not be included]
+## Notes for the curious
+
+### PSPvolume \[will not be included]
 
 Not feasible to implement a method that generalizes to n-dimensional polyhedra
 or convex polytope. There are already packages out there that can do it. I would
 leave it for the user. The method of calculating the volume/area of each region
 should be an explicit choice the modeller makes.
 
-## BURN-IN \[will not be implemented]
+### BURN-IN \[will not be implemented]
 
 If you have a decent starting point (e.g. parameters EXIT uses to produce inverse
 base-rate effect, or ALCOVE best-fitting parameters for the Type I-VI problems),
 burn-in is unnecessary.
 
 I am also not sure why burn-in is necessary for parameter space partitioning.
-This option might be optional, but it seems counter-intuitive to discard areas
-you explored in the parameter space if you'd like to explore said parameter
-space.
+It seems counter-intuitive to discard areas you explored in the parameter space
+if you'd like to explore said parameter space.
 
 One problem we might encounter is that regions further away from our starting
 point will be under-sampled. This could be avoided by increasing the number
 of `iterations`, so the MCMC will sample long enough to adequately populate
-those regions as well.
+those regions as well. One might also choose to decrease the radius, to
+sample from smaller areas.
 
 Resources to look through:
 
