@@ -11,7 +11,6 @@ Description: Implements global model evaluations for formal computational models
 License: `use_gpl3_license()`
 Imports:
     parallel,
-    SphericalCubature
 Encoding: UTF-8
 LazyData: true
 Suggests: testthat
