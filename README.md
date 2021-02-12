@@ -11,13 +11,17 @@ devtools::install_github("lenarddome/psp")
 
 ## Philosophy
 
-This project follows the Open Models Philosophy ([Andy Wills](github.com/ajwills72)).
-One big influence is an instantiation of this philosophy, [catlearn](github.com/ajwills72/catlearn).
+This project follows the Open Models Initiative by [Andy Wills](https://github.com/ajwills72).
+A big influence on this implementation is an instantiation of this philosophy, [catlearn](https://github.com/ajwills72/catlearn).
 
-Watch the talk from ![Andy Wills: “The OpenModels project”](https://youtu.be/SfqkqEYagJU)
+Watch the talk of [Andy Wills: “The OpenModels project”](https://youtu.be/SfqkqEYagJU)
 from Open Research Working Group (ORWG) virtual meeting 08/09/20.
 
-## Design
+The project's architecture is also influenced by [DEoptim](https://github.com/ArdiaD/DEoptim).
+`DEoptim` implements a Differential Evolutionary Optimization algorithm for
+model-fitting.
+
+## Design [in development]
 
 More about the design can be found in `ARCHITECTURE.md`
 
@@ -94,13 +98,13 @@ regions stopped, new points can still be classed as members of those regions.
 
 This is how it looks under the hood in real time:
 
-![](./docs/figures/psp.gif =600x)
+![](./docs/figures/psp.gif)
 
 Each colour is a separate region.
 
 ## Notes for the curious
 
-### PSPvolume \[will not be included]
+### Calculating Volume \[will not be included]
 
 Not feasible to implement a method that generalizes to n-dimensional polyhedra
 or convex polytope. There are already packages out there that can do it. I would
