@@ -36,6 +36,7 @@ PSPcontrol <- function(radius = 0.01, init = NULL, lower, upper,
     } else {
         cl <- parallel::makeCluster(cl)
     }
+    ## name parameters
     if (is.null(param_names)) {
         param_names <- paste("parameter_", seq(length(init)), sep = "")
     }
@@ -78,8 +79,7 @@ PSPcontrol <- function(radius = 0.01, init = NULL, lower, upper,
 ## https://mathworld.wolfram.com/HyperspherePointPicking.html
 
 #' generate random distribution from the unit hypersphere relative to 0
-#' scale it by the user-defined radius, then add it to the jumping
-#' distribution
+#' scale it by the user-defined radius, then add it to the jumping distribution
 #'
 #' @param init Matrix of coordinates serving as a jumping distribution
 #' @param radius The radius of the hypersphere defining the sampling region
@@ -93,12 +93,6 @@ PSPhyper <- function(init, radius) {
 }
 
 ## Parameter Space Partitioning  ------------------------------------------
-
-## fn = function outputting ordinal response
-## lower, upper = lower and upper boundaries for parameters
-## control = parameters tuning PSP behaviour
-## sampling = the sampling method
-## currently aiming to implement mcmc or volesti::direct_sampling
 
 PSPglobal <- function(fn, control = PSPcontrol()) {
 
@@ -173,6 +167,7 @@ PSPglobal <- function(fn, control = PSPcontrol()) {
                     sep = ""))
         if (while_count == ctrl$iterations) parameter_filled <- TRUE
     }
+    stopCluster(cl)
     ordinal_size <- table(parmat_big[, length(init) + 1])
     colnames(parmat_big) <- c(pnames, "pattern", "iteration")
     return(list("ps_partitions" = parmat_big,
