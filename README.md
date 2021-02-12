@@ -9,16 +9,17 @@ Parameter Space Partitioning MCMC for Global Model Evaluation (Pitt, Kim, Navarr
 devtools::install_github("lenarddome/psp")
 ```
 
+## Philosophy
+
+This project follows the Open Models Philosophy ([Andy Wills](github.com/ajwills72)).
+One big influence is an instantiation of this philosophy, [catlearn](github.com/ajwills72/catlearn).
+
+Watch the talk from ![Andy Wills: “The OpenModels project”](https://youtu.be/SfqkqEYagJU)
+from Open Research Working Group (ORWG) virtual meeting 08/09/20.
+
 ## Design
 
-The design of this implementation was heavily influenced by
-[DEoptim](https://github.com/ArdiaD/DEoptim). It is a great package and it
-being open source helped me a lot to implement a parallel PSP.
-
-The implementation consists of two function: `PSPglobal` and `PSPcontrol`.
-`PSPglobal` carries out the exploration of the parameter space via the MCMC
-specified by Pitt, Kim, Navarro and Myung (2006). PSPcontrol controls
-the set of parameters that constrains and tunes this exploration.
+More about the design can be found in `ARCHITECTURE.md`
 
 ## Example
 
@@ -93,7 +94,7 @@ regions stopped, new points can still be classed as members of those regions.
 
 This is how it looks under the hood in real time:
 
-![](./docs/figures/psp.gif)
+![](./docs/figures/psp.gif =600x)
 
 Each colour is a separate region.
 
@@ -116,11 +117,11 @@ I am also not sure why burn-in is necessary for parameter space partitioning.
 It seems counter-intuitive to discard areas you explored in the parameter space
 if you'd like to explore said parameter space.
 
-One problem we might encounter is that regions further away from our starting
-point will be under-sampled. This could be avoided by increasing the number
+One problem we might encounter is that *regions further away from our starting
+jumping distribution will be under-sampled*. This could be avoided by increasing the number
 of `iterations`, so the MCMC will sample long enough to adequately populate
-those regions as well. One might also choose to decrease the radius, to
-sample from smaller areas.
+those regions as well. One might also choose to decrease the radius to
+sample from smaller areas surrounding the jumping distributions.
 
 Resources to look through:
 
