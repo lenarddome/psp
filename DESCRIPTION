@@ -1,19 +1,14 @@
 Package: psp
 Title: Parameter Space Partitioning MCMC for Global Model Evaluation
-Version: 0.0.0.1000
-Authors@R: 
-    person(given = "Lenard",
-           family = "Dome",
-           role = c("aut", "cre"),
-           email = "lenard.dome@plymouth.ac.uk",
-           comment = c(ORCID = "YOUR-ORCID-ID"))
-Description: Implements global model evaluations for formal computational models in the cognitive sciences, and evaluation archive.
-License: `use_gpl3_license()`
-Imports:
-    parallel,
+Version: 0.0.1
+Date: 2021-02-12
+Authors@R: person("Lenard", "Dome",
+                   email = "lenarddome@protonmail.ch",
+                   role = c("aut", "cre", "mdc"))
+Description: Implements global model evaluations for formal computational models in the cognitive sciences, and serves as an evaluation archive.
+License: GPL (>= 3)
+Depends: parallel
 Encoding: UTF-8
 LazyData: true
 Suggests: testthat
-Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.1.1.9000
 Depends: R (>= 4.0)
