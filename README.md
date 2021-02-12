@@ -5,6 +5,8 @@ Parameter Space Partitioning MCMC for Global Model Evaluation (Pitt, Kim, Navarr
 
 # Install
 
+**This package is in heavy development. Use it at your own risk!**
+
 ```
 devtools::install_github("lenarddome/psp")
 ```
