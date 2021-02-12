@@ -1,4 +1,3 @@
-useDynLib(psp)
 export(PSPglobal, PSPcontrol)
 importFrom("parallel", "clusterExport", "parApply", "makeCluster",
            "clusterCall", "detectCores", "stopCluster")
