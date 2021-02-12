@@ -39,10 +39,6 @@ Return a list with the following items:
   \code{\link{PSPcontrol}}.
 }
 
-\examples{
-
-}
-
 \keyword{computational modelling; parameter space; model evaluation}
 
 \references{
@@ -51,7 +47,4 @@ Return a list with the following items:
 
     Weisstein, Eric W. "Hypersphere Point Picking." From MathWorld--A Wolfram Web Resource. https://mathworld.wolfram.com/HyperspherePointPicking.html
 
-}
-
-\note {
 }
