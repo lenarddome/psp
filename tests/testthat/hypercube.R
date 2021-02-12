@@ -30,10 +30,10 @@ model <- function(par) {
 }
 
 # run Parameter Space Partitioning
-out <- PSPglobal(model, PSPcontrol(lower = rep(0, 10),
-                                   upper = rep(1, 10),
-                                   init = rep(0.5, 10),
-                                   radius = rep(0.15, 10),
+out <- PSPglobal(model, PSPcontrol(lower = rep(0, 5),
+                                   upper = rep(1, 5),
+                                   init = rep(0.5, 5),
+                                   radius = rep(0.15, 5),
                                    pop = 200,
                                    cluster_names = c("positions",
                                                      "euclidean"),
