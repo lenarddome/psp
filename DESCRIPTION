@@ -11,4 +11,3 @@ Depends: parallel
 Encoding: UTF-8
 LazyData: true
 Suggests: testthat
-Depends: R (>= 4.0)
