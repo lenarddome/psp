@@ -13,8 +13,8 @@ devtools::install_github("lenarddome/psp")
 
 ## Philosophy
 
-This project follows the Open Models Initiative by [Andy Wills](https://github.com/ajwills72).
-A big influence on this implementation is an instantiation of this philosophy, [catlearn](https://github.com/ajwills72/catlearn).
+A big influence on this implementation is an instantiation of the Open Models
+Initiative, [catlearn](https://github.com/ajwills72/catlearn).
 
 Watch the talk of [Andy Wills: “The OpenModels project”](https://youtu.be/SfqkqEYagJU)
 from Open Research Working Group (ORWG) virtual meeting 08/09/20.
