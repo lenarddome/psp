@@ -33,7 +33,7 @@ model <- function(par) {
 out <- PSPglobal(model, PSPcontrol(lower = rep(0, 5),
                                    upper = rep(1, 5),
                                    init = rep(0.5, 5),
-                                   radius = rep(0.15, 5),
+                                   radius = rep(0.25, 5),
                                    pop = 200,
                                    cluster_names = c("positions",
                                                      "euclidean"),
