@@ -123,7 +123,8 @@ PSPglobal <- function(fn, control = PSPcontrol()) {
     evaluate <- FUN(parmat_current[1, seq(length(init))])
     parmat_big <- type.convert(data.frame(cbind(parmat_current, evaluate,
                                                 while_count,
-                                                deparse.level = 0)))
+                                                deparse.level = 0)),
+                               as.is = TRUE)
 
     while (!parameter_filled) {
         while_count <- while_count + 1
@@ -143,7 +144,8 @@ PSPglobal <- function(fn, control = PSPcontrol()) {
         # evaluate new_points and record ordinal patterns
         evaluate <- parallel::parApply(cl, new_points, 1, FUN)
         ordinal <- type.convert(cbind(new_points, evaluate, while_count,
-                                      deparse.level = 0))
+                                      deparse.level = 0),
+                                as.is = TRUE)
         ## compare stored and currently produced ordinal responses
         ## index new regions and update population
         parmat_big <- rbind(parmat_big, data.frame(ordinal))
@@ -167,7 +169,7 @@ PSPglobal <- function(fn, control = PSPcontrol()) {
                     sep = ""))
         if (while_count == ctrl$iterations) parameter_filled <- TRUE
     }
-    stopCluster(cl)
+    parallel::stopCluster(cl)
     ordinal_size <- table(parmat_big[, length(init) + 1])
     colnames(parmat_big) <- c(pnames, "pattern", "iteration")
     return(list("ps_partitions" = parmat_big,
