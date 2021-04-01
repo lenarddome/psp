@@ -48,18 +48,18 @@ PSPcontrol(radius = 0.01, init = NULL, lower, upper,
 
 }
 
+\keyword{computational modelling; parameter space; model evaluation}
+
 \seealso{
     \code{\link{save}}.
 }
+
 \examples{
-## save all data
-save(list = ls(), file= "all.RData")
+# two parameter model
+PSPcontrol(lower = rep(0, 2), upper = rep(1, 2), init = rep(0.5, 2),
+           radius = rep(0.25, 2), cluster_names = NULL, iterations = 500)
 
-## restore the saved values to the current environment
-load("all.RData")
-
-## restore the saved values to the workspace
-load("all.RData", .GlobalEnv)
+# return error when length of bound vectors mismatch
+PSPcontrol(lower = rep(0, 3), upper = rep(1, 2), init = rep(0.5, 2),
+           radius = rep(0.25, 2), cluster_names = NULL, iterations = 500)
 }
-\keyword{file}
-

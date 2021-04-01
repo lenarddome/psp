@@ -10,9 +10,11 @@
 \description{
 
 Implements global model evaluations for formal computational models in the
-cognitive sciences, and serves as an evaluation archive.
+cognitive sciences, and serves as an archive of model evaluation.
 
 }
+
+\keyword{computational modelling; parameter space; model evaluation}
 
 \author{
 
