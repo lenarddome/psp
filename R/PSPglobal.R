@@ -10,10 +10,16 @@ PSPcontrol <- function(radius = 0.01, init = NULL, lower, upper,
     if (length(upper) != length(lower)) {
         stop("Lower and upper boundaries have different lengths!")
     }
-    if (!is.null(init) & length(init) != length(lower)) {
-        stop(paste("init must be either NULL or a vector of same",
-                   "length as number of parameters!"))
+    if (!is.null(init)) {
+        if (is.vector(init) && length(init) != length(lower)) {
+            stop(paste("init must be either NULL or a vector of same",
+                       "length as the same number of parameters!"))
+        } else if (is.matrix(init) && ncol(init) != length(lower)) {
+            stop(paste("init must be either NULL or a matrix with the same
+                       number of columns as number of parameters!"))
+        }
     }
+
     if (length(init) < 1 | is.null(init)) {
         init <- colMeans(rbind(upper, lower))
         cat(paste("First jumping distribution is set to ",
@@ -44,7 +50,8 @@ PSPcontrol <- function(radius = 0.01, init = NULL, lower, upper,
     if (!is.null(cluster_names)) {
         out <- sapply(cluster_names, exists, simplify = TRUE)
         if (!all(out)) {
-            stop(paste("You need to load ", names(which(out == FALSE)),
+            stop(paste("You need to load ",
+                       paste(names(which(out == FALSE)), collapse = ", "),
                        " to your global environment.", sep = ""))
         }
     }
