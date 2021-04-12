@@ -46,7 +46,7 @@ euclidean <- function(a, b) sqrt(sum((a - b)^2))
 positions <- NULL
 for (i in seq_len(2)) positions <- cbind(positions, sample(500, 10))
 
-#' dummy hypercube model to test the PSP function
+#' dummy polytope model to test the PSP function
 #' The model takes in a set of coordinates, calculates its distance from all
 #' all of available coordinates, then return closest region number.
 #' This model generalizes to n-dimensions
@@ -73,8 +73,8 @@ model <- function(par) {
 # Here we run the MCMC for 400 iterations, but the partitioning
 # will stop if the population of all regions reach 200.
 # Note that we have to load our utility function into
-# the clusters, because PSPglobal is currently parallelized.
-out <- PSPglobal(model, PSPcontrol(lower = rep(0, 2),
+# the clusters, because psp_global is currently parallelized.
+out <- psp_global(model, psp_control(lower = rep(0, 2),
                                    upper = rep(1, 2),
                                    init = rep(0.5, 2),
                                    radius = rep(0.25, 2),
@@ -93,7 +93,7 @@ $ps_patterns
 300 344 317 306 359 358 307 396 416 397
 ```
 
-In this case, PSPglobal stopped before it reached the 500th iteration, because
+In this case, psp_global stopped before it reached the 500th iteration, because
 all regions reached at least 300 `pop`. We can also see that some regions have a
 population larger than 300. This is because even though the sampling from that
 regions stopped, new points can still be classed as members of those regions.
