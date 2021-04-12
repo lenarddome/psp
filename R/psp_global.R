@@ -1,6 +1,6 @@
 # function tuning the behaviour of the parameter space partitioning
 # see documentation
-PSPcontrol <- function(radius = 0.01, init = NULL, lower, upper,
+psp_control <- function(radius = 0.1, init = NULL, lower, upper,
                        pop = 400, cl = NULL,
                        param_names = NULL,
                        cluster_names = NULL,
@@ -18,13 +18,6 @@ PSPcontrol <- function(radius = 0.01, init = NULL, lower, upper,
             stop(paste("init must be either NULL or a matrix with the same
                        number of columns as number of parameters!"))
         }
-    }
-
-    if (length(init) < 1 | is.null(init)) {
-        init <- colMeans(rbind(upper, lower))
-        cat(paste("First jumping distribution is set to ",
-                  "the midpoint between lower and upper bounds:\n",
-                  paste(init, collapse = ","), sep = ""))
     }
     if (!is.null(param_names)) {
         if (length(param_names) != length(init)) {
@@ -48,23 +41,14 @@ PSPcontrol <- function(radius = 0.01, init = NULL, lower, upper,
     }
     # export functions to parallel clusters
     if (!is.null(cluster_names)) {
-        out <- sapply(cluster_names, exists, simplify = TRUE)
+        out <- sapply(cluster_names, exists, simplify = TRUE,)
         if (!all(out)) {
             stop(paste("You need to load ",
                        paste(names(which(out == FALSE)), collapse = ", "),
                        " to your global environment.", sep = ""))
         }
     }
-    if (is.null(pop)) {
-        pop <- Inf
-        print(paste("Option pop is set to Inf. Stopping rule",
-                    "is defined by global iterations."))
-    }
-    if (is.null(iterations)) {
-        iterations <- Inf
-        print(paste("Option iterations is set to Inf. Stopping rule is
-                    defined by pop."))
-    }
+    ## check if stopping rule is defined appropriately
     if (all(c(pop, iterations) == Inf)) {
         stop("You must set a stopping rule for the function by using either
              iterations or pop in PSPcontrol.")
@@ -91,7 +75,7 @@ PSPcontrol <- function(radius = 0.01, init = NULL, lower, upper,
 #' @param init Matrix of coordinates serving as a jumping distribution
 #' @param radius The radius of the hypersphere defining the sampling region
 #' @return Matrix of randomly sampled points within the unit sphere
-PSPhyper <- function(init, radius) {
+psp_hyper <- function(init, radius) {
     gauss <- rnorm(length(init), mean = 0, sd = 1)
     points <- (1 / sum(sqrt(gauss ^ 2)) * gauss) *
         runif(1, min = 0, max = radius)
@@ -101,10 +85,10 @@ PSPhyper <- function(init, radius) {
 
 ## Parameter Space Partitioning  ------------------------------------------
 
-PSPglobal <- function(fn, control = PSPcontrol()) {
+psp_global <- function(fn, control = psp_control()) {
 
     ## declare all variables
-    ctrl <- do.call(PSPcontrol, as.list(control))
+    ctrl <- do.call(psp_control, as.list(control))
     radius <- ctrl$radius
     pop <- ctrl$pop
     init <- ctrl$init
@@ -138,7 +122,7 @@ PSPglobal <- function(fn, control = PSPcontrol()) {
         ## construct new set of parameters to search
         new_points <- t(apply(parmat_current, 1,
                               function(x) {
-                                  PSPhyper(init = x[seq_len(length(init))],
+                                  psp_hyper(init = x[seq_len(length(init))],
                                            radius = radius)
                               }))
         ## constrain parameters within bounds

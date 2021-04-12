@@ -1,3 +1,5 @@
-export(PSPglobal, PSPcontrol)
+export(psp_global, psp_control)
 importFrom("parallel", "clusterExport", "parApply", "makeCluster",
            "clusterCall", "detectCores", "stopCluster")
+importFrom("stats", "rnorm", "runif")
+importFrom("utils", "tail", "type.convert")

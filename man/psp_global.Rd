@@ -1,5 +1,5 @@
-\name{PSPglobal}
-\alias{PSPglobal}
+\name{psp_global}
+\alias{psp_global}
 \title{Parameter Space Partitioning}
 
 \description{
@@ -8,14 +8,14 @@
 }
 
 \usage{
-PSPglobal(fn, control = PSPcontrol())
+psp_global(fn, control = psp_control())
 }
 
 \arguments{
   \item{fn}{The ordinal function. It should take a numeric vector (parameter set)
       as its argument, and return an ordinal response pattern as character (e.g.
       "A > B"). NA values are allowed, but are discouraged.}
-  \item{control}{a list of control parameters, see \code{\link{PSPcontrol}}}
+  \item{control}{a list of control parameters, see \code{\link{psp_control}}}
 }
 
 \details{
@@ -59,7 +59,7 @@ Return a list with the following items:
 }
 
 \seealso{
-  \code{\link{PSPcontrol}}.
+  \code{\link{psp_control}}.
 }
 
 \keyword{computational modelling; parameter space; model evaluation}
@@ -115,14 +115,14 @@ model <- function(par) {
 # will stop if the population of all regions reach 200.
 # Note that we have to load our utility function into
 # the clusters, because PSPglobal is currently parallelized.
-out <- PSPglobal(model, PSPcontrol(lower = rep(0, 2),
+out <- psp_global(model, psp_control(lower = rep(0, 2),
                                    upper = rep(1, 2),
                                    init = rep(0.5, 2),
                                    radius = rep(0.25, 2),
-                                   pop = 300,
+                                   pop = 100,
                                    cluster_names = c("positions",
                                                      "euclidean"),
-                                   iterations = 500))
+                                   iterations = 100))
 
 print(out)
 

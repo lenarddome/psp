@@ -1,13 +1,14 @@
-\name{PSPcontrol}
-\alias{PSPcontrol}
-\title{Control the behaviour of the PSPglobal implementation}
+\name{psp_control}
+\alias{psp_control}
+\title{Control the behaviour of the psp_global implementation}
 \description{
-    PSPcontrol allows modellers to define characteristics of the
-    parameter space partitioning MCMC algorithm as implemented in PSPglobal.
+    \code{psp_control} allows user to define characteristics of the
+    parameter space partitioning MCMC algorithm as implemented in
+    \code{psp_global}.
 }
 
 \usage{
-PSPcontrol(radius = 0.01, init = NULL, lower, upper,
+psp_control(radius = 0.1, init = NULL, lower, upper,
            pop = 400, cl = NULL,
            param_names = NULL,
            cluster_names = NULL,
@@ -15,15 +16,15 @@ PSPcontrol(radius = 0.01, init = NULL, lower, upper,
 }
 
 \arguments{
-    \item{radius}{The radius of the unit hypershere with n-dimensions to sample from.
-    Must be a double. Default is \code{0.1}.}
-    \item{init}{A vector of parameters to use as the first jumpgin distribution.
+    \item{radius}{The radius of the hypershere with n-dimensions to sample from.
+    Must be a double. Default is 0.1.}
+    \item{init}{A vector of parameters to use as the first jumping distribution.
         If \code{NULL} (default), parameter search starts from the center of the
         parameter space.}
     \item{lower, upper}{Vectors spercifiying the lower and upper boundaries of
         the parameter space for each parameter. The i-th element of lower and
         upper applies to the i-th parameter.}
-    \item{pop}{The minimum population PSPglobal aims to produce for each ordinal
+    \item{pop}{The minimum population psp_global aims to find for each ordinal
         pattern discovered. This can stop the parameter search early in case
         the population of each ordinal pattern are equal to or larger than \code{pop}.
         If you do not want to use this option, set it to \code{NULL} or \code{Inf}.
@@ -32,18 +33,16 @@ PSPcontrol(radius = 0.01, init = NULL, lower, upper,
     \code{parallel} pacakge.}
     \item{param_names}{A character vector that includes the names of each parameter.
     If \code{NULL} (default), a character vector is generated with
-    \code{"parameter_1", "parameter_2", "parameter_3", ...}}
+    parameter_1, parameter_2, parameter_3", ...}
     \item{cluster_names}{A character vector that includes the list of functions
     to be loaded into each parallel cluster. Default is \code{NULL}}.
-    \item{iterations}{The number of global iterations for PSPglobal. Default is
-        \code{1000}.}
+    \item{iterations}{The number of global iterations for psp_global. Default is
+        1000.}
 }
-
-\details{}
 
 \value{
 
-    Returns a control list suitable for \code{\link{PSPglobal}} with the above
+    Returns a control list suitable for \code{\link{psp_global}} with the above
     elements.
 
 }
@@ -51,15 +50,11 @@ PSPcontrol(radius = 0.01, init = NULL, lower, upper,
 \keyword{computational modelling; parameter space; model evaluation}
 
 \seealso{
-    \code{\link{save}}.
+    \code{\link{psp_global}}.
 }
 
 \examples{
 # two parameter model
-PSPcontrol(lower = rep(0, 2), upper = rep(1, 2), init = rep(0.5, 2),
-           radius = rep(0.25, 2), cluster_names = NULL, iterations = 500)
-
-# return error when length of bound vectors mismatch
-PSPcontrol(lower = rep(0, 3), upper = rep(1, 2), init = rep(0.5, 2),
+psp_control(lower = rep(0, 2), upper = rep(1, 2), init = rep(0.5, 2),
            radius = rep(0.25, 2), cluster_names = NULL, iterations = 500)
 }
