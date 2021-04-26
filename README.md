@@ -3,7 +3,7 @@
 Parameter Space Partitioning MCMC for Global Model Evaluation (Pitt, Kim, Navarro
 & Myung, 2006)
 
-# Install
+## Install
 
 **This package is in heavy development. Use it at your own risk!**
 
@@ -23,9 +23,13 @@ The project's architecture is also influenced by [DEoptim](https://github.com/Ar
 `DEoptim` implements a Differential Evolutionary Optimization algorithm for
 model-fitting.
 
+We are completely open-source and free. Anyone can contribute. If you would
+like to raise an issue or contribute code, use Github, message or email me
+(@lenarddome).
+
 ## Design [in development]
 
-More about the design can be found in `ARCHITECTURE.md`
+More about the architecture and coding styles will be added later.`
 
 ## Example
 
