@@ -8,7 +8,7 @@
 #' model(runif(5))
 model <- function(par) {
     set.seed(7624)
-    # region centers
+    # region centres
     positions <- NULL
     for (i in seq_len(5)) positions <- cbind(positions, sample(500, 100))
     areas <- NULL
