@@ -3,6 +3,7 @@
 psp_control <- function(radius = 0.1, init = NULL, lower, upper,
                        pop = 400, cl = NULL,
                        param_names = NULL,
+                       parallel = TRUE,
                        cluster_names = NULL,
                        iterations = 1000) {
 
@@ -29,10 +30,10 @@ psp_control <- function(radius = 0.1, init = NULL, lower, upper,
         radius <- rep(radius, length(init))
     }
     ## set up parallel
-    if (is.null(cl)) {
+    if (parallel == TRUE && is.null(cl)) {
         no_cores <- parallel::detectCores()
         cl <- parallel::makeCluster(no_cores)
-    } else {
+    } else if (parallel == TRUE && !is.null(cl)) {
         cl <- parallel::makeCluster(cl)
     }
     ## name parameters
@@ -59,6 +60,7 @@ psp_control <- function(radius = 0.1, init = NULL, lower, upper,
                 init = init,
                 lower = lower,
                 upper = upper,
+                parallel = parallel,
                 param_names = param_names,
                 cluster_names = cluster_names,
                 iterations = iterations)
@@ -97,6 +99,7 @@ psp_global <- function(fn, control = psp_control()) {
     cl <- ctrl$cl
     pnames <- ctrl$param_names
     cnames <- ctrl$cluster_names
+    parallel <- ctrl$parallel
     parallel::clusterExport(cl, cnames,
                             envir = environment())
 
@@ -133,7 +136,9 @@ psp_global <- function(fn, control = psp_control()) {
             new_points[, i] <- cbounds
         }
         # evaluate new_points and record ordinal patterns
-        evaluate <- parallel::parApply(cl, new_points, 1, FUN)
+        ifelse(parallel,
+           evaluate <- parallel::parApply(cl, new_points, 1, FUN), # parallel
+           evaluate <- apply(new_points, 1, FUN))                  # no parallel
         ordinal <- type.convert(cbind(new_points, evaluate, while_count,
                                       deparse.level = 0),
                                 as.is = TRUE)
@@ -160,7 +165,7 @@ psp_global <- function(fn, control = psp_control()) {
                     sep = ""))
         if (while_count == ctrl$iterations) parameter_filled <- TRUE
     }
-    parallel::stopCluster(cl)
+    if (parallel == TRUE) parallel::stopCluster(cl)
     ordinal_size <- table(parmat_big[, length(init) + 1])
     colnames(parmat_big) <- c(pnames, "pattern", "iteration")
     return(list("ps_partitions" = parmat_big,

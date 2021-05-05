@@ -35,4 +35,5 @@ out <- psp_global(model, psp_control(lower = rep(0, 5),
                                    pop = 200,
                                    cluster_names = c("positions",
                                                      "euclidean"),
+                                   parallel = FALSE,
                                    iterations = 500))

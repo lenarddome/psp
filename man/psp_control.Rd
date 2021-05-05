@@ -11,6 +11,7 @@
 psp_control(radius = 0.1, init = NULL, lower, upper,
            pop = 400, cl = NULL,
            param_names = NULL,
+           parallel = TRUE,
            cluster_names = NULL,
            iterations = 1000)
 }
@@ -29,10 +30,13 @@ psp_control(radius = 0.1, init = NULL, lower, upper,
         the population of each ordinal pattern are equal to or larger than \code{pop}.
         If you do not want to use this option, set it to \code{NULL} or \code{Inf}.
         Default is \code{400}.}
-    \item{cl}{The number of cores to use for \code{\link{makeCluster}} from the
-    \code{parallel} pacakge.}
-    \item{param_names}{A character vector that includes the names of each parameter.
-    If \code{NULL} (default), a character vector is generated with
+    \item{parallel}{If TRUE (default), uses the parallel package to run each
+        chain in the Markov Chain parallel.}
+    \item{cl}{If parallel is TRUE, the number of cores to use for 
+        \code{\link{makeCluster}} from the \code{parallel} package. If null
+        (default), use all cores.}
+    \item{param_names}{A character vector that includes the names of each
+       parameter. If \code{NULL} (default), a character vector is generated with
     parameter_1, parameter_2, parameter_3", ...}
     \item{cluster_names}{A character vector that includes the list of functions
     to be loaded into each parallel cluster. Default is \code{NULL}}.
