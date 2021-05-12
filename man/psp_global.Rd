@@ -120,8 +120,7 @@ out <- psp_global(model, psp_control(lower = rep(0, 2),
                                    init = rep(0.5, 2),
                                    radius = rep(0.25, 2),
                                    pop = 100,
-                                   cluster_names = c("positions",
-                                                     "euclidean"),
+                                   parallel = FALSE,
                                    iterations = 100))
 
 print(out)

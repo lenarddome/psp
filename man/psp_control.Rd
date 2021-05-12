@@ -60,5 +60,6 @@ psp_control(radius = 0.1, init = NULL, lower, upper,
 \examples{
 # two parameter model
 psp_control(lower = rep(0, 2), upper = rep(1, 2), init = rep(0.5, 2),
-           radius = rep(0.25, 2), cluster_names = NULL, iterations = 500)
+           radius = rep(0.25, 2), cluster_names = NULL, 
+           parallel = FALSE, iterations = 500)
 }
