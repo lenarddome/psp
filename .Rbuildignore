@@ -1,6 +1,8 @@
-^LICENSE$
-^CODE_OF_CONDUCT$
-^ARCHITECTURE$
-^CONTRIBUTING$
 ^docs$
 ^_config.yml$
+^[\.]md$$
+^LICENSE$
+^\.gitignore$
+^ARCHITECURE\.md$
+^CODE_OF_CONDUCT\.md$
+^CONTRIBUTING\.md$
