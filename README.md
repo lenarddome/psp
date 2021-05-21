@@ -104,7 +104,7 @@ regions stopped, new points can still be classed as members of those regions.
 
 This is how it looks under the hood in real time:
 
-![](https://youtu.be/xkfKJO2ViWI)
+![Youtube Video](https://youtu.be/xkfKJO2ViWI)
 
 Each colour is a separate region.
 
