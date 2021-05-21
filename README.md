@@ -77,7 +77,7 @@ model <- function(par) {
 # Here we run the MCMC for 400 iterations, but the partitioning
 # will stop if the population of all regions reach 200.
 # Note that we have to load our utility function into
-# the clusters, because psp_global is currently parallelized.
+# the clusters, because psp_global will run parallel.
 out <- psp_global(model, psp_control(lower = rep(0, 2),
                                    upper = rep(1, 2),
                                    init = rep(0.5, 2),
@@ -104,7 +104,7 @@ regions stopped, new points can still be classed as members of those regions.
 
 This is how it looks under the hood in real time:
 
-![](./docs/figures/psp.gif)
+![](https://youtu.be/xkfKJO2ViWI)
 
 Each colour is a separate region.
 
