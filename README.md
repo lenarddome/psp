@@ -29,9 +29,9 @@ like to raise an issue or contribute code, use Github, message or email me
 
 ## Design [in development]
 
-More about the architecture and coding styles will be added later.`
+More about the architecture and coding styles will be added later.
 
-## Example
+# Example
 
 Here is an example, using a two parameter model. We want PSP to find 10 distinct
 predefined regions.
@@ -104,7 +104,7 @@ regions stopped, new points can still be classed as members of those regions.
 
 This is how it looks under the hood in real time:
 
-![Youtube Video](https://youtu.be/xkfKJO2ViWI)
+[Youtube Video](https://youtu.be/xkfKJO2ViWI)
 
 Each colour is a separate region.
 
