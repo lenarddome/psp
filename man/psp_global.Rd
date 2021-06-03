@@ -14,7 +14,7 @@ psp_global(fn, control = psp_control())
 \arguments{
   \item{fn}{The ordinal function. It should take a numeric vector (parameter set)
       as its argument, and return an ordinal response pattern as character (e.g.
-      "A > B"). NA values are allowed, but are discouraged.}
+      "A > B"). NA values are not currently allowed.}
   \item{control}{a list of control parameters, see \code{\link{psp_control}}}
 }
 
@@ -46,14 +46,14 @@ psp_global(fn, control = psp_control())
 
 Return a list with the following items:
 
-    \item{ps_partitions}{A data frame containing the Parameter Space Partitions
-    and their corresponding ordinal response patterns output by \code{fn}. Columns
+    \item{ps_partitions}{A data frame containing coordinates from their regions
+    and their corresponding ordinal response pattern output by \code{fn}. Columns
     include (in this order): parameter coordinates, their ordinal pattern output
     by \code{fn}, the global iteration of the MCMC. Each row corresponds with
     the evaluation of a single set of parameters.}
 
     \item{ps_patterns}{A table with the ordinal patterns discovered and the
-    population of their corresponding region - the number of parameter set
+    population of their corresponding region - the number of parameter sets
     discovered to produce the ordinal pattern.}
 
 }

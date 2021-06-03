@@ -30,10 +30,10 @@ psp_control(radius = 0.1, init = NULL, lower, upper,
         the population of each ordinal pattern are equal to or larger than \code{pop}.
         If you do not want to use this option, set it to \code{NULL} or \code{Inf}.
         Default is \code{400}.}
-    \item{parallel}{If TRUE (default), uses the parallel package to run each
-        chain in the Markov Chain parallel.}
+    \item{parallel}{If TRUE (default), uses the parallel package to run
+        evaluations of jumping distributions for each chain parallel.}
     \item{cl}{If parallel is TRUE, the number of cores to use for 
-        \code{\link{makeCluster}} from the \code{parallel} package. If null
+        \code{makeCluster} from the \pkg{parallel} package. If null
         (default), use all cores.}
     \item{param_names}{A character vector that includes the names of each
        parameter. If \code{NULL} (default), a character vector is generated with
@@ -50,8 +50,6 @@ psp_control(radius = 0.1, init = NULL, lower, upper,
     elements.
 
 }
-
-\keyword{computational modelling; parameter space; model evaluation}
 
 \seealso{
     \code{\link{psp_global}}.

@@ -14,7 +14,7 @@ cognitive sciences, and serves as an archive of model evaluation.
 
 }
 
-\keyword{computational modelling; parameter space; model evaluation}
+\keyword{computational modelling; parameter space partitioning; model evaluation}
 
 \author{
 
