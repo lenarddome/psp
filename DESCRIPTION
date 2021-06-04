@@ -1,11 +1,12 @@
 Package: psp
 Title: Parameter Space Partitioning MCMC for Global Model Evaluation
-Version: 0.1.0
+Version: 0.1
 Date: 2021-05-06
-Authors@R: person("Lenard", "Dome",
+Authors@R: c(person("Lenard", "Dome",
                    email = "lenarddome@protonmail.ch",
-                   role = c("aut", "cre"))
-Description: Implements global model evaluations for formal computational models in the cognitive sciences, and serves as an evaluation archive.
+                   role = c("aut", "cre")),
+             person("Andy Wills", role = c("aut")))
+Description: Implements an n-dimensional parameter space partitioning algorithm for evaluating the global behaviour of formal computational models as described by Pitt, Kim, Navarro and Myung (2006) <doi:10.1037/0033-295X.113.1.57>.
 License: GPL (>= 3)
 Depends: parallel
 Encoding: UTF-8

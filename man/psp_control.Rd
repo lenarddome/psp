@@ -2,7 +2,7 @@
 \alias{psp_control}
 \title{Control the behaviour of the psp_global implementation}
 \description{
-    \code{psp_control} allows user to define characteristics of the
+    \code{psp_control} allows users to define characteristics of the
     parameter space partitioning MCMC algorithm as implemented in
     \code{psp_global}.
 }
@@ -22,12 +22,12 @@ psp_control(radius = 0.1, init = NULL, lower, upper,
     \item{init}{A vector of parameters to use as the first jumping distribution.
         If \code{NULL} (default), parameter search starts from the center of the
         parameter space.}
-    \item{lower, upper}{Vectors spercifiying the lower and upper boundaries of
+    \item{lower, upper}{Vectors specifiying the lower and upper boundaries of
         the parameter space for each parameter. The i-th element of lower and
-        upper applies to the i-th parameter.}
+        upper bounds applies to the i-th parameter.}
     \item{pop}{The minimum population psp_global aims to find for each ordinal
         pattern discovered. This can stop the parameter search early in case
-        the population of each ordinal pattern are equal to or larger than \code{pop}.
+        the population of all ordinal pattern are equal to or larger than \code{pop}.
         If you do not want to use this option, set it to \code{NULL} or \code{Inf}.
         Default is \code{400}.}
     \item{parallel}{If TRUE (default), uses the parallel package to run
@@ -39,7 +39,7 @@ psp_control(radius = 0.1, init = NULL, lower, upper,
        parameter. If \code{NULL} (default), a character vector is generated with
     parameter_1, parameter_2, parameter_3", ...}
     \item{cluster_names}{A character vector that includes the list of functions
-    to be loaded into each parallel cluster. Default is \code{NULL}}.
+    to be loaded into each cluster. Default is \code{NULL}}.
     \item{iterations}{The number of global iterations for psp_global. Default is
         1000.}
 }

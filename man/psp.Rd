@@ -10,7 +10,7 @@
 \description{
 
 Implements global model evaluations for formal computational models in the
-cognitive sciences, and serves as an archive of model evaluation.
+cognitive sciences.
 
 }
 

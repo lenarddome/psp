@@ -20,7 +20,7 @@ psp_global(fn, control = psp_control())
 
 \details{
     This function implements the Parameter Space Partitioning algorithm
-    desribed by Pitt et al. (2006):
+    desribed by Pitt et al. (2006). The algorithm is as follows:
 
     0. Initialize parameter space.
 
