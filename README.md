@@ -1,13 +1,21 @@
 # PSP
 
 Parameter Space Partitioning MCMC for Global Model Evaluation (Pitt, Kim, Navarro
-& Myung, 2006)
+& Myung, 2006).
+
+[CRAN page of psp](https://CRAN.R-project.org/package=psp)
 
 ## Install
 
-**This package is in heavy development. Use it at your own risk!**
+For the stable version
 
+```r
+install.packages("psp")
 ```
+
+For the developmental version:
+
+```r
 devtools::install_github("lenarddome/psp")
 ```
 
