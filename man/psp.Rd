@@ -9,8 +9,10 @@
 
 \description{
 
-Implements global model evaluations for formal computational models in the
-cognitive sciences.
+Implements an n-dimensional parameter space partitioning algorithm for evaluating
+the global behaviour of formal computational models as described by Pitt, Kim,
+Navarro and Myung (2006) <doi:10.1037/0033-295X.113.1.57>.
+
 
 }
 
@@ -22,4 +24,8 @@ cognitive sciences.
 
     Maintainer: Lenard Dome \email{lenarddome@protonmail.ch}
 
+}
+
+\references{
+    Pitt, M. A., Kim, W., Navarro, D. J., & Myung, J. I. (2006). Global model analysis by parameter space partitioning. Psychological Review, 113(1), 57.
 }
