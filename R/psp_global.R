@@ -87,7 +87,7 @@ psp_hyper <- function(init, radius) {
 
 ## Parameter Space Partitioning  ------------------------------------------
 
-psp_global <- function(fn, control = psp_control()) {
+psp_global <- function(fn, control = psp_control(), quiet = FALSE) {
 
     ## declare all variables
     ctrl <- do.call(psp_control, as.list(control))
@@ -159,10 +159,12 @@ psp_global <- function(fn, control = psp_control()) {
         } else {
             parameter_filled <- TRUE
         }
-        # print is only for debugging as of 2021-01-27T13:08:40+0000
+        ## print information about the current iteration
+        if (quiet) {
         print(paste("iteration [", while_count, "]: found ",
                     length(table(parmat_big[, length(init) + 1])),
                     sep = ""))
+        }
         if (while_count == ctrl$iterations) parameter_filled <- TRUE
     }
     if (parallel == TRUE) parallel::stopCluster(cl)
