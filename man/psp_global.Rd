@@ -3,7 +3,7 @@
 \title{Parameter Space Partitioning}
 
 \description{
-  An all-purpose implementation of the Parameter Space Partitioning MCMC 
+  An all-purpose implementation of the Parameter Space Partitioning MCMC
   Algorithm described by Pitt, Kim, Navarro, Myung (2006).
 }
 
@@ -33,8 +33,8 @@ psp_global(fn, control = psp_control())
     parameter set for a given pattern.
 
     2. Evaluate model on all new parameter sets.
-    
-    3. Record new patterns and their corresponding parameter sets. If the 
+
+    3. Record new patterns and their corresponding parameter sets. If the
     parameter sets returns an already discovered pattern, add parameter set
     to their records. Return to Step 1.
 
@@ -83,7 +83,7 @@ library(psp)
 #' @return euclidean distance between coordinates
 euclidean <- function(a, b) sqrt(sum((a - b)^2))
 
-# define center points for the 10 regions in a two-dimensional space 
+# define center points for the 10 regions in a two-dimensional space
 positions <- NULL
 for (i in seq_len(2)) positions <- cbind(positions, sample(500, 10))
 
@@ -97,12 +97,12 @@ for (i in seq_len(2)) positions <- cbind(positions, sample(500, 10))
 #' @examples
 #' model(runif(5))
 model <- function(par) {
-    areas <- NULL 
+    areas <- NULL
     for (i in seq_along(par)) {
         range <- c(1, 0)
         if (i \%\% 2 == 0) {
             range <- c(0, 1)
-        } 
+        }
         areas <- cbind(areas,
                        seq(range[1], range[2], length.out = 500)[positions[,i]])
     }
