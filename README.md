@@ -57,6 +57,17 @@ like to raise an issue or contribute code, use Github, message or email me
 
 More about the architecture and coding styles will be added later.
 
+## Commit emoji convention
+
+
+- :memo: Add comment or doc
+- :gift: New feature.
+- :bug: Bug fix.
+- :bomb: Breaking compatibility.
+- :white_check_mark: Write test.
+- :fire: Remove something.
+- :beer: I'm happy like reduced code complexity.
+
 
 ## About `psp`
 
