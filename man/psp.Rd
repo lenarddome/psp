@@ -13,7 +13,7 @@ Implements an n-dimensional parameter space partitioning algorithm for evaluatin
 the global behaviour of formal computational models as described by Pitt, Kim,
 Navarro and Myung (2006) <doi:10.1037/0033-295X.113.1.57>.
 
-
+Please cite the package in publications. Use \code{citation("psp").
 }
 
 \keyword{computational modelling; parameter space partitioning; model evaluation}
