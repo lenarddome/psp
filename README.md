@@ -1,5 +1,13 @@
 # PSP
 
+[![R-CMD-check](https://github.com/lenarddome/psp/actions/workflows/main.yml/badge.svg)](https://github.com/lenarddome/psp/actions/workflows/main.yml)
+
+[![](https://cranlogs.r-pkg.org/badges/psp)](https://cran.r-project.org/package=psp)
+
+![CRAN/METACRAN](https://img.shields.io/cran/v/psp)
+
+![CRAN/METACRAN](https://img.shields.io/cran/l/psp)
+
 Parameter Space Partitioning MCMC for Global Model Evaluation (Pitt, Kim, Navarro
 & Myung, 2006).
 
