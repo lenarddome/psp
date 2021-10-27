@@ -8,7 +8,7 @@
 }
 
 \usage{
-psp_global(fn, control = psp_control())
+psp_global(fn, control = psp_control(), quiet = FALSE)
 }
 
 \arguments{
@@ -16,6 +16,8 @@ psp_global(fn, control = psp_control())
       as its argument, and return an ordinal response pattern as character (e.g.
       "A > B"). NA values are not currently allowed.}
   \item{control}{a list of control parameters, see \code{\link{psp_control}}}
+  \item{quiet}{If \code{FALSE} (default), print the total number of patterns found up to the
+              current iteration. If \code{TRUE}, do not print anything.}
 }
 
 \details{
@@ -38,7 +40,7 @@ psp_global(fn, control = psp_control())
     parameter sets returns an already discovered pattern, add parameter set
     to their records. Return to Step 1.
 
-    This process runs in parallel for each discovered pattern.
+    This process runs can run in parallel for each discovered pattern.
 
 }
 
