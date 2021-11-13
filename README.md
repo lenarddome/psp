@@ -1,11 +1,8 @@
 # PSP
 
 [![R-CMD-check](https://github.com/lenarddome/psp/actions/workflows/main.yml/badge.svg)](https://github.com/lenarddome/psp/actions/workflows/main.yml)
-
 [![](https://cranlogs.r-pkg.org/badges/psp)](https://cran.r-project.org/package=psp)
-
 ![CRAN/METACRAN](https://img.shields.io/cran/v/psp)
-
 ![CRAN/METACRAN](https://img.shields.io/cran/l/psp)
 
 Parameter Space Partitioning MCMC for Global Model Evaluation (Pitt, Kim, Navarro
@@ -44,6 +41,10 @@ For the developmental version:
 ```r
 devtools::install_github("lenarddome/psp")
 ```
+
+## Support
+
+<a href="https://www.buymeacoffee.com/lenarddome" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-yellow.png" alt="Buy Me A Coffee" height="57"></a>
 
 ## Philosophy
 
