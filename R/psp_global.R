@@ -1,11 +1,11 @@
 # function tuning the behaviour of the parameter space partitioning
 # see documentation
 psp_control <- function(radius = 0.1, init = NULL, lower, upper,
-                       pop = 400, cl = NULL,
-                       param_names = NULL,
-                       parallel = TRUE,
-                       cluster_names = NULL,
-                       iterations = 1000) {
+                        pop = 400, cl = NULL,
+                        param_names = NULL,
+                        parallel = TRUE,
+                        cluster_names = NULL,
+                        iterations = 1000) {
 
     ## error functions
     if (length(upper) != length(lower)) {

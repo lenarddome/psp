@@ -1,12 +1,10 @@
 # PSP
 
 [![R-CMD-check](https://github.com/lenarddome/psp/actions/workflows/main.yml/badge.svg)](https://github.com/lenarddome/psp/actions/workflows/main.yml)
-
-[![](https://cranlogs.r-pkg.org/badges/psp)](https://cran.r-project.org/package=psp)
-
+[![](https://cranlogs.r-pkg.org/badges/grand-total/psp)](https://cran.r-project.org/package=psp)
 ![CRAN/METACRAN](https://img.shields.io/cran/v/psp)
-
 ![CRAN/METACRAN](https://img.shields.io/cran/l/psp)
+[![codecov](https://codecov.io/gh/lenarddome/psp/branch/main/graph/badge.svg?token=XS0CEOS74M)](https://codecov.io/gh/lenarddome/psp)
 
 Parameter Space Partitioning MCMC for Global Model Evaluation (Pitt, Kim, Navarro
 & Myung, 2006).

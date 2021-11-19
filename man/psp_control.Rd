@@ -19,9 +19,8 @@ psp_control(radius = 0.1, init = NULL, lower, upper,
 \arguments{
     \item{radius}{The radius of the hypershere with n-dimensions to sample from.
     Must be a double. Default is 0.1.}
-    \item{init}{A vector of parameters to use as the first jumping distribution.
-        If \code{NULL} (default), parameter search starts from the center of the
-        parameter space.}
+    \item{init}{A vector of parameters to use as the first jumping
+        distribution.}
     \item{lower, upper}{Vectors specifiying the lower and upper boundaries of
         the parameter space for each parameter. The i-th element of lower and
         upper bounds applies to the i-th parameter.}
@@ -32,7 +31,7 @@ psp_control(radius = 0.1, init = NULL, lower, upper,
         Default is \code{400}.}
     \item{parallel}{If TRUE (default), uses the parallel package to run
         evaluations of jumping distributions for each chain parallel.}
-    \item{cl}{If parallel is TRUE, the number of cores to use for 
+    \item{cl}{If parallel is TRUE, the number of cores to use for
         \code{makeCluster} from the \pkg{parallel} package. If null
         (default), use all cores.}
     \item{param_names}{A character vector that includes the names of each
@@ -58,6 +57,6 @@ psp_control(radius = 0.1, init = NULL, lower, upper,
 \examples{
 # two parameter model
 psp_control(lower = rep(0, 2), upper = rep(1, 2), init = rep(0.5, 2),
-           radius = rep(0.25, 2), cluster_names = NULL, 
+           radius = rep(0.25, 2), cluster_names = NULL,
            parallel = FALSE, iterations = 500)
 }
