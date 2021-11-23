@@ -29,6 +29,10 @@ A BibTeX entry for LaTeX users is
   }
 ```
 
+## Support
+
+<a href="https://www.buymeacoffee.com/lenarddome" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-yellow.png" alt="Buy Me A Coffee" height="57"></a>
+
 ## Install
 
 For the stable version
