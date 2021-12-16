@@ -46,9 +46,10 @@ psp_global(fn, control = psp_control(), quiet = FALSE)
 
 \value{
 
-Return a list with the following items:
+The output of function \code{psp} is a member of the \code{S3} class
+of \code{PSP}. A \code{PSP} object is a list with the following items:
 
-    \item{ps_partitions}{A data frame containing coordinates from their regions
+    \item{ps_partitions}{A data table containing coordinates from their regions
     and their corresponding ordinal response pattern output by \code{fn}. Columns
     include (in this order): parameter coordinates, their ordinal pattern output
     by \code{fn}, the global iteration of the MCMC. Each row corresponds with
@@ -57,6 +58,11 @@ Return a list with the following items:
     \item{ps_patterns}{A table with the ordinal patterns discovered and the
     population of their corresponding region - the number of parameter sets
     discovered to produce the ordinal pattern.}
+
+    \item{ps_ordinal}{A list (if ordinal patterns are multidimensional objects)
+    or character vector (if ordinal patterns are strings or other single values)
+    with the ordinal patterns found. The place of the ordinal pattern
+    corresponds to the names in ps_patterns.}
 
 }
 

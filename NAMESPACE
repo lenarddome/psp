@@ -3,3 +3,5 @@ importFrom("parallel", "clusterExport", "parApply", "makeCluster",
            "clusterCall", "detectCores", "stopCluster")
 importFrom("stats", "rnorm", "runif")
 importFrom("utils", "tail", "type.convert")
+importFrom("data.table", "data.table")
+importFrom("methods", "is", "show")

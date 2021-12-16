@@ -3,6 +3,8 @@
 ^[\.]md$$
 ^LICENSE$
 ^\.gitignore$
+^.github$
+^.git$
 ^ARCHITECURE\.md$
 ^CODE_OF_CONDUCT\.md$
 ^CONTRIBUTING\.md$

@@ -29,14 +29,14 @@ model <- function(par) {
 }
 
 # run Parameter Space Partitioning
-out <- psp_global(model, psp_control(lower = rep(0, 4),
-                                     upper = rep(1, 4),
-                                     init = rep(0.5, 4),
-                                     radius = rep(0.25, 4),
+out <- psp_global(model, psp_control(lower = rep(0, 5),
+                                     upper = rep(1, 5),
+                                     init = rep(0.5, 5),
+                                     radius = rep(0.25, 5),
                                      pop = 300,
                                      parallel = FALSE,
                                      iterations = 300))
 
-test_that("PSP finds all 100 regions in a 5 parameter model",
-          {expect_equal(length(out[[2]]), 100)
+test_that("PSP finds all 100 regions in a 5 parameter model", {
+              expect_equal(length(out[[2]]), 100)
           })
