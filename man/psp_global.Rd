@@ -16,8 +16,8 @@ psp_global(fn, control = psp_control(), quiet = FALSE)
       as its argument, and return an ordinal response pattern as character (e.g.
       "A > B"). NA values are not currently allowed.}
   \item{control}{a list of control parameters, see \code{\link{psp_control}}}
-  \item{quiet}{If \code{FALSE} (default), print the total number of patterns found up to the
-              current iteration. If \code{TRUE}, do not print anything.}
+  \item{quiet}{If \code{FALSE} (default), print the total number of patterns
+      found up to the current iteration. If \code{TRUE}, do not print anything.}
 }
 
 \details{
@@ -49,11 +49,12 @@ psp_global(fn, control = psp_control(), quiet = FALSE)
 The output of function \code{psp} is a member of the \code{S3} class
 of \code{PSP}. A \code{PSP} object is a list with the following items:
 
-    \item{ps_partitions}{A data table containing coordinates from their regions
-    and their corresponding ordinal response pattern output by \code{fn}. Columns
-    include (in this order): parameter coordinates, their ordinal pattern output
-    by \code{fn}, the global iteration of the MCMC. Each row corresponds with
-    the evaluation of a single set of parameters.}
+    \item{ps_partitions}{A \code{data.table} containing coordinates from the
+    parameter space and their corresponding ordinal response pattern output by
+    \code{fn}. Columns include (in this order): parameter coordinates,
+    their ordinal pattern output by \code{fn}, the global iteration of the
+    MCMC. Each row corresponds with the evaluation of a single set of
+    parameters.}
 
     \item{ps_patterns}{A table with the ordinal patterns discovered and the
     population of their corresponding region - the number of parameter sets

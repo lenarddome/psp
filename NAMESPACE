@@ -5,3 +5,6 @@ importFrom("stats", "rnorm", "runif")
 importFrom("utils", "tail", "type.convert")
 importFrom("data.table", "data.table")
 importFrom("methods", "is", "show")
+
+exportClasses("PSP")
+S3method("print", "PSP")
