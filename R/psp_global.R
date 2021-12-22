@@ -193,6 +193,7 @@ psp_global <- function(fn, control = psp_control(), quiet = FALSE) {
         }
         if (while_count == ctrl$iterations) parameter_filled <- TRUE
     }
+    ## close parallel workplaces
     if (ctrl$parallel == TRUE) parallel::stopCluster(cl)
     ## depending on dims of ordinal pattern compile output
     if (dimension) {
