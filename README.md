@@ -4,7 +4,6 @@
 [![](https://cranlogs.r-pkg.org/badges/grand-total/psp)](https://cran.r-project.org/package=psp)
 ![CRAN/METACRAN](https://img.shields.io/cran/v/psp)
 ![CRAN/METACRAN](https://img.shields.io/cran/l/psp)
-[![codecov](https://codecov.io/gh/lenarddome/psp/branch/main/graph/badge.svg?token=XS0CEOS74M)](https://codecov.io/gh/lenarddome/psp)
 
 Parameter Space Partitioning MCMC for Global Model Evaluation (Pitt, Kim, Navarro
 & Myung, 2006).
@@ -80,7 +79,6 @@ More about the architecture and coding styles will be added later.
 - :construction: Release candidate.
 - :heavy_plus_sign: Add dependency.
 - :heavy_minus_sign: Remove dependency.
-
 
 ## About `psp`
 
