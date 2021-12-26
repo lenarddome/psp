@@ -8,7 +8,7 @@
 }
 
 \usage{
-psp_global(fn, control = psp_control(), quiet = FALSE)
+psp_global(fn, control = psp_control(), ..., quiet = FALSE)
 }
 
 \arguments{
@@ -16,6 +16,7 @@ psp_global(fn, control = psp_control(), quiet = FALSE)
       as its argument, and return an ordinal response pattern as character (e.g.
       "A > B"). NA values are not currently allowed.}
   \item{control}{a list of control parameters, see \code{\link{psp_control}}}
+  \item{...}{Additional arguments passed to \code{fn}.}
   \item{quiet}{If \code{FALSE} (default), print the total number of patterns
       found up to the current iteration. If \code{TRUE}, do not print anything.}
 }

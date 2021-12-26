@@ -93,7 +93,7 @@ psp_hyper <- function(jump, radius) {
 
 ## Parameter Space Partitioning
 
-psp_global <- function(fn, control = psp_control(), quiet = FALSE) {
+psp_global <- function(fn, control = psp_control(), ..., quiet = FALSE) {
 
     ## declare all variables
     ctrl <- do.call(psp_control, as.list(control))
@@ -152,8 +152,8 @@ psp_global <- function(fn, control = psp_control(), quiet = FALSE) {
 
         # evaluate new_points and record ordinal patterns
         ifelse(ctrl$parallel,
-           evaluate <- parallel::parApply(cl, new_points, 1, fun), # parallel
-           evaluate <- apply(new_points, 1, fun))                  # no parallel
+           evaluate <- parallel::parApply(cl, new_points, 1, fun, ...), # parallel
+           evaluate <- apply(new_points, 1, fun, ...))                  # no parallel
 
         ## save new results with points
         ordinal <- dota(cbind(new_points, evaluate, while_count))
