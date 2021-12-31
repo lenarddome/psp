@@ -8,6 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 
+- :gift: `psp` can take additional arguments and pass it to `fn`
+
+### Changed
+
+- *fix* returns incorrect dimension attributes of ordinal pattern if it is in a list
+
+## v0.2 pre-release
+
+### Added
+
 - :gift: `psp` can now handle ordinal patterns other than strings of characters, e.g. adjacency matrices, list of strings, ...
 
 ### Changed

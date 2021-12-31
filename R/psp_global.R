@@ -83,6 +83,7 @@ parallelize <- function(parallel = FALSE, cl = NULL, names = NULL) {
 #' @param radius The radius of the hypersphere defining the sampling region
 #' @return Matrix of randomly sampled points within the unit sphere
 psp_hyper <- function(jump, radius) {
+    if (is.list(jump)) jump <- unlist(jump)
     if (!("numeric" %in% is(jump))) jump <- as.numeric(jump)
     gauss <- rnorm(length(jump), mean = 0, sd = 1)
     points <- (1 / sum(sqrt(gauss ^ 2)) * gauss) *
@@ -120,7 +121,8 @@ psp_global <- function(fn, control = psp_control(), ..., quiet = FALSE) {
 
     ## set first parameter set and ordinal pattern
     parmat_current <- matrix(init, nrow = 1)
-    evaluate <- fun(parmat_current[1, seq(length(init))])
+    evaluate <- fun(params = parmat_current[1, seq(length(init))],
+                    ...)
     if (!is.null(dim(evaluate))) evaluate <- list(evaluate)
 
     ## create big parameter matrix
@@ -131,7 +133,7 @@ psp_global <- function(fn, control = psp_control(), ..., quiet = FALSE) {
     loc <- colnames(parmat_big)[(length(init) + 1)]
 
     ## does the ordinal pattern have any dimensions?
-    dimension <- any(dim(parmat_big[, loc, with = FALSE]) > 1)
+    dimension <- any(length(unlist(evaluate)) > 1)
 
     while (!parameter_filled) {
         while_count <- while_count + 1
