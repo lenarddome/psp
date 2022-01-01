@@ -8,7 +8,7 @@
 }
 
 \usage{
-psp_control(radius = 0.1, init = NULL, lower, upper,
+psp_control(radius = 0.1, init, lower, upper,
            pop = 400, cl = NULL,
            param_names = NULL,
            parallel = FALSE,

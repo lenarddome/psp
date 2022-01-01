@@ -18,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 
-- :gift: `psp` can now handle ordinal patterns other than strings of characters, e.g. adjacency matrices, list of strings, ...
+- :gift: `psp` can now handle ordinal patterns other than strings of characters, e.g. adjacency matrices, list of strings, …
 
 ### Changed
 

@@ -10,3 +10,8 @@ Some aspects of `psp` we would like to improve are:
 - enhancing performance
 - adding various statistics for summarizing `psp` results
 - finding methods to visualise `psp` outputs
+
+## [In the works]
+
+- [] `init` can be a matrix. Users should be able to define multiple jumping
+     distribution.
