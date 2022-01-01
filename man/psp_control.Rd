@@ -18,7 +18,8 @@ psp_control(radius = 0.1, init = NULL, lower, upper,
 
 \arguments{
     \item{radius}{The radius of the hypershere with n-dimensions to sample from.
-    Must be a double. Default is 0.1.}
+    Must be a double or a numeric vector, where elements correspond to
+    parameters in `init, lower, upper`. Default is 0.1.}
     \item{init}{A vector of parameters to use as the first jumping
         distribution.}
     \item{lower, upper}{Vectors specifiying the lower and upper boundaries of

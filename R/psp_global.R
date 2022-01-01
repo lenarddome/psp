@@ -1,6 +1,6 @@
 # function tuning the behaviour of the parameter space partitioning
 # see documentation
-psp_control <- function(radius = 0.1, init = NULL, lower, upper,
+psp_control <- function(radius = 0.1, init, lower, upper,
                         pop = 400, cl = NULL,
                         param_names = NULL,
                         parallel = FALSE,
@@ -12,25 +12,24 @@ psp_control <- function(radius = 0.1, init = NULL, lower, upper,
         stop("Lower and upper boundaries have different lengths!")
     }
 
-    if (!is.null(init)) {
-        if (is.vector(init) && length(init) != length(lower)) {
-            stop(paste("init must be either NULL or a vector of same",
-                       "length as the same number of parameters!"))
-        } else if (is.matrix(init) && ncol(init) != length(lower)) {
-            stop(paste("init must be either NULL or a matrix with the same
-                       number of columns as number of parameters!"))
-        }
+    if (is.vector(init) && length(init) != length(lower)) {
+        stop(paste("init must be a vector of same",
+                   "length as the number of parameters!"))
+    } else if (is.matrix(init) && ncol(init) != length(lower)) {
+        stop(paste("init must be a matrix with the same
+                   number of columns as number of parameters!"))
     }
 
     ## set up hypersphere radius
     if (length(radius) == 1) {
         radius <- rep(radius, length(init))
     }
-    ## name parameters
 
+    ## name parameters
     if (is.null(param_names)) {
         param_names <- paste("parameter_", seq(length(init)), sep = "")
     }
+
     # export functions to parallel clusters
     if (!is.null(cluster_names)) {
         out <- sapply(cluster_names, exists, simplify = TRUE)
@@ -45,6 +44,8 @@ psp_control <- function(radius = 0.1, init = NULL, lower, upper,
         stop("You must set a stopping rule for the function by using either
              iterations or pop in PSPcontrol.")
     }
+
+    ## construct output
     out <- list(radius = radius,
                 pop = pop,
                 cl = cl,
@@ -55,6 +56,7 @@ psp_control <- function(radius = 0.1, init = NULL, lower, upper,
                 param_names = param_names,
                 cluster_names = cluster_names,
                 iterations = iterations)
+
     return(out)
 }
 
@@ -72,22 +74,20 @@ parallelize <- function(parallel = FALSE, cl = NULL, names = NULL) {
     return(cl)
 }
 
-## Weisstein, Eric W. "Hypersphere Point Picking." From
-## MathWorld--A Wolfram Web Resource.
+## Weisstein, Eric W. "Hypersphere Point Picking." From MathWorld.
 ## https://mathworld.wolfram.com/HyperspherePointPicking.html
 
-#' generate random distribution from the unit hypersphere relative to 0
-#' scale it by the user-defined radius, then add it to the jumping distribution
-#'
-#' @param init Matrix of coordinates serving as a jumping distribution
-#' @param radius The radius of the hypersphere defining the sampling region
-#' @return Matrix of randomly sampled points within the unit sphere
+# generate random distribution from the unit hypersphere relative to 0
 psp_hyper <- function(jump, radius) {
+    ## perform simple checks for object types
     if (is.list(jump)) jump <- unlist(jump)
     if (!("numeric" %in% is(jump))) jump <- as.numeric(jump)
+    ## generate a random distribution
     gauss <- rnorm(length(jump), mean = 0, sd = 1)
+    ## sample points from unit hypersphere and scale it by radius
     points <- (1 / sum(sqrt(gauss ^ 2)) * gauss) *
         runif(1, min = 0, max = radius)
+    ## add distance to jumping distribution
     points_interior <- points + jump
     return(points_interior)
 }
@@ -121,8 +121,7 @@ psp_global <- function(fn, control = psp_control(), ..., quiet = FALSE) {
 
     ## set first parameter set and ordinal pattern
     parmat_current <- matrix(init, nrow = 1)
-    evaluate <- fun(params = parmat_current[1, seq(length(init))],
-                    ...)
+    evaluate <- fun(parmat_current[1, seq(length(init))], ...)
     if (!is.null(dim(evaluate))) evaluate <- list(evaluate)
 
     ## create big parameter matrix
@@ -154,8 +153,8 @@ psp_global <- function(fn, control = psp_control(), ..., quiet = FALSE) {
 
         # evaluate new_points and record ordinal patterns
         ifelse(ctrl$parallel,
-           evaluate <- parallel::parApply(cl, new_points, 1, fun, ...), # parallel
-           evaluate <- apply(new_points, 1, fun, ...))                  # no parallel
+           evaluate <- parallel::parApply(cl, new_points, 1, fun, ...),
+           evaluate <- apply(new_points, 1, fun, ...))
 
         ## save new results with points
         ordinal <- dota(cbind(new_points, evaluate, while_count))
@@ -175,7 +174,8 @@ psp_global <- function(fn, control = psp_control(), ..., quiet = FALSE) {
 
         ## index regions
         new_index <- which(new_dist < pop)
-        ## if all regions below population limit
+        ## if all regions below population limit, keep sampling
+        ## otherwise stop process
         if (length(new_index) > 0) {
             parmat_current <- NULL
             for (i in names(new_dist)) {
@@ -193,6 +193,7 @@ psp_global <- function(fn, control = psp_control(), ..., quiet = FALSE) {
         print(paste("iteration [", while_count, "]: found ",
                     length(unique(mapping)), sep = ""))
         }
+        ## is iteration limit reached, stop sampling
         if (while_count == ctrl$iterations) parameter_filled <- TRUE
     }
     ## close parallel workplaces
