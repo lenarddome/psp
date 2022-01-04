@@ -30,15 +30,6 @@ psp_control <- function(radius = 0.1, init, lower, upper,
         param_names <- paste("parameter_", seq(length(init)), sep = "")
     }
 
-    # export functions to parallel clusters
-    if (!is.null(cluster_names)) {
-        out <- sapply(cluster_names, exists, simplify = TRUE)
-        if (!all(out)) {
-            stop(paste("You need to load ",
-                       paste(names(which(out == FALSE)), collapse = ", "),
-                       " to your global environment.", sep = ""))
-        }
-    }
     ## check if stopping rule is defined appropriately
     if (all(c(pop, iterations) == Inf)) {
         stop("You must set a stopping rule for the function by using either

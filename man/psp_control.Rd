@@ -27,9 +27,9 @@ psp_control(radius = 0.1, init, lower, upper,
         upper bounds applies to the i-th parameter.}
     \item{pop}{The minimum population psp_global aims to find for each ordinal
         pattern discovered. This can stop the parameter search early in case
-        the population of all ordinal pattern are equal to or larger than \code{pop}.
-        If you do not want to use this option, set it to \code{NULL} or \code{Inf}.
-        Default is \code{400}.}
+        the population of all ordinal pattern are equal to or larger than
+        \code{pop}. If you do not want to use this option, set it to \code{NULL}
+        or \code{Inf}. Default is \code{400}.}
     \item{parallel}{If TRUE, uses the parallel package to run evaluations of
         jumping distributions for each chain parallel. Default value is
         \code{FALSE}.}
@@ -39,8 +39,12 @@ psp_control(radius = 0.1, init, lower, upper,
     \item{param_names}{A character vector that includes the names of each
        parameter. If \code{NULL} (default), a character vector is generated with
        parameter_1, parameter_2, parameter_3, ...}
-    \item{cluster_names}{A character vector that includes the list of functions
-       to be loaded into each cluster. Default is \code{NULL}}.
+    \item{cluster_names}{A vector that includes the list of objects to be loaded
+        into each cluster. It is handled by \code{\link[parallel]{clusterExports}}. 
+        Default is \code{NULL}. Object names should be written as character
+        strings, while package names should be written as they would be loaded
+        into the environment, e.g. \code{c("object.1", "object.2",
+        library(data.table))}.}
     \item{iterations}{The number of global iterations for psp_global. Default is
         1000.}
 }
