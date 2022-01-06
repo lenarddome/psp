@@ -40,10 +40,10 @@ psp_control(radius = 0.1, init, lower, upper,
        parameter. If \code{NULL} (default), a character vector is generated with
        parameter_1, parameter_2, parameter_3, ...}
     \item{cluster_names}{A vector that includes the list of objects to be loaded
-        into each cluster. It is handled by \code{\link[parallel]{clusterExports}}. 
+        into each cluster. It is handled by \code{\link[pkg:parallel]{clusterExports}}. 
         Default is \code{NULL}. Object names should be written as character
-        strings, while package names should be written as they would be loaded
-        into the environment, e.g. \code{c("object.1", "object.2",
+        strings, while package names should be written like they are to be loaded
+        into the global environment, e.g. \code{c("object.1", "object.2",
         library(data.table))}.}
     \item{iterations}{The number of global iterations for psp_global. Default is
         1000.}
