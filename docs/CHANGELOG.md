@@ -8,6 +8,18 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 
+- `psp_control` has separate arguments for objects vs. packages that it needs
+to load into each core.
+
+## Removed
+
+- `cluster_names` is deprecated in `psp_control`, but retained for backwards
+compatibility
+
+## v0.3.1
+
+### Added
+
 - :gift: `psp` can take additional arguments and pass it to `fn`
 
 ### Changed

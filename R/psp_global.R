@@ -5,6 +5,8 @@ psp_control <- function(radius = 0.1, init, lower, upper,
                         param_names = NULL,
                         parallel = FALSE,
                         cluster_names = NULL,
+                        export_objects = NULL,
+                        export_libs = NULL,
                         iterations = 1000) {
 
     ## error functions
@@ -36,6 +38,14 @@ psp_control <- function(radius = 0.1, init, lower, upper,
              iterations or pop in PSPcontrol.")
     }
 
+    ## check exports
+    if (!is.null(cluster_names)) {
+      print(paste("cluster_names is deprecated, please use",
+                  "export_objects instead.\n",
+                  "export_objects is overwritten by cluster_names."))
+      export_objects <- cluster_names
+    }
+
     ## construct output
     out <- list(radius = radius,
                 pop = pop,
@@ -45,7 +55,8 @@ psp_control <- function(radius = 0.1, init, lower, upper,
                 upper = upper,
                 parallel = parallel,
                 param_names = param_names,
-                cluster_names = cluster_names,
+                export_objects = export_objects,
+                export_libs = export_libs,
                 iterations = iterations)
 
     return(out)
@@ -53,7 +64,8 @@ psp_control <- function(radius = 0.1, init, lower, upper,
 
 ## A handy function to set up parallel environment without increasing
 ## cyclomatic complexity of the main psp_global
-parallelize <- function(parallel = FALSE, cl = NULL, names = NULL) {
+parallelize <- function(parallel = FALSE, cl = NULL,
+                        object_names = NULL, lib_names = NULL) {
     if (parallel == TRUE && is.null(cl)) {
         no_cores <- parallel::detectCores()
         cl <- parallel::makeCluster(no_cores)
@@ -61,7 +73,15 @@ parallelize <- function(parallel = FALSE, cl = NULL, names = NULL) {
         cl <- parallel::makeCluster(cl)
     }
 
-    parallel::clusterExport(cl, names, envir = environment())
+    # HACK: code is clumsy
+    if (parallel == TRUE) {
+        object_names <- c(object_names, "lib_names")
+        parallel::clusterExport(cl, object_names, envir = environment())
+        parallel::clusterEvalQ(cl, {
+          sapply(lib_names,
+                 FUN = function(name) library(name, character.only = TRUE))
+        })
+    }
     return(cl)
 }
 
@@ -95,10 +115,12 @@ psp_global <- function(fn, control = psp_control(), ..., quiet = FALSE) {
     upper <- ctrl$upper
     lower <- ctrl$lower
     pnames <- ctrl$param_names
-    cnames <- ctrl$cluster_names
+    ex_objects <- ctrl$export_objects
+    ex_libs <- ctrl$export_libs
 
     ## set up parallel
-    cl <- parallelize(parallel = ctrl$parallel, cl = ctrl$cl, names = cnames)
+    cl <- parallelize(parallel = ctrl$parallel, cl = ctrl$cl,
+                      object_names = ex_objects, lib_names = ex_libs)
 
     ## define ordinal function
     fun <- match.fun(fn)
