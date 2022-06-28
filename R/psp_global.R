@@ -88,7 +88,7 @@ parallelize <- function(parallel = FALSE, cl = NULL,
 ## Weisstein, Eric W. "Hypersphere Point Picking." From MathWorld.
 ## https://mathworld.wolfram.com/HyperspherePointPicking.html
 
-# generate random distribution from the unit hypersphere relative to 0
+# generate random distribution from the unit hypersphere relative to jumping distribution
 psp_hyper <- function(jump, radius) {
     ## perform simple checks for object types
     if (is.list(jump)) jump <- unlist(jump)
@@ -106,6 +106,11 @@ psp_hyper <- function(jump, radius) {
 ## Parameter Space Partitioning
 
 psp_global <- function(fn, control = psp_control(), ..., quiet = FALSE) {
+
+    .Deprecated(
+        new = "pspGlobal", package = "psp",
+        msg = paste("This function is no longer maintained and will be pspGlobal in the future.")
+    )
 
     ## declare all variables
     ctrl <- do.call(psp_control, as.list(control))
