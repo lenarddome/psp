@@ -16,7 +16,7 @@ mat .HyperPoints(mat jumping_distribution, colvec radius) {
 mat .ClampParameters() {
 }
 
-// compare new inequality matrices to stored inequality matrices
+// compare two inequality matrices
 vec .OrdinalCompare() {
 }
 
@@ -28,7 +28,7 @@ List .OrdinalStorage() {
 vec .CountOrdinal() {
 }
 
-// pspControl does a bunch of error checks and manipulations to set up
+// pspControl does a bunch of error catching and manipulations to set up
 // the environment for pspGlobal.
 // [[Rcpp::export]]
 List pspControl(List control) {
@@ -37,7 +37,7 @@ List pspControl(List control) {
 
 // [[Rcpp::export]]
 List pspGlobal(std::string fn, List control, std::string filename,
-               bool quiet = false) {
+               std::string path, bool load = false, bool quiet = false) {
 
   // call the ordinal function used for evaluation parameters
   // TODO: error catching is important here
