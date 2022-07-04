@@ -64,8 +64,9 @@ like to raise an issue or contribute code, use Github, message or email me
 
 ## Design [in development]
 
-More about the architecture and coding styles will be added later.
+We use [Google’s R Style Guide](https://google.github.io/styleguide/Rguide.html) with some extra caveats:
 
+- Do not use `roxygen`. Write your documentation from scratch as an Rdocumentation file. It is desirable to avoid writing test units for this.
 
 ## About `psp`
 
