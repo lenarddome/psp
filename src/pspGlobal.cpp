@@ -11,42 +11,48 @@ using namespace arma;
 // Weisstein, Eric W. "Hypersphere Point Picking." From MathWorld.
 // https://mathworld.wolfram.com/HyperspherePointPicking.html
 // pick new jumping distributions from the unit hypersphere scaled by the radius
-mat .HyperPoints(int counts, int dimensions, colvec radius) {
+mat HyperPoints(int counts, int dimensions, rowvec radius) {
   mat hypersphere;
   // create a uniform distribution
   hypersphere.randu(counts, dimensions);
-  colvec denominator = sum(hypershphere, 1);
+  colvec denominator = sum(hypersphere, 1);
   denominator = 1 / denominator;
   // pick points from within unite hypersphere
-  hypersphere = hypersphere.each_row() % denominator;
+  hypersphere = hypersphere.each_col() % denominator;
   // scale up values by r
   hypersphere = hypersphere.each_row() % radius;
   return(hypersphere);
 }
 
 // constrain new jumping distributions within given parameter bounds
-void ClampParameters(mat jumping_distribution, colvec upper, colvec lower) {
+mat ClampParameters(mat jumping_distribution, colvec lower, colvec upper) {
   for (int i = 0; i < upper.n_elem; i++) {
-    jumping_distribution.col(i).clamp(upper[i], lower[i])
+    jumping_distribution.col(i).clamp(lower[i], upper[i]);
   }
+  return(jumping_distribution);
 }
 
-// compare two inequality matrices
-// returns TRUE if they are the same or FALSE if they differ in any aspect
-rowvec OrdinalCompare(mat discovered, mat predicted) {
-  int stimuli = discovered.n_rows;
-  // TODO(LD): boolean matrix
-}
-
-// store ordinal patterns in lists
-// takes existing list and appends new ordinal patterns
-List OrdinalStorage(List ordinal, List new) {
+// compare two cubes of inequality matrices
+// returns the complete list of unique ordinal matrices
+// [[Rcpp::export]]
+cube OrdinalCompare(cube discovered, cube predicted) {
+  cube ordinal(discovered);
+  // carry out the comparisons
+  for (int x = 0; x < predicted.n_slices; x++) {
+    mat current = predicted.slice(x);
+    for (int y = 0; y < discovered.size(); y++) {
+      if (current != discovered.slice(y)) {
+        ordinal.insert_slices(ordinal.n_slices, current);
+      }
+    }
+  }
+  return(ordinal);
 }
 
 // count ordinal patterns
 // if ordinal pattern is output TRUE from .OrdinalStorage
 // add 1 to its count
-rowvec CountOrdinal(List ordinal, vec counts) {
+rowvec CountOrdinal(cube discovered, cube predicted, vec counts) {
 }
 
 // writes rows to csv file
@@ -86,14 +92,12 @@ List pspGlobal(std::string fn, List control, std::string filename,
   int iteration = 0;
 
   int max_iteration = as<int>(control["iterations"]);
-  // FIXME(lenarddome): comparison between NULL and non-pointer
-  if (max_iteration == NULL) {
+  if (!max_iteration) {
     max_iteration = datum::inf;
   }
 
   int population = as<int>(control["population"]);
-  // FIXME(lenarddome): comparison between NULL and non-pointer
-  if (population == NULL) {
+  if (!population) {
     population =  datum::inf;
   }
 
@@ -101,8 +105,9 @@ List pspGlobal(std::string fn, List control, std::string filename,
     stop("A resonable threshold must be set by either adjusting iteration or population.")
   }
 
-  colvec radius  = as<colvec>(control["radius"]);
-  colvec  init = as<colvec>(control["init"]);
+  rowvec radius  = as<colvec>(control["radius"]);
+  rowvec  init = as<colvec>(control["init"]);
+  mat jumping_distribution(init);
   colvec lower = as<colvec>(control["lower"]);
   colvec upper = as<colvec>(control["upper"]);
   int dimension = init.n_elem;
@@ -113,8 +118,8 @@ List pspGlobal(std::string fn, List control, std::string filename,
 
   mat output;
   rowvec counts;
-  List ordinal;
-  List storage;
+  cube ordinal;
+  cube storage;
 
   CharacterVector names = as<CharacterVector>(control["param_names"]);
 
@@ -132,17 +137,29 @@ List pspGlobal(std::string fn, List control, std::string filename,
 
   // evaluate first parameter set
   mat output = model(init);
+  ordinal.insert_slices(0, output);
   // add output to storage
-  List storage = output;
+  storage.insert_slices(output);
+  delete[] output;
 
   while (parameter_filled) {
     // update iteration
     iteration += 1;
 
     // generate new jumping distributions from ordinal patterns with counts < population
+    jumping_distribution = HyperPoints(jumping_distribution.n_rows, dimensions, radius);
+    jumping_distribution = ClampParameters(jumping_distribution, lower, upper);
+
     // evaluate jumping distributions
+    for (uword i = 0; i < jumping_distribution.n_rows; i++) {
+      mat evaluate = model(jumping_distribution.row(i));
+      ordinal.slice(i) = evaluate;
+    }
     // compare ordinal patterns to stored ones
     // update list of ordinal patterns
+    if (!new) {
+      /* code here */
+    }
     // update counts of ordinal patterns
     // write data to disk
     outFile << "\n";
