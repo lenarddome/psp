@@ -46,6 +46,11 @@ For the developmental version:
 devtools::install_github("lenarddome/psp")
 ```
 
+## About `psp`
+
+- [A short intro and manual](https://lenarddome.github.io/software/psp/)
+- [A brief blog post](https://www.andywills.info/2021-06-23-psp/)
+
 ## Philosophy
 
 A big influence on this implementation is an instantiation of the Open Models
@@ -62,13 +67,18 @@ We are completely open-source and free. Anyone can contribute. If you would
 like to raise an issue or contribute code, use Github, message or email me
 (@lenarddome).
 
-## Design [in development]
+## Code Style
 
 We use [Google’s R Style Guide](https://google.github.io/styleguide/Rguide.html) with some extra caveats:
 
-- Do not use `roxygen`. Write your documentation from scratch as an Rdocumentation file. It is desirable to avoid writing test units for this.
+- Do not use `roxygen`. Write your documentation from scratch as an Rdocumentation file. It is desirable to avoid writing test units for converting your comments to documentation.
+- We have a 100 characters per line policy. You are still encouraged to keep line lengths to 80 characters, but sometimes going over 80 can be better than the alternative.
+- Function names follow  camelCase. This is necessary, so they can be distinguished from other variables.
+- Use TODO, FIXME, HACK, BUG, WARNING, NOTE comments for code that is temporary, a short-term solution, or good-enough but not perfect. TODO comments must adhere to the following format: `## TODO(lenarddome): change this to use matrix operations`.
+- Use spaces! Good practice: `if (makeup == TRUE) list(variable = runif(100), id = rep(letters, 5)[1:100])`. Bad practice: `if(makeup==TRUE) list(variable=runif(100),id=rep(letters,5)[1:100])`.
+- Do not number your files. File naming conventions are pretty straightforward:
+  - Files are prefixed by their relation to groups of functions. For example, the prefix `psp` means that the file contains function relevant for the parameter space partitioning routines.
+  - Files use camelCase or CamelCase.
+  - File names must not contain spaces.
+- Apply the same conventions to C++ code as well. While this is somewhat different, study [Google's C++ Style Guide](https://google.github.io/styleguide/cppguide.html).
 
-## About `psp`
-
-- [A short intro and manual](https://lenarddome.github.io/software/psp/)
-- [A brief blog post](https://www.andywills.info/2021-06-23-psp/)
