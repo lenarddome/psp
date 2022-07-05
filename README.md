@@ -73,12 +73,14 @@ We use [Google’s R Style Guide](https://google.github.io/styleguide/Rguide.htm
 
 - Do not use `roxygen`. Write your documentation from scratch as an Rdocumentation file. It is desirable to avoid writing test units for converting your comments to documentation.
 - We have a 100 characters per line policy. You are still encouraged to keep line lengths to 80 characters, but sometimes going over 80 can be better than the alternative.
-- Function names follow  camelCase. This is necessary, so they can be distinguished from other variables.
-- Use TODO, FIXME, HACK, BUG, WARNING, NOTE comments for code that is temporary, a short-term solution, or good-enough but not perfect. TODO comments must adhere to the following format: `## TODO(lenarddome): change this to use matrix operations`.
-- Use spaces! Good practice: `if (makeup == TRUE) list(variable = runif(100), id = rep(letters, 5)[1:100])`. Bad practice: `if(makeup==TRUE) list(variable=runif(100),id=rep(letters,5)[1:100])`.
+- Use TODO, FIXME, HACK, BUG, WARNING, NOTE comments for code that is temporary, a short-term solution, or good-enough but not perfect.
+  - TODO comments must adhere to the following format: `## TODO(lenarddome): change this to use matrix operations`.
+- Use spaces!
+  - Good practice: `if (makeup == TRUE) list(variable = runif(100), id = rep(letters, 5)[1:100])`.
+  - Bad practice: `if(makeup==TRUE) list(variable=runif(100),id=rep(letters,5)[1:100])`.
 - Do not number your files. File naming conventions are pretty straightforward:
   - Files are prefixed by their relation to groups of functions. For example, the prefix `psp` means that the file contains function relevant for the parameter space partitioning routines.
-  - Files use camelCase or CamelCase.
+  - Files use camelCase.
   - File names must not contain spaces.
 - Apply the same conventions to C++ code as well. While this is somewhat different, study [Google's C++ Style Guide](https://google.github.io/styleguide/cppguide.html).
 
