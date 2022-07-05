@@ -25,38 +25,40 @@ mat .HyperPoints(int counts, int dimensions, colvec radius) {
 }
 
 // constrain new jumping distributions within given parameter bounds
-mat .ClampParameters(mat jumping_distribution, colvec upper, colvec lower) {
-  jumping_distribution.clamp()
+void ClampParameters(mat jumping_distribution, colvec upper, colvec lower) {
+  for (int i = 0; i < upper.n_elem; i++) {
+    jumping_distribution.col(i).clamp(upper[i], lower[i])
+  }
 }
 
 // compare two inequality matrices
 // returns TRUE if they are the same or FALSE if they differ in any aspect
-rowvec .OrdinalCompare(mat discovered, mat predicted) {
+rowvec OrdinalCompare(mat discovered, mat predicted) {
   int stimuli = discovered.n_rows;
   // TODO(LD): boolean matrix
 }
 
 // store ordinal patterns in lists
 // takes existing list and appends new ordinal patterns
-List .OrdinalStorage(List ordinal, List new) {
+List OrdinalStorage(List ordinal, List new) {
 }
 
 // count ordinal patterns
 // if ordinal pattern is output TRUE from .OrdinalStorage
 // add 1 to its count
-rowvec .CountOrdinal(List ordinal, vec counts) {
+rowvec CountOrdinal(List ordinal, vec counts) {
 }
 
 // writes rows to csv file
-void .WriteFile(int iteration, mat evaluation, int dimension,
+void WriteFile(int iteration, mat evaluation, int dimension,
   std::string path_to_file) {
   // open file stream connection
   std::ofstream outFile(path_to_file.c_str());
   int rows = evaluation.n_rows;
   int columns = dimension + 1;
-  for (size_t i = 0; i < rows; i++) {
+  for (uword i = 0; i < rows; i++) {
     outFile << i + ",";
-    for (size_t k = 0; k < columns; k++) {
+    for (uword k = 0; k < columns; k++) {
       outFile << evaluation[i, k] + ",";
     }
     outFile << "\n";
@@ -84,19 +86,31 @@ List pspGlobal(std::string fn, List control, std::string filename,
   int iteration = 0;
 
   int max_iteration = as<int>(control["iterations"]);
+  // FIXME(lenarddome): comparison between NULL and non-pointer
   if (max_iteration == NULL) {
     max_iteration = datum::inf;
   }
 
   int population = as<int>(control["population"]);
+  // FIXME(lenarddome): comparison between NULL and non-pointer
   if (population == NULL) {
     population =  datum::inf;
   }
+
+  if (population == datum::inf && max_iteration == datum::inf) {
+    stop("A resonable threshold must be set by either adjusting iteration or population.")
+  }
+
   colvec radius  = as<colvec>(control["radius"]);
   colvec  init = as<colvec>(control["init"]);
   colvec lower = as<colvec>(control["lower"]);
   colvec upper = as<colvec>(control["upper"]);
-  int dimension = init.size();
+  int dimension = init.n_elem;
+  // do some basic error checks
+  if (dimension != lower.n_elem || dimension != upper.n_elem {
+    stop("init, lower and upper must have the same length.");
+  }
+
   mat output;
   rowvec counts;
   List ordinal;
@@ -109,7 +123,7 @@ List pspGlobal(std::string fn, List control, std::string filename,
   // setup file and create headers
   std::ofstream outFile(path + filename);
   outFile << "iteration,";
-  for (size_t i = 0; i < dimensions; i++) {
+  for (uword i = 0; i < dimensions; i++) {
     outFile << names[i] + ",";
   }
   outFile << names + ",pattern\n";
