@@ -53,21 +53,45 @@ cube OrdinalCompare(cube discovered, cube predicted) {
   return(drawer);
 }
 
-// find the location of  inequality matrices in storage that correspond
-// to the jumping distributions
 // returns the last evaluated parameters in all chains in the MCMC
-uvec OrdinalMatch(cube discovered, cube predicted, mat jumping, mat centers) {
+mat LastEvaluatedParameters(cube discovered, cube predicted, mat jumping, mat centers) {
+  mat parameters(centers);
+  mat index(predicted.n_slices, discovered.n_slices);
+  // create index matrix
+  for (uword x = 0; x < predicted.n_slices; x++) {
+    mat current = predicted.slice(x);
+    for (uword y = 0; y < discovered.n_slices; y++) {
+      mat base = discovered.slice(y);
+      umat result = (base == current);
+      index(x, y) =  all(any(result == 0));
+    }
+    if (all(index.row(x) == 1)) {
+      //  if there is a new region, appeng params to centers
+      parameters.insert_rows(parameters.n_rows, jumping.row(x));
+    } else if (any(index.row(x) == 0)) {
+      // if there is an old region in predicted, update center
+      parameters.rows(find(index.row(x) == 0, 1, "last")) = jumping.row(x);
+    }
+    // replace old centers with new ones
+  }
+  return(parameters);
 }
 
 // count ordinal patterns
 rowvec CountOrdinal(cube updated_ordinal, cube predicted, rowvec counts) {
+  mat index(updated_ordinal.n_slices, predicted.n_slices);
   rowvec new_counts = counts;
-  new_counts.resize(updated_ordinal.n_slices)
+  new_counts.resize(updated_ordinal.n_slices);
+  Rcout <<  new_counts << std::endl;
   for (int x = 0; x < updated_ordinal.n_slices; x++) {
-    for (int y = 0; y < predicted.size(); y++) {
-      if (current == discovered.predicted(y)) {
-        new_counts[x] += 1;
-      }
+    mat current = updated_ordinal.slice(x);
+    for (int y = 0; y < predicted.n_slices; y++) {
+      mat base = predicted.slice(y);
+      umat result = (base == current);
+      index(x, y) =  all(any(result == 0));
+    }
+    if (!all(index.row(x) == 1)) {
+      new_counts[x] += 1;
     }
   }
   return(new_counts);
@@ -125,7 +149,7 @@ List pspGlobal(std::string fn, List control, std::string filename,
 
   rowvec radius  = as<colvec>(control["radius"]);
   rowvec  init = as<colvec>(control["init"]);
-  mat jumping_distribution(init);
+
   colvec lower = as<colvec>(control["lower"]);
   colvec upper = as<colvec>(control["upper"]);
   int dimension = init.n_elem;
@@ -133,11 +157,11 @@ List pspGlobal(std::string fn, List control, std::string filename,
   if (dimension != lower.n_elem || dimension != upper.n_elem {
     stop("init, lower and upper must have the same length.");
   }
-
-  mat output;
-  rowvec counts;
-  cube ordinal;
-  cube storage;
+  mat jumping_distribution(init); // the parameter sets to be evaluated
+  mat last_eval(init); // the last evaluated parameter set for each ordinal pattern
+  rowvec counts; // keeps track of the population of ordinal regions
+  cube ordinal; // stores all evaluations of fn on jumping_distribution
+  cube storage; //  stores all unique ordinal patterns
 
   CharacterVector names = as<CharacterVector>(control["param_names"]);
 
@@ -157,7 +181,7 @@ List pspGlobal(std::string fn, List control, std::string filename,
   mat output = model(init);
   int stimuli = output.n_rows;
   // add output to storage
-  storage.insert_slices(output);
+  storage = join_slices(storage, output)
   delete[] output;
 
   // run parameter space partitioning until parameter is filled
@@ -166,8 +190,9 @@ List pspGlobal(std::string fn, List control, std::string filename,
     iteration += 1;
 
     // generate new jumping distributions from ordinal patterns with counts < population
-    jumping_distribution = HyperPoints(jumping_distribution.n_rows, dimensions, radius);
+    jumping_distribution = HyperPoints(last_eval.n_rows, dimensions, radius);
     jumping_distribution = ClampParameters(jumping_distribution, lower, upper);
+    jumping_distribution += last_evaluated;
 
     cube ordinal(stimuli, stimuli, jumping_distribution.n_rows);
     // evaluate jumping distributions
@@ -176,6 +201,7 @@ List pspGlobal(std::string fn, List control, std::string filename,
       ordinal.slice(i) = evaluate;
     }
     // compare ordinal patterns to stored ones and update list
+    last_eval = LastEvaluatedParameters(storage, ordinal, jumping_distribution, last_eval);
     storage = OrdinalCompare(storage, ordinal);
     // update counts of ordinal patterns
     counts = CountOrdinal(storage, ordinal, counts);
