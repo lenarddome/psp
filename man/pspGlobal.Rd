@@ -16,6 +16,8 @@ pspGlobal(fn, control, quiet = FALSE)
       as its argument, and return an ordinal response pattern as character (e.g.
       "A > B"). NA values are not currently allowed.}
   \item{control}{a list of control parameters, see \code{Details}.}
+  \item{filename}{}
+  \item{path}{}
   \item{quiet}{If \code{FALSE} (default), print the total number of patterns
       found up to the current iteration. If \code{TRUE}, do not print anything.}
 }
@@ -32,7 +34,7 @@ pspGlobal(fn, control, quiet = FALSE)
 
     1. Pick a random jumping distribution from for each ordinal pattern from the
     sampling region defined by a hypershere with a center of the last recorded
-    parameter set for a given pattern.
+    parameter set for a given pattern. Clamp parameter values with their respective lower and upper bounds.
 
     2. Evaluate model on all new parameter sets.
 
@@ -46,28 +48,20 @@ pspGlobal(fn, control, quiet = FALSE)
 
 \value{
 
-The output of function \code{psp} is a member of the \code{S3} class
-of \code{PSP}. A \code{PSP} object is a list with the following items:
+The output is a list with the following items:
 
-    \item{ps_partitions}{A \code{data.table} containing coordinates from the
-    parameter space and their corresponding ordinal response pattern output by
-    \code{fn}. Columns include (in this order): parameter coordinates,
-    their ordinal pattern output by \code{fn}, the global iteration of the
-    MCMC. Each row corresponds with the evaluation of a single set of
-    parameters.}
-
-    \item{ps_patterns}{A table with the ordinal patterns discovered and the
+    \item{ordinal_patterns}{A table with the ordinal patterns discovered and the
     population of their corresponding region - the number of parameter sets
     discovered to produce the ordinal pattern.}
 
-    \item{ps_ordinal}{A list (if ordinal patterns are multidimensional objects)
+    \item{ordinal_counts}{A list (if ordinal patterns are multidimensional objects)
     or character vector (if ordinal patterns are strings or other single values)
     with the ordinal patterns found. The place of the ordinal pattern
     corresponds to the names in ps_patterns.}
 
 }
 
-\keyword{computational modelling; parameter space; model evaluation}
+\keyword{computational modelling; parameter space partitioning; model evaluation}
 
 \references{
 
