@@ -3,7 +3,7 @@ Title: Parameter Space Partitioning MCMC for Global Model Evaluation
 Version: 0.4.1
 Date: 2021-12-16
 Authors@R: c(person("Lenard", "Dome",
-                   email = "lenarddome@protonmail.ch",
+                   email = "lenarddome@gmail.com",
                    role = c("aut", "cre")),
              person("Andy Wills", role = c("aut")))
 Description: Implements an n-dimensional parameter space partitioning algorithm for evaluating the global behaviour of formal computational models as described by Pitt, Kim, Navarro and Myung (2006) <doi:10.1037/0033-295X.113.1.57>.

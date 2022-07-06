@@ -23,7 +23,7 @@ Please cite the package in publications. Use \code{citation("psp")}.
 
     Lenard Dome
 
-    Maintainer: Lenard Dome \email{lenarddome@protonmail.ch}
+    Maintainer: Lenard Dome \email{lenarddome@gmail.com}
 
 }
 
