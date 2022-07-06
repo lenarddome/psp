@@ -82,7 +82,6 @@ rowvec CountOrdinal(cube updated_ordinal, cube predicted, rowvec counts) {
   mat index(updated_ordinal.n_slices, predicted.n_slices);
   rowvec new_counts = counts;
   new_counts.resize(updated_ordinal.n_slices);
-  Rcout <<  new_counts << std::endl;
   for (int x = 0; x < updated_ordinal.n_slices; x++) {
     mat current = updated_ordinal.slice(x);
     for (int y = 0; y < predicted.n_slices; y++) {
@@ -97,8 +96,25 @@ rowvec CountOrdinal(cube updated_ordinal, cube predicted, rowvec counts) {
   return(new_counts);
 }
 
+// match jumping distributions to ordinal ordinal_patterns
+// returns a column uvec of slice IDs corresponding to each set in jumping_distribution
+uvec MatchJumpDists(cube updated_ordinal, cube predicted) {
+  mat index(updated_ordinal.n_slices, predicted.n_slices);
+  uvec matches(predicted.n_slices);
+  for (uword x = 0; x < updated_ordinal.n_slices; x++) {
+    mat current = updated_ordinal.slice(x);
+    for (uword y = 0; y < predicted.n_slices; y++) {
+      mat base = predicted.slice(y);
+      umat result = (base == current);
+      index(x, y) =  all(any(result == 0));
+    }
+  }
+  matches = find(sum(index, 1) < predicted.n_slices);
+  return(matches);
+}
+
 // writes rows to csv file
-void WriteFile(int iteration, mat evaluation, int dimension,
+void WriteFile(int iteration, mat evaluation, int dimension, uvec matches,
   std::string path_to_file) {
   // open file stream connection
   std::ofstream outFile(path_to_file.c_str());
@@ -109,7 +125,7 @@ void WriteFile(int iteration, mat evaluation, int dimension,
     for (uword k = 0; k < columns; k++) {
       outFile << evaluation[i, k] + ",";
     }
-    outFile << "\n";
+    outFile << matches[i] + ",\n";
   }
   // close file connection
   outFile.close();
@@ -119,26 +135,20 @@ void WriteFile(int iteration, mat evaluation, int dimension,
 List pspGlobal(std::string fn, List control, std::string filename,
                std::string path = ".", bool quiet = false) {
   // call the ordinal function used for evaluation parameters
-  try {
-    Environment env = Environment::global_env();
-    Function model = env[fn];
-  }
-
-  catch (...) {
-    Rcout << "ERROR: ordinal function " << fn << " need to be loaded into global_env" << std::endl;
-  }
+  Environment env = Environment::global_env();
+  Function model = env[fn];
 
   // setup environment
-
   bool parameter_filled = false;
   int iteration = 0;
-
+  // import thresholds from control
   int max_iteration = as<int>(control["iterations"]);
+  int population = as<int>(control["population"]);
+
   if (!max_iteration) {
     max_iteration = datum::inf;
   }
 
-  int population = as<int>(control["population"]);
   if (!population) {
     population =  datum::inf;
   }
@@ -157,11 +167,11 @@ List pspGlobal(std::string fn, List control, std::string filename,
   if (dimension != lower.n_elem || dimension != upper.n_elem {
     stop("init, lower and upper must have the same length.");
   }
-  mat jumping_distribution(init); // the parameter sets to be evaluated
-  mat last_eval(init); // the last evaluated parameter set for each ordinal pattern
-  rowvec counts; // keeps track of the population of ordinal regions
-  cube ordinal; // stores all evaluations of fn on jumping_distribution
-  cube storage; //  stores all unique ordinal patterns
+  mat jumping_distribution(init);  // the parameter sets to be evaluated
+  mat last_eval(init);  // the last evaluated parameter set for each ordinal pattern
+  rowvec counts;  // keeps track of the population of ordinal regions
+  cube ordinal;  // stores all evaluations of fn on jumping_distribution
+  cube storage;  //  stores all unique ordinal patterns
 
   CharacterVector names = as<CharacterVector>(control["param_names"]);
 
@@ -173,7 +183,7 @@ List pspGlobal(std::string fn, List control, std::string filename,
   for (uword i = 0; i < dimensions; i++) {
     outFile << names[i] + ",";
   }
-  outFile << names + ",pattern\n";
+  outFile << names + ",pattern,\n";
   // close file connection
   outFile.close();
 
@@ -193,6 +203,7 @@ List pspGlobal(std::string fn, List control, std::string filename,
     jumping_distribution = HyperPoints(last_eval.n_rows, dimensions, radius);
     jumping_distribution = ClampParameters(jumping_distribution, lower, upper);
     jumping_distribution += last_evaluated;
+    jumping_distribution.shed_rows(find(counts > pop));
 
     cube ordinal(stimuli, stimuli, jumping_distribution.n_rows);
     // evaluate jumping distributions
