@@ -13,8 +13,7 @@ pspGlobal(fn, control, quiet = FALSE)
 
 \arguments{
   \item{fn}{The ordinal function. It should take a numeric vector (parameter set)
-      as its argument, and return an ordinal response pattern as character (e.g.
-      "A > B"). NA values are not currently allowed.}
+      as its argument, and return an inequality matrix in a `data.matrix` format with `type=double`. NA values are allowed, see Note 1.}
   \item{control}{a list of control parameters, see \code{Details}.}
   \item{filename}{}
   \item{path}{}
@@ -68,6 +67,12 @@ The output is a list with the following items:
     Pitt, M. A., Kim, W., Navarro, D. J., & Myung, J. I. (2006). Global model analysis by parameter space partitioning. Psychological Review, 113(1), 57.
 
     Weisstein, Eric W. "Hypersphere Point Picking." From MathWorld--A Wolfram Web Resource. https://mathworld.wolfram.com/HyperspherePointPicking.html
+
+}
+
+\note{
+
+1. NA values are usually a result of some parameter combination falling outside of what the model implementation can handle. It is best handled outside of the psp routine, during the inequality matrix construction. For example, if NA is detected in the matrix, change all values to 99 before returning the output.
 
 }
 
