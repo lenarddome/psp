@@ -90,10 +90,9 @@ rowvec CountOrdinal(cube updated_ordinal, cube predicted, rowvec counts) {
       mat base = predicted.slice(y);
       umat result = (base == current);
       uvec comparisons = result(trimatu_ind(size(result), 1));
-      index(x, y) =  any(comparisons == 0);
-    }
-    if (!all(index.row(x) == 1)) {
-      new_counts[x] += 1;
+      if (all(comparisons == 1)) {
+        new_counts[x] += 1;
+      }
     }
   }
   return(new_counts);
@@ -101,24 +100,57 @@ rowvec CountOrdinal(cube updated_ordinal, cube predicted, rowvec counts) {
 
 // match jumping distributions to ordinal ordinal_patterns
 // returns a column uvec of slice IDs corresponding to each set in jumping_distribution
-uvec MatchJumpDists(cube updated_ordinal, cube predicted) {
+vec MatchJumpDists(cube updated_ordinal, cube predicted) {
   mat index(updated_ordinal.n_slices, predicted.n_slices);
-  uvec matches(predicted.n_slices);
+  vec matches(predicted.n_slices);
   for (uword x = 0; x < updated_ordinal.n_slices; x++) {
     mat current = updated_ordinal.slice(x);
     for (uword y = 0; y < predicted.n_slices; y++) {
       mat base = predicted.slice(y);
       umat result = (base == current);
       uvec comparisons = result(trimatu_ind(size(result), 1));
-      index(x, y) =  any(comparisons == 0);
+      if (all(comparisons == 1)) {
+        matches(y) = x;
+      };
     }
   }
-  matches = find(sum(index, 1) < predicted.n_slices);
+  Rcout << "\nmatches" << matches << std::endl;
   return(matches);
 }
 
+// create local csv file for storing coordinates
+void CreateFile(CharacterVector names, std::string path_to_file){
+  std::ofstream outFile(path_to_file.c_str());
+  outFile << "iteration,";
+  for (uword i = 0; i < names.size(); i++) {
+    outFile << names[i];
+    outFile << + ",";
+  }
+  outFile << "pattern,\n";
+}
+
+// writes rows to csv file
+void WriteFile(int iteration, mat evaluation, vec matches,
+  std::string path_to_file) {
+  // open file stream connection
+  std::ofstream outFile(path_to_file.c_str(), std::ios::app);
+  int rows = evaluation.n_rows;
+  int columns = evaluation.n_cols;
+  for (uword i = 0; i < rows; i++) {
+    outFile << iteration;
+    outFile << ",";
+    for (uword k = 0; k < columns; k++) {
+      outFile << evaluation(i, k);
+      outFile << ",";
+    }
+    outFile << matches(i);
+    outFile << ",\n";
+  }
+}
+
 // [[Rcpp::export]]
-List pspGlobal(Function model, List control, bool quiet = false) {
+List pspGlobal(Function model, List control, bool save = false,
+               std::string path = ".", bool quiet = false) {
 
   // setup environment
   bool parameter_filled = false;
@@ -149,10 +181,13 @@ List pspGlobal(Function model, List control, bool quiet = false) {
   if (dimensions != lower.n_elem || dimensions != upper.n_elem) {
     stop("init, lower and upper must have the same length.");
   }
-  rowvec counts;  // keeps track of the population of ordinal regions
+  rowvec counts(1, fill::ones);  // keeps track of the population of ordinal regions
   cube ordinal;  // stores all evaluations of fn on jumping_distribution
   cube storage;  //  stores all unique ordinal patterns
   CharacterVector names = as<CharacterVector>(control["param_names"]);
+  if (names.size() != dimensions) {
+    stop("Length of param_names must equal to the number of dimensions");
+  }
   List out;
 
   // evaluate first parameter set
@@ -162,7 +197,14 @@ List pspGlobal(Function model, List control, bool quiet = false) {
   mat last_eval = init; // last evaluated parameters
   // add output to storage
   storage = join_slices(storage, evaluate);
-  // delete[] output;
+  counts = CountOrdinal(storage, ordinal, counts);
+
+  if (save) {
+    CreateFile(names, path);
+    WriteFile(0, conv_to<mat>::from(init),
+              vec(1, fill::value(0)),
+              path);
+  }
 
   // run parameter space partitioning until parameter is filled
   while (!parameter_filled) {
@@ -187,12 +229,16 @@ List pspGlobal(Function model, List control, bool quiet = false) {
     storage = OrdinalCompare(storage, ordinal);
     // update counts of ordinal patterns
     counts = CountOrdinal(storage, ordinal, counts);
+    // index locations of currently found patterns in storage
+    vec match = MatchJumpDists(storage, ordinal);
     // write data to disk
-    // outFile << "\n";
-    rowvec vector_counts = vectorise(counts, 1);
-    irowvec print_counts = conv_to< irowvec >::from(vector_counts);
+    if (save) {
+      WriteFile(iteration, jumping_distribution, match, path);
+    }
 
     if (!quiet) {
+      rowvec vector_counts = vectorise(counts, 1);
+      irowvec print_counts = conv_to< irowvec >::from(vector_counts);
       std::cout <<  "[" << iteration << "]: " << print_counts << std::endl;
     }
 
