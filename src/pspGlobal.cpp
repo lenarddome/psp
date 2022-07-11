@@ -11,16 +11,16 @@ using namespace arma;
 // Weisstein, Eric W. "Hypersphere Point Picking." From MathWorld.
 // https://mathworld.wolfram.com/HyperspherePointPicking.html
 // pick new jumping distributions from the unit hypersphere scaled by the radius
-mat HyperPoints(int counts, int dimensions, rowvec radius) {
-  mat hypersphere;
+mat HyperPoints(int counts, int dimensions, double radius) {
   // create a uniform distribution
-  hypersphere.randu(counts, dimensions);
-  colvec denominator = sum(hypersphere, 1);
-  denominator = 1 / denominator;
+  mat hypersphere = randn(counts, dimensions, distr_param(0, 1) );
+  colvec denominator = sum(square(hypersphere), 1);
+  denominator = 1 / sqrt(denominator);
   // pick points from within unite hypersphere
   hypersphere = hypersphere.each_col() % denominator;
   // scale up values by r
-  hypersphere = hypersphere.each_row() % radius;
+  rowvec rad = randu<rowvec>(dimensions, distr_param(0.0, radius));
+  hypersphere = hypersphere.each_row() % rad;
   return(hypersphere);
 }
 
@@ -170,7 +170,7 @@ List pspGlobal(Function model, List control, bool save = false,
     stop("A resonable threshold must be set by either adjusting iteration or population.");
   }
 
-  rowvec radius  = as<rowvec>(control["radius"]);
+  double radius  = as<double>(control["radius"]);
   rowvec  init = as<rowvec>(control["init"]);
 
   colvec lower = as<colvec>(control["lower"]);
@@ -209,11 +209,10 @@ List pspGlobal(Function model, List control, bool save = false,
   while (!parameter_filled) {
     // update iteration
     iteration += 1;
-
     // generate new jumping distributions from ordinal patterns with counts < population
     mat jumping_distribution = HyperPoints(last_eval.n_rows, dimensions, radius);
-    jumping_distribution = ClampParameters(jumping_distribution, lower, upper);
     jumping_distribution += last_eval;
+    jumping_distribution = ClampParameters(jumping_distribution, lower, upper);
     jumping_distribution.shed_rows(find(counts > population));
 
     cube ordinal(stimuli, stimuli, jumping_distribution.n_rows);
