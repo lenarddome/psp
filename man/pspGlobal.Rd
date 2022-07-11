@@ -8,15 +8,15 @@
 }
 
 \usage{
-pspGlobal(fn, control, quiet = FALSE)
+pspGlobal(model, control, save, path, quiet = FALSE)
 }
 
 \arguments{
-  \item{fn}{The ordinal function. It should take a numeric vector (parameter set)
+  \item{model}{The ordinal function. It should take a numeric vector (parameter set)
       as its argument, and return an inequality matrix in a `data.matrix` format with `type=double`. NA values are allowed, see Note 1.}
-  \item{control}{a list of control parameters, see \code{Details}.}
-  \item{filename}{}
-  \item{path}{}
+  \item{control}{A `list()` of control arguments that tunes the behaviour of the parameter space partitioning routine. See Details for more information on what to include.}
+  \item{save}{Whether you want all evaluated parameters to be saved to the disk.}
+  \item{path}{If `save = TRUE`, the path to the file that will store all evaluated parameters.}
   \item{quiet}{If \code{FALSE} (default), print the total number of patterns
       found up to the current iteration. If \code{TRUE}, do not print anything.}
 }
@@ -41,7 +41,7 @@ pspGlobal(fn, control, quiet = FALSE)
     parameter sets returns an already discovered pattern, add parameter set
     to their records. Return to Step 1.
 
-    This process can run in parallel for each discovered pattern.
+    This behaviour is further tuned by `control`, which needs to contain the following values:
 
 }
 
@@ -73,60 +73,5 @@ The output is a list with the following items:
 \note{
 
 1. NA values are usually a result of some parameter combination falling outside of what the model implementation can handle. It is best handled outside of the psp routine, during the inequality matrix construction. For example, if NA is detected in the matrix, change all values to 99 before returning the output.
-
-}
-
-\examples{
-
-library(psp)
-
-#' euclidean distance
-#'
-#' @param a vector coordinate 1
-#' @param b vector coordinate 2
-#' @return euclidean distance between coordinates
-euclidean <- function(a, b) sqrt(sum((a - b)^2))
-
-# define center points for the 10 regions in a two-dimensional space
-positions <- NULL
-for (i in seq_len(2)) positions <- cbind(positions, sample(500, 10))
-
-#' dummy hypercube model to test the PSP function
-#' The model takes in a set of coordinates, calculates its distance from all
-#' all of available coordinates, then return closest region number.
-#' This model generalizes to n-dimensions
-#'
-#' @param x a vector of coordinates
-#' @return The number of the region as character
-#' @examples
-#' model(runif(5))
-model <- function(par) {
-    areas <- NULL
-    for (i in seq_along(par)) {
-        range <- c(1, 0)
-        if (i \%\% 2 == 0) {
-            range <- c(0, 1)
-        }
-        areas <- cbind(areas,
-                       seq(range[1], range[2], length.out = 500)[positions[,i]])
-    }
-    dist <- apply(areas, 1, function(x) euclidean(par, x))
-    return(as.character(which.min(dist)))
-}
-
-# run Parameter Space Partitioning with some default settings
-# Here we run the MCMC for 400 iterations, but the partitioning
-# will stop if the population of all regions reach 200.
-# Note that we have to load our utility function into
-# the clusters, because PSPglobal is currently parallelized.
-out <- psp_global(model, psp_control(lower = rep(0, 2),
-                                   upper = rep(1, 2),
-                                   init = rep(0.5, 2),
-                                   radius = rep(0.25, 2),
-                                   pop = 100,
-                                   parallel = FALSE,
-                                   iterations = 100))
-
-print(out)
 
 }
