@@ -1,9 +1,10 @@
-export(psp_global, psp_control)
+useDynLib(psp, .registration=TRUE)
+importFrom(Rcpp, evalCpp)
+exportPattern("^[[:alpha:]]+")    # export all identifiers starting with letters
 importFrom("parallel", "clusterExport", "parApply", "makeCluster",
            "clusterCall", "detectCores", "stopCluster")
 importFrom("stats", "rnorm", "runif")
 importFrom("utils", "tail", "type.convert")
 importFrom("data.table", "data.table")
 importFrom("methods", "is", "show")
-
 S3method("print", "PSP")
