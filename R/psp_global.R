@@ -69,7 +69,7 @@ psp_control <- function(radius = 0.1, init, lower, upper,
 
 ## A handy function to set up parallel environment without increasing
 ## cyclomatic complexity of the main psp_global
-parallelize <- function(parallel = FALSE, cl = NULL,
+.parallelize <- function(parallel = FALSE, cl = NULL,
                         object_names = NULL, lib_names = NULL) {
     if (parallel == TRUE && is.null(cl)) {
         no_cores <- parallel::detectCores()
@@ -94,7 +94,7 @@ parallelize <- function(parallel = FALSE, cl = NULL,
 ## https://mathworld.wolfram.com/HyperspherePointPicking.html
 
 # generate random distribution from the unit hypersphere relative to jumping distribution
-psp_hyper <- function(jump, radius) {
+.psp_hyper <- function(jump, radius) {
     ## perform simple checks for object types
     if (is.list(jump)) jump <- unlist(jump)
     if (!("numeric" %in% is(jump))) jump <- as.numeric(jump)
@@ -129,7 +129,7 @@ psp_global <- function(fn, control = psp_control(), ..., quiet = FALSE) {
     ex_libs <- ctrl$export_libs
 
     ## set up parallel
-    cl <- parallelize(parallel = ctrl$parallel, cl = ctrl$cl,
+    cl <- .parallelize(parallel = ctrl$parallel, cl = ctrl$cl,
                       object_names = ex_objects, lib_names = ex_libs)
 
     ## define ordinal function
@@ -163,7 +163,7 @@ psp_global <- function(fn, control = psp_control(), ..., quiet = FALSE) {
         new_points <-
             t(apply(parmat_current, 1,
                     function(x) {
-                        psp_hyper(jump = x, radius = radius)
+                        .psp_hyper(jump = x, radius = radius)
                     }))
 
         ## constrain parameters within bounds
