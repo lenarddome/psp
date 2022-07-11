@@ -8,13 +8,28 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 
+- Added a C++ implementation of the parameter space partitioning routine that will take over from `psp_global` and `psp_control`.
+
+### Changed
+
+- `psp_global` now has a Deprecated message. The function will be removed after we complete the development of `pspGlobal`.
+
+## v0.4.1
+
+### Added
+
 - `psp_control` has separate arguments for objects vs. packages that it needs
 to load into each core.
 
-## Removed
+### Removed
 
 - `cluster_names` is deprecated in `psp_control`, but retained for backwards
-compatibility
+compatibility.
+- Removed unnecessary error checks.
+
+### Changed
+
+- Fix libraries not exporting to clusters.
 
 ## v0.3.1
 

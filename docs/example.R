@@ -1,68 +1,60 @@
 library(psp)
 library(data.table)
-library(gganimate)
-library(ggplot2)
-library(ggthemes)
-library(viridis)
+library(plyr)
+library(microbenchmark)
 
-#' euclidean distance
-#'
-#' @param a vector coordinate 1
-#' @param b vector coordinate 2
-#' @return euclidean distance between coordinates
+# euclidean distance
 euclidean <- function(a, b) sqrt(sum((a - b)^2))
 
 # define center points for the 10 regions in a two-dimensional space
 positions <- NULL
-for (i in seq_len(2)) positions <- cbind(positions, sample(500, 50))
+for (i in seq_len(2)) positions <- cbind(positions, sample(500, 4) / 500)
 
-#' dummy polytope model to test the PSP function
-#' The model takes in a set of coordinates, calculates its distance from all
-#' all of available coordinates, then return closest region number.
-#' This model generalizes to n-dimensions
-#'
-#' @param x a vector of coordinates
-#' @return The number of the region as character
-#' @examples
-#' model(runif(5))
-model <- function(par) {
-    areas <- NULL
-    for (i in seq_along(par)) {
-        range <- c(1, 0)
-        if (i %% 2 == 0) {
-            range <- c(0, 1)
-        }
-        areas <- cbind(areas,
-                    seq(range[1], range[2], length.out = 500)[positions[, i]])
-    }
-    dist <- apply(areas, 1, function(x) euclidean(par, x))
-    return(as.character(which.min(dist)))
+## calculates distances and gives a non-sensical inequality matrix
+model <-  function(par, legacy = FALSE) {
+  distances <- outer(as.matrix(par), as.matrix(positions), Vectorize(euclidean))
+  converted <- plyr::alply(distances, 3)
+  summed <- unlist(plyr::alply(distances, 3, sum, expand = FALSE))
+  distance_matrix <- dist(summed, diag = TRUE)
+  distance_matrix[distance_matrix < 0.5] <- -1
+  distance_matrix[distance_matrix < 1.0 & distance_matrix > 0.5] <- 0
+  distance_matrix[distance_matrix > 1.0] <- 1
+  if (legacy) {
+    distance_matrix <- data.frame(as.matrix(distance_matrix))
+  } else {
+    distance_matrix <- as.matrix(distance_matrix)
+  }
+  distance_matrix[!upper.tri(distance_matrix)] <- NA
+  return(distance_matrix)
 }
 
-# run Parameter Space Partitioning with some default settings
-out <- psp_global(model, psp_control(lower = rep(0, 2),
+rold <- function() {
+  out <- psp_global(model, psp_control(lower = rep(0, 2),
+                                     upper = rep(1, 2),
+                                     init = rep(0.5, 2),
+                                     radius = rep(0.10, 2),
+                                     pop = Inf,
+                                     iterations = 100),
+                    legacy = TRUE)
+}
+
+cpp <- function() {
+  outcpp <- pspGlobal(model, control = list(lower = rep(0, 2),
                                    upper = rep(1, 2),
-                                   init = rep(0.5, 2),
+                                   init = matrix(rep(0.5, 2), nrow = 1),
                                    radius = rep(0.10, 2),
-                                   pop = Inf,
-                                   parallel = TRUE,
-                                   cluster_names = c("positions",
-                                                     "euclidean"),
-                                   iterations = 1000))
+                                   population = 1000000,
+                                   param_names = paste("names", 1:2, sep = ""),
+                                   iterations = 100),
+                 save = TRUE, path = "./benchmark.csv")
+}
 
-dta <- data.table(out$ps_partitions)
+benchPress <- function () {
+  mbcpp <- microbenchmark(cpp(), rold())
+  return(mbcpp)
+}
 
-plot <- ggplot(dta, aes(x = parameter_1, y = parameter_2,
-                        colour = as.factor(pattern))) +
-    geom_point() +
-    theme_par() +
-    theme(legend.position = "none") +
-    scale_colour_viridis_d(option = "A")
+cpp_benchmark <- benchPress()
 
-ggsave("psp_cover.png")
-
-animated <- plot + transition_manual(cumulative = TRUE, frames = iteration) +
-  labs(title = "Iteration: {current_frame}")
-
-anim_save(filename = "figures/test.png", animation = animated,
-          renderer = file_renderer())
+graph <- ggplot2::autoplot(cpp_benchmark)
+ggsave(plot = graph, filename = "benchmark.pdf", units = in, width = 10, height = 12)
