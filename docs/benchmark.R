@@ -11,7 +11,7 @@ euclidean <- function(a, b) sqrt(sum((a - b)^2))
 
 # define center points for the 10 regions in a two-dimensional space
 positions <- NULL
-for (i in seq_len(2)) positions <- cbind(positions, sample(500, 100))
+for (i in seq_len(5)) positions <- cbind(positions, sample(500, 2))
 
 ## calculates distances and gives a non-sensical inequality matrix
 model <-  function(par, legacy = FALSE) {
@@ -35,42 +35,38 @@ model <-  function(par, legacy = FALSE) {
   return(out)
 }
 
-set.seed(1)
+set.seed(7624)
+
 rold <- function() {
-  out <- psp_global(model, psp_control(lower = rep(0, 2),
-                                     upper = rep(1, 2),
-                                     init = rep(0.5, 2),
-                                     radius = rep(0.10, 2),
+  out <- psp_global(model, psp_control(lower = rep(0, 5),
+                                     upper = rep(1, 5),
+                                     init = rep(0.5, 5),
+                                     radius = rep(0.25, 5),
                                      pop = Inf,
-                                     iterations = 100),
+                                     iterations = 1000),
                     legacy = TRUE)
 }
 
 cpp <- function() {
-  outcpp <- pspGlobal(model, control = list(lower = rep(0, 2),
-                                   upper = rep(1, 2),
-                                   init = matrix(rep(0.5, 2), nrow = 1),
-                                   radius = 0.10,
+  outcpp <- pspGlobal(model, control = list(lower = rep(0, 5),
+                                   upper = rep(1, 5),
+                                   init = matrix(rep(0.5, 5), nrow = 1),
+                                   radius = 0.25,
                                    population = 2147483647,
-                                   param_names = paste("names", 1:2, sep = ""),
-                                   iterations = 100),
+                                   param_names = paste("names", 1:5, sep = ""),
+                                   iterations = 1000),
                  save = TRUE, path = "./benchmark.csv")
 }
 
+
 benchPress <- function () {
-  mbcpp <- microbenchmark(cpp(), rold())
+  mbcpp <- bench::mark(cpp = cpp(), r = rold())
   return(mbcpp)
 }
 
 cpp_benchmark <- benchPress()
-
-graph <- ggplot2::autoplot(cpp_benchmark)
-ggsave(plot = graph, filename = "benchmark.pdf", units = in, width = 10, height = 12)
-
-
-test <- fread("benchmark.csv")
-ggplot(test, aes(x = names1, y = names2, color = pattern)) +
-  geom_point()
-
-ggplot(out$ps_partitions, aes(x = parameter_1, y = parameter_2, color = pattern)) +
-  geom_point()
+save(cpp_benchmark, file = "benchmark.RData")
+# load("benchmark.RData")
+graph <- ggplot(cpp_benchmark, aes(y = expr, x = time/1e9, fill = expr))
+graph <- graph + geom_violin() + geom_boxplot(fill = "grey", width = 0.15) + geom_jitter(size = 0.25) + ggthemes::theme_calc()
+ggsave(plot = graph, filename = "benchmark.pdf", units = "in", width = 12, height = 8)
