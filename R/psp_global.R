@@ -231,6 +231,5 @@ psp_global <- function(fn, control = psp_control(), ..., quiet = FALSE) {
                        "ps_patterns" = ordinal_size,
                        "ps_ordinal" = names(ordinal_size))
     }
-    attr(output, "class") <- "PSP"
     return(output)
 }
