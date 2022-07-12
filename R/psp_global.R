@@ -9,11 +9,6 @@ psp_control <- function(radius = 0.1, init, lower, upper,
                         export_libs = NULL,
                         iterations = 1000) {
 
-    .Deprecated(
-        new = "pspGlobal", package = "psp",
-        msg = paste("This function is no longer maintained and will be pspGlobal in the future.")
-    )
-
     ## error functions
     if (length(upper) != length(lower)) {
         stop("Lower and upper boundaries have different lengths!")
