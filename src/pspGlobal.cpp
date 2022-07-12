@@ -150,7 +150,6 @@ void WriteFile(int iteration, mat evaluation, vec matches,
 // [[Rcpp::export]]
 List pspGlobal(Function model, List control, bool save = false,
                std::string path = ".", bool quiet = false) {
-
   // setup environment
   bool parameter_filled = false;
   int iteration = 0;
@@ -193,7 +192,8 @@ List pspGlobal(Function model, List control, bool save = false,
   NumericMatrix teatime = model(init);
   const mat& evaluate = as<mat>(teatime);
   int stimuli = evaluate.n_rows;
-  mat last_eval = init; // last evaluated parameters
+  // last evaluated parameters
+  mat last_eval = init;
   // add output to storage
   storage = join_slices(storage, evaluate);
   counts = CountOrdinal(storage, ordinal, counts);
@@ -248,8 +248,8 @@ List pspGlobal(Function model, List control, bool save = false,
 
   // compile output including ordinal patterns and their frequencies
   out = Rcpp::List::create(
-    Rcpp::Named("ordinal_counts") = counts,
-    Rcpp::Named("ordinal_patterns") = storage);
+    Rcpp::Named("ordinal_patterns") = storage,
+    Rcpp::Named("ordinal_counts") = counts);
 
   return(out);
 }
