@@ -60,7 +60,7 @@ cpp <- function() {
 
 
 benchPress <- function () {
-  mbcpp <- bench::mark(cpp = cpp(), r = rold())
+  mbcpp <- microbenchmark(cpp(), rold())
   return(mbcpp)
 }
 
