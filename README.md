@@ -67,7 +67,7 @@ We use [Google’s R Style Guide](https://google.github.io/styleguide/Rguide.htm
 - Do not use `roxygen`. Write your documentation from scratch as an Rdocumentation file. It is desirable to avoid writing test units for converting your comments to documentation.
 - We have a 100 characters per line policy. You are still encouraged to keep line lengths to 80 characters, but sometimes going over 80 can be better than the alternative.
 - Use TODO, FIXME, HACK, BUG, WARNING, NOTE comments for code that is temporary, a short-term solution, or good-enough but not perfect.
-  - TODO comments must adhere to the following format: `## TODO(lenarddome): change this to use matrix operations`.
+  - TODO comments must adhere to the following format: `## TODO: change this to use matrix operations`.
 - Use spaces!
   - Good practice: `if (makeup == TRUE) list(variable = runif(100), id = rep(letters, 5)[1:100])`.
   - Bad practice: `if(makeup==TRUE) list(variable=runif(100),id=rep(letters,5)[1:100])`.

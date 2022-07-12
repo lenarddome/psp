@@ -11,7 +11,7 @@ euclidean <- function(a, b) sqrt(sum((a - b)^2))
 
 # define center points for the 10 regions in a two-dimensional space
 positions <- NULL
-for (i in seq_len(5)) positions <- cbind(positions, sample(500, 2))
+for (i in seq_len(5)) positions <- cbind(positions, sample(500, 10))
 
 ## calculates distances and gives a non-sensical inequality matrix
 model <-  function(par, legacy = FALSE) {

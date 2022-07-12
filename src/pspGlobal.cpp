@@ -111,14 +111,14 @@ vec MatchJumpDists(cube updated_ordinal, cube predicted) {
       uvec comparisons = result(trimatu_ind(size(result), 1));
       if (all(comparisons == 1)) {
         matches(y) = x;
-      };
+      }
     }
   }
   return(matches);
 }
 
 // create local csv file for storing coordinates
-void CreateFile(CharacterVector names, std::string path_to_file){
+void CreateFile(CharacterVector names, std::string path_to_file) {
   std::ofstream outFile(path_to_file.c_str());
   outFile << "iteration,";
   for (uword i = 0; i < names.size(); i++) {
@@ -153,6 +153,7 @@ List pspGlobal(Function model, List control, bool save = false,
   // setup environment
   bool parameter_filled = false;
   int iteration = 0;
+
   // import thresholds from control
   int max_iteration = as<int>(control["iterations"]);
   int population = as<int>(control["population"]);

@@ -14,7 +14,17 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 - `psp_global` now has a Deprecated message. The function will be removed after we complete the development of `pspGlobal`.
 
-## v0.4.1
+### Removed
+
+- `S3` class is removed due to redundancy and to avoid feature creep.
+
+## v0.4.1-beta
+
+### Changed
+
+- Fix libraries not exporting to clusters.
+
+## v0.4.0
 
 ### Added
 
@@ -26,10 +36,6 @@ to load into each core.
 - `cluster_names` is deprecated in `psp_control`, but retained for backwards
 compatibility.
 - Removed unnecessary error checks.
-
-### Changed
-
-- Fix libraries not exporting to clusters.
 
 ## v0.3.1
 
