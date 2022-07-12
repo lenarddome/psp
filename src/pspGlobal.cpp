@@ -235,9 +235,7 @@ List pspGlobal(Function model, List control, bool save = false,
     }
 
     if (!quiet) {
-    //  rowvec vector_counts = vectorise(counts, 1);
-    //  irowvec print_counts = conv_to< irowvec >::from(vector_counts);
-      std::cout <<  "Iteration: [" << iteration << "]" << std::endl;
+      Rprintf("Iteration: [%i]\n", iteration);
     }
 
     // check if parameter_filled threshold is reached
