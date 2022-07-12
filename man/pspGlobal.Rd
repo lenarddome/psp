@@ -3,22 +3,21 @@
 \title{Parameter Space Partitioning}
 
 \description{
-  An all-purpose implementation of the Parameter Space Partitioning MCMC
+  An all-purpose RcppArmadillo implementation of the Parameter Space Partitioning MCMC
   Algorithm described by Pitt, Kim, Navarro, Myung (2006).
 }
 
 \usage{
-pspGlobal(model, control, save, path, quiet = FALSE)
+pspGlobal(model, control, save = FALSE, path = ".", quiet = FALSE)
 }
 
 \arguments{
   \item{model}{The ordinal function. It should take a numeric vector (parameter set)
-      as its argument, and return an inequality matrix in a `data.matrix` format with `type=double`. NA values are allowed, see Note 1.}
-  \item{control}{A `list()` of control arguments that tunes the behaviour of the parameter space partitioning routine. See Details for more information on what to include.}
-  \item{save}{Whether you want all evaluated parameters to be saved to the disk.}
-  \item{path}{If `save = TRUE`, the path to the file that will store all evaluated parameters.}
-  \item{quiet}{If \code{FALSE} (default), print the total number of patterns
-      found up to the current iteration. If \code{TRUE}, do not print anything.}
+      as its argument, and return an inequality matrix (Dome & Wills, n.d.) in a \code{matrix} format with `type=double`. NA values are allowed, see Note 2.}
+  \item{control}{A \code{list()} of control arguments that tunes the behaviour of the parameter space partitioning routine. See Details for more information on what to include.}
+  \item{save}{if \code{save = TRUE}, all evaluated parameters will be saved to disk. The deafult is \code{FALSE}.}
+  \item{path}{If `save = TRUE`, the path to the file that will store all evaluated parameters. The default path is the current working directory.}
+  \item{quiet}{If \code{FALSE} (default), print the number of the current iteration. If \code{TRUE}, do not print anything.}
 }
 
 \details{
@@ -43,6 +42,17 @@ pspGlobal(model, control, save, path, quiet = FALSE)
 
     This behaviour is further tuned by `control`, which needs to contain the following values:
 
+    \code{population}{The number of parameter sets in each ordinal region, which serves as a threshold above which pspGlobal will not generate a new jumping distribution for a given ordinal pattern.}
+    \code{iterations}{The number of global iterations.}
+    \code{lower, upper}{Vectors specifiying the lower and upper boundaries of
+        the parameter space for each parameter. The i-th element of lower and
+        upper bounds applies to the i-th parameter.}
+    \code{init}{A vector of parameters to use as the first jumping
+        distribution.}
+    \code{radius}{The radius of the hypershere with n-dimensions to sample from.
+    Must be of type double.}
+    \code{param_names}{A character vector that includes the names of each parameter.}
+
 }
 
 \value{
@@ -53,16 +63,16 @@ The output is a list with the following items:
     population of their corresponding region - the number of parameter sets
     discovered to produce the ordinal pattern.}
 
-    \item{ordinal_counts}{A list (if ordinal patterns are multidimensional objects)
-    or character vector (if ordinal patterns are strings or other single values)
-    with the ordinal patterns found. The place of the ordinal pattern
-    corresponds to the names in ps_patterns.}
+    \item{ordinal_counts}{A 3D array with the ordinal patterns found.
+    The place of the ordinal pattern corresponds to ordinal_patterns.}
 
 }
 
 \keyword{computational modelling; parameter space partitioning; model evaluation}
 
 \references{
+
+    Dome, L., Wills, A. J. (n.d.) g-distance: Prediction, accommodation, and \emph{a priori} likelihood in formal psychological theorizing. \emph{Manuscript in preparation}.
 
     Pitt, M. A., Kim, W., Navarro, D. J., & Myung, J. I. (2006). Global model analysis by parameter space partitioning. Psychological Review, 113(1), 57.
 
@@ -72,6 +82,6 @@ The output is a list with the following items:
 
 \note{
 
-1. NA values are usually a result of some parameter combination falling outside of what the model implementation can handle. It is best handled outside of the psp routine, during the inequality matrix construction. For example, if NA is detected in the matrix, change all values to 99 before returning the output.
+1. NA values are usually a result of some parameter combination falling outside of what the model implementation can handle. It is best handled outside of the psp routine, e.g. during the inequality matrix construction. For example, if NA is detected in the matrix, change all values to 99 before returning the output.
 
 }

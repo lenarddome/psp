@@ -15,7 +15,7 @@ psp_global(fn, control = psp_control(), ..., quiet = FALSE)
   \item{fn}{The ordinal function. It should take a numeric vector (parameter set)
       as its argument, and return an ordinal response pattern as character (e.g.
       "A > B"). NA values are not currently allowed.}
-  \item{control}{a list of control parameters, see \code{\link{psp_control}}}
+  \item{control}{a list of control parameters, see \code{psp_control}}
   \item{...}{Additional arguments passed to \code{fn}.}
   \item{quiet}{If \code{FALSE} (default), print the total number of patterns
       found up to the current iteration. If \code{TRUE}, do not print anything.}

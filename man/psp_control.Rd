@@ -44,10 +44,10 @@ psp_control(radius = 0.1, init, lower, upper,
     \item{cluster_names}{Maintained for backwards-compatibility. See
       \code{export_objects} below.}
     \item{export_objects}{A character vector that includes all of the objects
-      to be loaded into each cluster. It is handled by 
+      to be loaded into each cluster. It is handled by
       \code{\link[pkg:parallel]{clusterExports}}. Default is \code{NULL}.}
     \item{export_libs}{A character vector that includes all the packages to
-    be loaded into each cluster. It is handled by 
+    be loaded into each cluster. It is handled by
       \code{\link[pkg:parallel]{clusterExports}}. Default is \code{NULL}.}
     \item{iterations}{The number of global iterations for psp_global. Default is
         1000.}
