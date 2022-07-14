@@ -1,7 +1,9 @@
 library(psp)
 library(ggplot2)
+library(ggbeeswarm)
 library(data.table)
 library(plyr)
+library(bench)
 library(microbenchmark)
 library(Rcpp)
 sourceCpp("../src/pspGlobal.cpp")
@@ -10,27 +12,17 @@ sourceCpp("../src/pspGlobal.cpp")
 euclidean <- function(a, b) sqrt(sum((a - b)^2))
 
 # define center points for the 10 regions in a two-dimensional space
-positions <- NULL
-for (i in seq_len(5)) positions <- cbind(positions, sample(500, 10))
+#positions <- NULL
+#for (i in seq_len(5)) positions <- cbind(positions, sample(500, 1))
+
+positions <- matrix(runif(5), nrow = 1)
 
 ## calculates distances and gives a non-sensical inequality matrix
 model <-  function(par, legacy = FALSE) {
-  areas <- NULL
-  for (i in seq_along(par)) {
-      range <- c(1, 0)
-      if (i %% 2 == 0) {
-          range <- c(0, 1)
-      }
-      areas <- cbind(areas, seq(range[1], range[2], length.out = 500)[positions[, i]])
-  }
-  distances <- outer(as.matrix(par), as.matrix(areas), Vectorize(euclidean))
-  converted <- plyr::alply(distances, 3)
-  summed <- unlist(plyr::alply(distances, 3, sum, expand = FALSE))
-  out <- converted[[which.min(summed)]]
   if (legacy) {
-    out <- paste(positions[which.min(summed),], collapse = "")
+    out <- paste(positions, collapse = "+")
   } else {
-    out <- matrix(which.min(summed), nrow = 2, ncol = 2)
+    out <- matrix(1, nrow = 2, ncol = 2)
   }
   return(out)
 }
@@ -43,8 +35,9 @@ rold <- function() {
                                      init = rep(0.5, 5),
                                      radius = rep(0.25, 5),
                                      pop = Inf,
-                                     iterations = 1000),
+                                     iterations = 100),
                     legacy = TRUE)
+  return(0)
 }
 
 cpp <- function() {
@@ -54,19 +47,37 @@ cpp <- function() {
                                    radius = 0.25,
                                    population = 2147483647,
                                    param_names = paste("names", 1:5, sep = ""),
-                                   iterations = 1000),
-                 save = TRUE, path = "./benchmark.csv")
+                                   iterations = 100))
+  return(0)
 }
 
 
 benchPress <- function () {
-  mbcpp <- microbenchmark(cpp(), rold())
+  mbcpp <- microbenchmark(cpp(), rold(), times = 1000)
   return(mbcpp)
 }
 
+## measure other hardware requirements as well
+frontSquat <-  function () {
+  out <-bench::mark(cpp(), rold(), iterations = 1000)
+  return(out)
+}
+
 cpp_benchmark <- benchPress()
-save(cpp_benchmark, file = "benchmark.RData")
+cpp_frontsquat <-  frontSquat()
+
+save(cpp_benchmark, file = "cpp_backsquat.RData")
+save(cpp_frontsquat, file = "cpp_frontsquat.RData")
+
+benchpress <- autoplot(cpp_frontsquat, "beeswarm")
+benchpress + geom_boxplot(aes(group = expression, colour = "black"), width = 0.25) + ggthemes::theme_calc() + theme(legend.position = "none")
+
 # load("benchmark.RData")
-graph <- ggplot(cpp_benchmark, aes(y = expr, x = time/1e9, fill = expr))
-graph <- graph + geom_violin() + geom_boxplot(fill = "grey", width = 0.15) + geom_jitter(size = 0.25) + ggthemes::theme_calc()
+graph <- ggplot(cpp_benchmark, aes(y = expr, x = time, fill = expr))
+graph <- graph + geom_violin() +
+  geom_boxplot(fill = "grey", width = 0.15) +
+  ylab("alogrithm implementation") + xlab("time (ms)") +
+  geom_jitter(size = 0.25) + ggthemes::theme_calc()
+
 ggsave(plot = graph, filename = "benchmark.pdf", units = "in", width = 12, height = 8)
+ggsave(plot = graph, filename = "benchmark.png", units = "in", width = 8, height = 6)
