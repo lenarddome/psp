@@ -84,9 +84,9 @@ rowvec CountOrdinal(cube updated_ordinal, cube predicted, rowvec counts) {
   mat index(updated_ordinal.n_slices, predicted.n_slices);
   rowvec new_counts = counts;
   new_counts.resize(updated_ordinal.n_slices);
-  for (int x = 0; x < updated_ordinal.n_slices; x++) {
+  for (uword x = 0; x < updated_ordinal.n_slices; x++) {
     mat current = updated_ordinal.slice(x);
-    for (int y = 0; y < predicted.n_slices; y++) {
+    for (uword y = 0; y < predicted.n_slices; y++) {
       mat base = predicted.slice(y);
       umat result = (base == current);
       uvec comparisons = result(trimatu_ind(size(result), 1));
