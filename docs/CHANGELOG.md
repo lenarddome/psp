@@ -9,9 +9,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Added
 
 - Added a C++ implementation of the parameter space partitioning routine that will take over from `psp_global` and `psp_control`.
+-
 
 ### Changed
 
+- `pspGlobal` now relies on
 - `psp_global` now has a Deprecated message. The function will be removed after we complete the development of `pspGlobal`.
 
 ### Removed
@@ -22,41 +24,42 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Changed
 
-- Fix libraries not exporting to clusters.
+- f396c774f79ab46a9d70632c4b2b67c052fc221c Fix libraries not exporting to clusters.
 
 ## v0.4.0
 
 ### Added
 
-- `psp_control` has separate arguments for objects vs. packages that it needs
+- 66d13b0d349a3040b4f58be90dafaa30eac5ed6c :sparkles: `psp_control` has separate arguments for objects vs. packages that it needs
 to load into each core.
 
 ### Removed
 
-- `cluster_names` is deprecated in `psp_control`, but retained for backwards
+- 66d13b0d349a3040b4f58be90dafaa30eac5ed6c :fire: `cluster_names` is deprecated in `psp_control`, but retained for backwards
 compatibility.
-- Removed unnecessary error checks.
+- 73dd987dd3d564edf1026a45d5dee8bc98804614 :fire: Removed unnecessary error checks.
 
 ## v0.3.1
 
 ### Added
 
-- :gift: `psp` can take additional arguments and pass it to `fn`
+- b11d87578ce9a4f7ac9d8e53a5275c38d06c1810 :gift: `psp` can take additional arguments and pass it to `fn`
 
 ### Changed
 
-- *fix* returns incorrect dimension attributes of ordinal pattern if it is in a list
+- 6ec1c821dcb6468cd8b632d9b538450201ab00db :bug: returns incorrect dimension attributes of ordinal pattern if it is in a list
 
 ## v0.2 pre-release
 
 ### Added
 
-- :gift: `psp` can now handle ordinal patterns other than strings of characters, e.g. adjacency matrices, list of strings, …
-
+- 96db5820032d750bb3b2d0177e47a53fe0114082 :gift: `psp` can now handle ordinal patterns other than strings of characters, e.g. adjacency matrices, list of strings, …
+- dd968df2400bc5c4a95d528c61a0b7f50cd447b1 :sparkles: make printing optional
+ 
 ### Changed
 
-- :heavy_plus_sign: add `data.table` and `method` dependency
-- add print method for new S3 `PSP` class
+- 96db5820032d750bb3b2d0177e47a53fe0114082 :heavy_plus_sign: add `data.table` and `method` dependency
+- 7f104e70763210aebf34e8eea3912ae1f077d1da add print method for new S3 `PSP` class
 
 ## v0.1
 
