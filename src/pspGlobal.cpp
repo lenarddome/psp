@@ -1,5 +1,6 @@
 // Copyright 2022 <Lenard Dome> [legal/copyright]
 // [[Rcpp::depends(RcppArmadillo)]]
+#define ARMA_USE_CXX11_RNG
 #include <RcppArmadillo.h>
 #include <fstream>
 
