@@ -12,6 +12,13 @@ using namespace arma;
 // https://mathworld.wolfram.com/HyperspherePointPicking.html
 // pick new jumping distributions from the unit hypersphere scaled by the radius
 mat HyperPoints(int counts, int dimensions, double radius) {
+  // set a random seed in R for better sampling
+  // see Documentation about the sampling
+  //std::srand(std::time_t(nullptr));
+  int pool =  std::rand();
+  Rcpp::Environment base_env("package:base");
+  Rcpp::Function set_seed_r = base_env["set.seed"];
+  set_seed_r(pool);
   // create a uniform distribution
   mat hypersphere = randn(counts, dimensions, distr_param(0, 1) );
   colvec denominator = sum(square(hypersphere), 1);
@@ -212,7 +219,7 @@ List pspGlobal(Function model, List control, bool save = false,
     iteration += 1;
     // generate new jumping distributions from ordinal patterns with counts < population
     mat jumping_distribution = HyperPoints(last_eval.n_rows, dimensions, radius);
-    jumping_distribution += last_eval;
+    jumping_distribution = jumping_distribution + last_eval;
     jumping_distribution = ClampParameters(jumping_distribution, lower, upper);
     jumping_distribution.shed_rows(find(counts > population));
 
