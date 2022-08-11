@@ -8,17 +8,16 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ### Added
 
-- Added a C++ implementation of the parameter space partitioning routine that will take over from `psp_global` and `psp_control`.
+- c75d02f2ab9bc76a23502e807717d029be39608f Added a C++ implementation of the parameter space partitioning routine that will take over from `psp_global` and `psp_control`.
 -
 
 ### Changed
 
-- `pspGlobal` now relies on
-- `psp_global` now has a Deprecated message. The function will be removed after we complete the development of `pspGlobal`.
+- b52126debbc25f88c6c41d12810aaedeab23771c `psp_global` now has a Deprecated message. The function will be removed after we complete the development of `pspGlobal`.
 
 ### Removed
 
-- `S3` class is removed due to redundancy and to avoid feature creep.
+- c0f5f92e3ffb5753be9357725cea82767eee6936 `S3` class is removed due to redundancy and to avoid feature creep.
 
 ## v0.4.1-beta
 
@@ -55,7 +54,7 @@ compatibility.
 
 - 96db5820032d750bb3b2d0177e47a53fe0114082 :gift: `psp` can now handle ordinal patterns other than strings of characters, e.g. adjacency matrices, list of strings, …
 - dd968df2400bc5c4a95d528c61a0b7f50cd447b1 :sparkles: make printing optional
- 
+
 ### Changed
 
 - 96db5820032d750bb3b2d0177e47a53fe0114082 :heavy_plus_sign: add `data.table` and `method` dependency
