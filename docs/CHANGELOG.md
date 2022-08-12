@@ -13,7 +13,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Changed
 
 - b52126debbc25f88c6c41d12810aaedeab23771c `psp_global` now has a Deprecated message. The function will be removed after we complete the development of `pspGlobal`.
-
+- 358eee7897a9fe3371ebba101f20baad6214609d :bug: fix global R seed interfering with random sampling 
 
 ### Removed
 

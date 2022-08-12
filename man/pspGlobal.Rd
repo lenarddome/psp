@@ -3,7 +3,7 @@
 \title{Parameter Space Partitioning}
 
 \description{
-  An all-purpose RcppArmadillo implementation of the Parameter Space Partitioning MCMC
+  An all-purpose C++ implementation of the Parameter Space Partitioning MCMC
   Algorithm described by Pitt, Kim, Navarro, Myung (2006).
 }
 
@@ -82,6 +82,6 @@ The output is a list with the following items:
 
 \note{
 
-1. NA values are usually a result of some parameter combination falling outside of what the model implementation can handle. It is best handled outside of the psp routine, e.g. during the inequality matrix construction. For example, if NA is detected in the matrix, change all values to 99 before returning the output.
+1. NA values are usually a result of some parameter combination falling outside of what the model implementation can handle. It is best handled outside of the PSP routine, e.g. during the inequality matrix construction. For example, if NA is detected in the matrix, change all values to 99 before returning the output.
 
 }
