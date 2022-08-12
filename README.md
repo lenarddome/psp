@@ -76,7 +76,3 @@ We use [Google’s R Style Guide](https://google.github.io/styleguide/Rguide.htm
   - Files use camelCase.
   - File names must not contain spaces.
 - Apply the same conventions to C++ code as well. While we do not militantly adhere to this, study [Google's C++ Style Guide](https://google.github.io/styleguide/cppguide.html).
-
-## The algorithm
-
-![](./docs/algorithm-flowchart.png)

@@ -9,11 +9,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 ### Added
 
 - c75d02f2ab9bc76a23502e807717d029be39608f Added a C++ implementation of the parameter space partitioning routine that will take over from `psp_global` and `psp_control`.
--
 
 ### Changed
 
 - b52126debbc25f88c6c41d12810aaedeab23771c `psp_global` now has a Deprecated message. The function will be removed after we complete the development of `pspGlobal`.
+
 
 ### Removed
 

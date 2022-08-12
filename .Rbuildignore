@@ -10,3 +10,5 @@
 ^CODE_OF_CONDUCT\.md$
 ^CONTRIBUTING\.md$
 ^README\.md$
+^_pkgdown\.yml$
+^pkgdown$
