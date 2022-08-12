@@ -12,7 +12,8 @@ URL: https://github.com/lenarddome/psp
 BugReports: https://github.com/lenarddome/psp/issues
 Imports: Rcpp (>= 1.0.8.3),
          parallel,
-         data.table
+         data.table,
+         methods
 LinkingTo: Rcpp, RcppArmadillo
 Encoding: UTF-8
 Suggests:
