@@ -12,3 +12,4 @@
 ^README\.md$
 ^_pkgdown\.yml$
 ^pkgdown$
+^.vscode/

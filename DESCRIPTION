@@ -1,7 +1,7 @@
 Package: psp
 Title: Parameter Space Partitioning MCMC for Global Model Evaluation
 Version: 0.5.4
-Date: 2022-06-12
+Date: 2022-08-12
 Authors@R: c(person("Lenard", "Dome",
                    email = "lenarddome@gmail.com",
                    role = c("aut", "cre")),

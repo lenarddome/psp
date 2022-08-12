@@ -216,7 +216,7 @@ List pspGlobal(Function model, List control, bool save = false,
     // update iteration
     iteration += 1;
     // reset the seed
-    int pool =  std::rand();
+    int pool =  as<int>(Rcpp::sample(10000000, 1));
     set_seed_r(pool); 
     // generate new jumping distributions from ordinal patterns with counts < population
     mat jumping_distribution = HyperPoints(last_eval.n_rows, dimensions, radius);
