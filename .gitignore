@@ -3,5 +3,5 @@
 .Rproj.user
 /docs/tmp
 /tmp/
-.vscode/settings.json
-docs/
+/.vscode/
+/docs/
