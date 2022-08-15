@@ -293,7 +293,8 @@ List pspGlobal(Function model, List control, bool save = false,
   // compile output including ordinal patterns and their frequencies
   out = Rcpp::List::create(
     Rcpp::Named("ordinal_patterns") = storage,
-    Rcpp::Named("ordinal_counts") = counts);
+    Rcpp::Named("ordinal_counts") = counts,
+    Rcpp::Named("iterations") = iteration);
 
   return(out);
 }
