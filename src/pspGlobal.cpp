@@ -175,6 +175,7 @@ List pspGlobal(Function model, List control, bool save = false,
   // setup environment
   bool parameter_filled = false;
   int iteration = 0;
+  uvec underpopulated = { 0 };
 
   // import thresholds from control
   int max_iteration = as<int>(control["iterations"]);
@@ -238,44 +239,48 @@ List pspGlobal(Function model, List control, bool save = false,
   while (!parameter_filled) {
     // update iteration
     iteration += 1;
+
+    if (!quiet) {
+      Rprintf("Iteration: [%i]\n", iteration);
+    }
+
     // reset the seed
     int pool =  as<int>(Rcpp::sample(10000000, 1));
     set_seed_r(pool); 
+
     // generate new jumping distributions from ordinal patterns with counts < population
-    mat jumping_distribution = HyperPoints(last_eval.n_rows, dimensions, radius);
-    jumping_distribution = jumping_distribution + last_eval;
+    mat jumping_distribution = HyperPoints(underpopulated.n_elem,
+                                           dimensions, radius);
+    jumping_distribution = jumping_distribution + last_eval.rows(underpopulated);
     jumping_distribution = ClampParameters(jumping_distribution, lower, upper);
     jumping_distribution.shed_rows(find(counts > population));
 
     cube ordinal(stimuli, stimuli, jumping_distribution.n_rows);
-    std::cout << "model run";
+
     // evaluate jumping distributions
     for (uword i = 0; i < jumping_distribution.n_rows; i++) {
       NumericMatrix teatime = model(jumping_distribution.row(i));
       const mat& evaluate = as<mat>(teatime);
       ordinal.slice(i) = evaluate;
     }
-    std::cout << "finished";
 
     // compare ordinal patterns to stored ones and update list
     uvec include = FindUniqueSlices(ordinal);
-    std::cout << "\n inclusion";
+
     // update last evaluated parameters
     last_eval = LastEvaluatedParameters(storage, ordinal.slices(include),
-                                        jumping_distribution.rows(include), last_eval);
-    std::cout << "stuff";
+                                        jumping_distribution.rows(include),
+                                        last_eval);
     storage = OrdinalCompare(storage, ordinal.slices(include));
     // update counts of ordinal patterns
     counts = CountOrdinal(storage, ordinal, counts);
+    underpopulated = find( counts < 300 );
+
     // write data to disk
     if (save) {
       // index locations of currently found patterns in storage
       vec match = MatchJumpDists(storage, ordinal);
       WriteFile(iteration, jumping_distribution, match, path);
-    }
-
-    if (!quiet) {
-      Rprintf("Iteration: [%i]\n", iteration);
     }
 
     // check if parameter_filled threshold is reached
