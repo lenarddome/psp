@@ -253,8 +253,8 @@ List pspGlobal(Function model, List control, bool save = false,
                                            dimensions, radius);
     jumping_distribution = jumping_distribution + last_eval.rows(underpopulated);
     jumping_distribution = ClampParameters(jumping_distribution, lower, upper);
-    jumping_distribution.shed_rows(find(counts > population));
 
+    // allocate cube for ordinal predictions
     cube ordinal(stimuli, stimuli, jumping_distribution.n_rows);
 
     // evaluate jumping distributions
@@ -272,6 +272,7 @@ List pspGlobal(Function model, List control, bool save = false,
                                         jumping_distribution.rows(include),
                                         last_eval);
     storage = OrdinalCompare(storage, ordinal.slices(include));
+
     // update counts of ordinal patterns
     counts = CountOrdinal(storage, ordinal, counts);
     underpopulated = find( counts < 300 );
