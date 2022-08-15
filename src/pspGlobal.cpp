@@ -32,18 +32,38 @@ mat ClampParameters(mat jumping_distribution, colvec lower, colvec upper) {
   return(jumping_distribution);
 }
 
+// returns the unique slices of a cube (a 3D array) 
+uvec FindUniqueSlices(cube predictions) {
+  vec predictions_filter(predictions.n_slices, fill::zeros);
+  // filter the same predictions
+  for (uword x = 0; x < predictions.n_slices; x++) {
+    vec current = vectorise( predictions.slice(x) );
+    for (uword y = x + 1; y < predictions.n_slices; y++) {
+      vec base = vectorise( predictions.slice(y) );
+      uvec result = (base == current);
+      if (all(result == 1)) predictions_filter(x) += 1;
+    }
+  }
+  // remove multiple predictions for the comparisons
+  uvec inclusion = find( predictions_filter == 0 );
+  return(inclusion);
+}
+
 // compare two cubes of inequality matrices
 // returns the complete list of unique ordinal matrices
 cube OrdinalCompare(cube discovered, cube predicted) {
+
   cube drawer(discovered);
   mat index(predicted.n_slices, discovered.n_slices);
+
   // carry out the comparisons
   for (int x = 0; x < predicted.n_slices; x++) {
     mat current = predicted.slice(x);
     for (int y = 0; y < discovered.n_slices; y++) {
       mat base = discovered.slice(y);
       umat result = (base == current);
-      uvec comparisons = result(trimatu_ind(size(result), 1));
+      uvec comparisons_indices = result(trimatu_ind(size(result), 1));
+      uvec comparisons = result(comparisons_indices);
       index(x, y) =  any(comparisons == 0);
     }
     if (all(index.row(x) == 1)) {
@@ -57,22 +77,23 @@ cube OrdinalCompare(cube discovered, cube predicted) {
 // returns the last evaluated parameters in all chains in the MCMC
 mat LastEvaluatedParameters(cube discovered, cube predicted, mat jumping, mat centers) {
   mat parameters(centers);
-  mat index(predicted.n_slices, discovered.n_slices);
+  mat index(discovered.n_slices, predicted.n_slices);
   // create index matrix
-  for (uword x = 0; x < predicted.n_slices; x++) {
-    mat current = predicted.slice(x);
-    for (uword y = 0; y < discovered.n_slices; y++) {
-      mat base = discovered.slice(y);
+  for (uword x = 0; x < discovered.n_slices; x++) {
+    mat current = discovered.slice(x);
+    for (uword y = 0; y < predicted.n_slices; y++) {
+      mat base = predicted.slice(y);
       umat result = (base == current);
-      uvec comparisons = result(trimatu_ind(size(result), 1));
-      index(x, y) =  any(comparisons == 0);
+      uvec comparisons_indices = result(trimatu_ind(size(result), 1));
+      uvec comparisons = result(comparisons_indices);
+      index(x, y) = any(comparisons == 0);
     }
-    if (all(index.row(x) == 1)) {
+    if (all(index.row(x))) {
       //  if there is a new region, appeng params to centers
-      parameters.insert_rows(parameters.n_rows, jumping.row(x));
-    } else if (any(index.row(x) == 0)) {
+      parameters.insert_rows(parameters.n_rows, jumping.rows( find(index.row(x) == 1, 1, "last") ));
+    } else {
       // if there is an old region in predicted, update center
-      parameters.rows(find(index.row(x) == 0, 1, "last")) = jumping.row(x);
+      parameters.row(x) = jumping.rows( find(index.row(x) == 0, 1, "last") );
     }
     // replace old centers with new ones
   }
@@ -109,6 +130,7 @@ vec MatchJumpDists(cube updated_ordinal, cube predicted) {
       mat base = predicted.slice(y);
       umat result = (base == current);
       uvec comparisons = result(trimatu_ind(size(result), 1));
+      // FIXME: this returns the wrong things
       if (all(comparisons == 1)) {
         matches(y) = x;
       }
@@ -182,6 +204,7 @@ List pspGlobal(Function model, List control, bool save = false,
   }
   rowvec counts(1, fill::ones);  // keeps track of the population of ordinal regions
   cube ordinal;  // stores all evaluations of fn on jumping_distribution
+  cube filtered; // stores all unique predictions
   cube storage;  //  stores all unique ordinal patterns
   CharacterVector names = as<CharacterVector>(control["param_names"]);
   if (names.size() != dimensions) {
@@ -225,21 +248,29 @@ List pspGlobal(Function model, List control, bool save = false,
     jumping_distribution.shed_rows(find(counts > population));
 
     cube ordinal(stimuli, stimuli, jumping_distribution.n_rows);
+    std::cout << "model run";
     // evaluate jumping distributions
     for (uword i = 0; i < jumping_distribution.n_rows; i++) {
       NumericMatrix teatime = model(jumping_distribution.row(i));
       const mat& evaluate = as<mat>(teatime);
       ordinal.slice(i) = evaluate;
     }
+    std::cout << "finished";
+
     // compare ordinal patterns to stored ones and update list
-    last_eval = LastEvaluatedParameters(storage, ordinal, jumping_distribution, last_eval);
-    storage = OrdinalCompare(storage, ordinal);
+    uvec include = FindUniqueSlices(ordinal);
+    std::cout << "\n inclusion";
+    // update last evaluated parameters
+    last_eval = LastEvaluatedParameters(storage, ordinal.slices(include),
+                                        jumping_distribution.rows(include), last_eval);
+    std::cout << "stuff";
+    storage = OrdinalCompare(storage, ordinal.slices(include));
     // update counts of ordinal patterns
     counts = CountOrdinal(storage, ordinal, counts);
-    // index locations of currently found patterns in storage
-    vec match = MatchJumpDists(storage, ordinal);
     // write data to disk
     if (save) {
+      // index locations of currently found patterns in storage
+      vec match = MatchJumpDists(storage, ordinal);
       WriteFile(iteration, jumping_distribution, match, path);
     }
 

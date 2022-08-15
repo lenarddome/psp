@@ -6,4 +6,3 @@ importFrom("parallel", "clusterExport", "parApply", "makeCluster",
 importFrom("stats", "rnorm", "runif")
 importFrom("utils", "tail", "type.convert")
 importFrom("data.table", "data.table")
-importFrom("methods", "is")
