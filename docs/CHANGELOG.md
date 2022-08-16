@@ -6,18 +6,24 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 
 ## [Unreleased]
 
+## v0.5.8
+
 ### Added
 
-- c75d02f2ab9bc76a23502e807717d029be39608f Added a C++ implementation of the parameter space partitioning routine that will take over from `psp_global` and `psp_control`.
+- c75d02f2ab9bc76a23502e807717d029be39608f :sparkles: Added a C++ implementation of the parameter space partitioning routine that will take over from `psp_global` and `psp_control`.
 
 ### Changed
 
-- b52126debbc25f88c6c41d12810aaedeab23771c `psp_global` now has a Deprecated message. The function will be removed after we complete the development of `pspGlobal`.
-- 358eee7897a9fe3371ebba101f20baad6214609d :bug: fix global R seed interfering with random sampling 
+- b52126debbc25f88c6c41d12810aaedeab23771c :wastebasket: `psp_global` now has a Deprecated message. The function will be removed after we complete the development of `pspGlobal`.
+- 358eee7897a9fe3371ebba101f20baad6214609d :bug: fix global R seed interfering with random sampling
+- 56935439c4cbc4ba69b62f5ccfb5702c52e8f1d7 🐛 fix pspGlobal recruiting unique inequality matrices more than once
+- 56935439c4cbc4ba69b62f5ccfb5702c52e8f1d7 7648f47fd3081f2837af2556c12c476b15916bd3 🐛 fix population parameters having no effects
+- 3b3bd0d9da4f27d2ae7cd42432522c2f0d928a46 🚸 pspGlobal outputs maximum iterations run
+- 8ee7247eccc1a474d799404e775096f77ece623e :children_crossing: NA values are not allowed in model outputs
 
 ### Removed
 
-- c0f5f92e3ffb5753be9357725cea82767eee6936 `S3` class is removed due to redundancy and to avoid feature creep.
+- c0f5f92e3ffb5753be9357725cea82767eee6936 🔥 `S3` class is removed due to redundancy and to avoid feature creep.
 
 ## v0.4.1-beta
 

@@ -62,9 +62,7 @@ cube OrdinalCompare(cube discovered, cube predicted) {
     for (int y = 0; y < discovered.n_slices; y++) {
       mat base = discovered.slice(y);
       umat result = (base == current);
-      uvec comparisons_indices = result(trimatu_ind(size(result), 1));
-      uvec comparisons = result(comparisons_indices);
-      index(x, y) =  any(comparisons == 0);
+      index(x, y) =  any(vectorise(result) == 0);
     }
     if (all(index.row(x) == 1)) {
       cube update = join_slices(drawer, current);
@@ -84,9 +82,7 @@ mat LastEvaluatedParameters(cube discovered, cube predicted, mat jumping, mat ce
     for (uword y = 0; y < predicted.n_slices; y++) {
       mat base = predicted.slice(y);
       umat result = (base == current);
-      uvec comparisons_indices = result(trimatu_ind(size(result), 1));
-      uvec comparisons = result(comparisons_indices);
-      index(x, y) = any(comparisons == 0);
+      index(x, y) =  any(vectorise(result) == 0);
     }
     if (all(index.row(x))) {
       //  if there is a new region, appeng params to centers
@@ -110,8 +106,7 @@ rowvec CountOrdinal(cube updated_ordinal, cube predicted, rowvec counts) {
     for (uword y = 0; y < predicted.n_slices; y++) {
       mat base = predicted.slice(y);
       umat result = (base == current);
-      uvec comparisons = result(trimatu_ind(size(result), 1));
-      if (all(comparisons == 1)) {
+      if (all(vectorise(result) == 1)) {
         new_counts[x] += 1;
       }
     }
@@ -129,9 +124,7 @@ vec MatchJumpDists(cube updated_ordinal, cube predicted) {
     for (uword y = 0; y < predicted.n_slices; y++) {
       mat base = predicted.slice(y);
       umat result = (base == current);
-      uvec comparisons = result(trimatu_ind(size(result), 1));
-      // FIXME: this returns the wrong things
-      if (all(comparisons == 1)) {
+      if (all(vectorise(result) == 1)) {
         matches(y) = x;
       }
     }
@@ -253,7 +246,6 @@ List pspGlobal(Function model, List control, bool save = false,
                                            dimensions, radius);
     jumping_distribution = jumping_distribution + last_eval.rows(underpopulated);
     jumping_distribution = ClampParameters(jumping_distribution, lower, upper);
-
     // allocate cube for ordinal predictions
     cube ordinal(stimuli, stimuli, jumping_distribution.n_rows);
 
@@ -271,11 +263,12 @@ List pspGlobal(Function model, List control, bool save = false,
     last_eval = LastEvaluatedParameters(storage, ordinal.slices(include),
                                         jumping_distribution.rows(include),
                                         last_eval);
+
     storage = OrdinalCompare(storage, ordinal.slices(include));
 
     // update counts of ordinal patterns
     counts = CountOrdinal(storage, ordinal, counts);
-    underpopulated = find( counts < 300 );
+    underpopulated = find( counts < population );
 
     // write data to disk
     if (save) {
@@ -284,8 +277,8 @@ List pspGlobal(Function model, List control, bool save = false,
       WriteFile(iteration, jumping_distribution, match, path);
     }
 
-    // check if parameter_filled threshold is reached
-    if (iteration == max_iteration || all(counts > population)) {
+    // check if either of the parameter_filled thresholds is reached
+    if (iteration == max_iteration || underpopulated.n_elem == 0) {
       parameter_filled = TRUE;
     }
   }

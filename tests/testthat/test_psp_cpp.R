@@ -29,7 +29,7 @@ model <-  function(par, legacy = FALSE) {
 
 out2 <- pspGlobal(model = model,
                  control = list(iterations = 1000,
-                                population = 30,
+                                population = 20,
                                 radius = 1,
                                 lower = rep(0, 5),
                                 upper = rep(1, 5),
@@ -41,15 +41,23 @@ test_that("PSP finds all 100 regions in a 5 parameter model", {
               expect_equal(dim(out2$ordinal_pattern)[3], 100)
           })
 
-test_that("", {
+test_that("PSP population has an effect", {
   expect_true(out2$iterations < 1000)
   }
 )
 
-test_that("Unique unequality matrices only recruited once", {
+test_that("Part 1: Unique unequality matrices only recruited once", {
   expect_true(all(!(table(out2$ordinal_patterns) > 4)))
   }
 )
+
+foo <- lapply(seq(dim(out2$ordinal_patterns)[3]), function(x) out2$ordinal_patterns[ , , x])
+
+test_that("Part 2: PSP only recruits items once", {
+    expect_equal(dim(out2$ordinal_patterns)[3], length(foo))
+  }
+)
+
 
 out3 <- pspGlobal(model = model,
                  control = list(iterations = 100,

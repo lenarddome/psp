@@ -13,7 +13,7 @@ pspGlobal(model, control, save = FALSE, path = ".", quiet = FALSE)
 
 \arguments{
   \item{model}{The ordinal function. It should take a numeric vector (parameter set)
-      as its argument, and return an inequality matrix (Dome & Wills, n.d.) in a \code{matrix} format with `type=double`. NA values are allowed, see Note 2.}
+      as its argument, and return an inequality matrix (Dome & Wills, n.d.) in a \code{matrix} format with `type=double`. NA values are note allowed, see Note 2.}
   \item{control}{A \code{list()} of control arguments that tunes the behaviour of the parameter space partitioning routine. See Details for more information on what to include.}
   \item{save}{if \code{save = TRUE}, all evaluated parameters will be saved to disk. The deafult is \code{FALSE}.}
   \item{path}{If `save = TRUE`, the path to the file that will store all evaluated parameters. The default path is the current working directory.}
