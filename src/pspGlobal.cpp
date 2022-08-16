@@ -256,7 +256,6 @@ List pspGlobal(Function model, List control, bool save = false,
       ordinal.slice(i) = evaluate;
     }
 
-    std::cout << "predictions" << ordinal.n_slices << std::endl;
     // compare ordinal patterns to stored ones and update list
     uvec include = FindUniqueSlices(ordinal);
 
@@ -266,7 +265,7 @@ List pspGlobal(Function model, List control, bool save = false,
                                         last_eval);
 
     storage = OrdinalCompare(storage, ordinal.slices(include));
-    std::cout <<  "storage: " << storage.n_slices << std::endl;
+
     // update counts of ordinal patterns
     counts = CountOrdinal(storage, ordinal, counts);
     underpopulated = find( counts < population );
@@ -278,8 +277,8 @@ List pspGlobal(Function model, List control, bool save = false,
       WriteFile(iteration, jumping_distribution, match, path);
     }
 
-    // check if parameter_filled threshold is reached
-    if (iteration == max_iteration || all(counts > population)) {
+    // check if either of the parameter_filled thresholds is reached
+    if (iteration == max_iteration || underpopulated.n_elem == 0) {
       parameter_filled = TRUE;
     }
   }
