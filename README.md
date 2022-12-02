@@ -1,4 +1,4 @@
-# PSP
+![](./docs/logo.png)
 
 [![R-CMD-check](https://github.com/lenarddome/psp/actions/workflows/main.yml/badge.svg)](https://github.com/lenarddome/psp/actions/workflows/main.yml)
 [![](https://cranlogs.r-pkg.org/badges/grand-total/psp)](https://cran.r-project.org/package=psp)
