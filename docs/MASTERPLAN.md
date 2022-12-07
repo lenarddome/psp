@@ -11,7 +11,9 @@ Some aspects of `psp` we would like to improve are:
 - adding various statistics for summarizing `psp` results
 - finding methods to visualise `psp` outputs
 
-## [In the works]
+## TODO
 
-- [] `init` can be a matrix. Users should be able to define multiple jumping
-     distribution.
+- :sparkles: `init` can be a matrix. Users should be able to define multiple jumping distribution.
+- :zap: model evaluations should be able to happen in parallel
+- :sparkles: connect to external databases
+- :zap: allow sampling procedure where parameters are not uniformly distributed
