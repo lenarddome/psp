@@ -22,7 +22,7 @@ pspGlobal(model, control, save = FALSE, path = ".", quiet = FALSE)
 
 \details{
     This function implements the Parameter Space Partitioning algorithm
-    desribed by Pitt et al. (2006). The algorithm is as follows:
+    desribed by Pitt et al. (2006). The brief overview of the algorithm is as follows:
 
     0. Initialize parameter space.
 
@@ -40,17 +40,19 @@ pspGlobal(model, control, save = FALSE, path = ".", quiet = FALSE)
     parameter sets returns an already discovered pattern, add parameter set
     to their records. Return to Step 1.
 
-    This behaviour is further tuned by `control`, which needs to contain the following values:
+    This behaviour is further tuned by `control`, which needs to contain a list of the following values:
 
-    \code{population}{The number of parameter sets in each ordinal region, which serves as a threshold above which pspGlobal will not generate a new jumping distribution for a given ordinal pattern.}
-    \code{iterations}{The number of global iterations.}
+    \code{population}{The number of parameter sets in each ordinal region,
+        which serves as a threshold above which pspGlobal will not generate
+        a new jumping distribution for a given ordinal pattern.}
+    \code{iterations}{The number of global iterations. It has to be an integer. If emph{population} is not set or the regions have population less then the upper bound on their size, the function will stop after the set number of \emph{iterations}.}
     \code{lower, upper}{Vectors specifiying the lower and upper boundaries of
         the parameter space for each parameter. The i-th element of lower and
         upper bounds applies to the i-th parameter.}
     \code{init}{A vector of parameters to use as the first jumping
         distribution.}
     \code{radius}{The radius of the hypershere with n-dimensions to sample from.
-    Must be of type double.}
+        Must be of type double. If you are unsure what to set here, set it to 1.}
     \code{param_names}{A character vector that includes the names of each parameter.}
 
 }
@@ -59,18 +61,23 @@ pspGlobal(model, control, save = FALSE, path = ".", quiet = FALSE)
 
 The output is a list with the following items:
 
-    \item{ordinal_patterns}{A table with the ordinal patterns discovered and the
+    \item{ordinal_patterns}{A 3D array with the ordinal patterns found.
+    The place of the ordinal pattern corresponds to ordinal_counts.}
+
+    \item{ordinal_counts}{A table with the ordinal patterns discovered and the
     population of their corresponding region - the number of parameter sets
     discovered to produce the ordinal pattern.}
 
-    \item{ordinal_counts}{A 3D array with the ordinal patterns found.
-    The place of the ordinal pattern corresponds to ordinal_patterns.}
+    \item{iterations}{Number of iterations completed before reaching set
+    threshold.}
 
 }
 
 \keyword{computational modelling; parameter space partitioning; model evaluation}
 
 \references{
+
+    Dome, L. (n.d.) psp: an n-dimensional parameter space partitioning tool to explore model behaviour. \emph{Manuscript in preparation}.
 
     Dome, L., Wills, A. J. (n.d.) g-distance: Prediction, accommodation, and \emph{a priori} likelihood in formal psychological theorizing. \emph{Manuscript in preparation}.
 
