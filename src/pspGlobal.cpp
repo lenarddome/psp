@@ -187,15 +187,16 @@ List pspGlobal(Function model, List control, bool save = false,
   }
 
   double radius  = as<double>(control["radius"]);
-  rowvec  init = as<rowvec>(control["init"]);
+  mat init = as<mat>(control["init"]);
 
   colvec lower = as<colvec>(control["lower"]);
   colvec upper = as<colvec>(control["upper"]);
-  int dimensions = init.n_elem;
+  int dimensions = init.n_cols;
   // do some basic error checks
   if (dimensions != lower.n_elem || dimensions != upper.n_elem) {
     stop("init, lower and upper must have the same length.");
   }
+  int stimuli = as<int>(control["stimuli_dimensions"]);
   rowvec counts(1, fill::ones);  // keeps track of the population of ordinal regions
   cube ordinal;  // stores all evaluations of fn on jumping_distribution
   cube filtered; // stores all unique predictions
@@ -211,15 +212,39 @@ List pspGlobal(Function model, List control, bool save = false,
   Rcpp::Environment base_env("package:base");
   Rcpp::Function set_seed_r = base_env["set.seed"];
 
-  // evaluate first parameter set
-  NumericMatrix teatime = model(init);
-  const mat& evaluate = as<mat>(teatime);
-  int stimuli = evaluate.n_rows;
-  // last evaluated parameters
+  // // evaluate first parameter set
+  // NumericMatrix teatime = model(init);
+  // const mat& evaluate = as<mat>(teatime);
+  // int stimuli = evaluate.n_rows;
+  // // last evaluated parameters
   mat last_eval = init;
-  // add output to storage
-  storage = join_slices(storage, evaluate);
+  mat jumping_distribution = init;
+
+  // // add output to storages
+  // storage = join_slices(storage, evaluate);
+
+  cube first_ordinal(stimuli, stimuli, jumping_distribution.n_rows);
+
+
+  // evaluate jumping distributions
+  for (uword i = 0; i < jumping_distribution.n_rows; i++) {
+    NumericMatrix teatime = model(jumping_distribution.row(i));
+    const mat& evaluate = as<mat>(teatime);
+    first_ordinal.slice(i) = evaluate;
+  }
+
+  // compare ordinal patterns to stored ones and update list
+  uvec include = FindUniqueSlices(ordinal);
+
+  // update last evaluated parameters
+  last_eval = LastEvaluatedParameters(storage, ordinal.slices(include),
+                                      jumping_distribution.rows(include),
+                                      last_eval);
+
+  storage = OrdinalCompare(storage, ordinal.slices(include));
   counts = CountOrdinal(storage, ordinal, counts);
+
+  ////////////////////////////////////////////////////////////////
 
   if (save) {
     CreateFile(names, path);

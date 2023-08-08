@@ -49,12 +49,16 @@ pspGlobal(model, control, save = FALSE, path = ".", quiet = FALSE)
     \code{lower, upper}{Vectors specifiying the lower and upper boundaries of
         the parameter space for each parameter. The i-th element of lower and
         upper bounds applies to the i-th parameter.}
-    \code{init}{A vector of parameters to use as the first jumping
-        distribution.}
+    \code{init}{A marix of parameters to use as the first jumping distribution. 
+        Each row contains the parameter set, whereas columns correspond to 
+        freely varying paarameters of the model.}
     \code{radius}{The radius of the hypershere with n-dimensions to sample from.
         Must be of type double. If you are unsure what to set here, set it to 1.}
-    \code{param_names}{A character vector that includes the names of each parameter.}
-
+    \code{param_names}{A character vector that includes the names of each parameter.
+        The order of elements should correspond to the order of parameter columns in
+        init.}
+    \code{stimuli_dimensions}{A single integer that specifies the number of
+        stimuli dimensions for the ordinal pattern.}
 }
 
 \value{
