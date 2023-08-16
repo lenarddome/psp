@@ -109,7 +109,7 @@ psp_global <- function(fn, control = psp_control(), ..., quiet = FALSE) {
 
     .Deprecated(
         new = "pspGlobal", package = "psp",
-        msg = paste("This function is no longer maintained and will be pspGlobal in the future.")
+        msg = paste("This function is no longer maintained and is scheduled for removal.\nPlease use pspGlobal instead.")
     )
 
     ## declare all variables
