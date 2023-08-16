@@ -54,11 +54,15 @@ pspGlobal(model, control, save = FALSE, path = ".", quiet = FALSE)
         freely varying paarameters of the model.}
     \code{radius}{The radius of the hypershere with n-dimensions to sample from.
         Must be of type double. If you are unsure what to set here, set it to 1.}
-    \code{param_names}{A character vector that includes the names of each parameter.
+    \code{parameter_names}{A character vector that includes the names of each parameter.
         The order of elements should correspond to the order of parameter columns in
         init.}
-    \code{stimuli_dimensions}{A single integer that specifies the number of
-        stimuli dimensions for the ordinal pattern.}
+    \code{dimensionality}{A single integer that specifies the number of
+         dimensions for the inequality matrix. The inequality matrix is a strict
+         upper triangular matrix. The number of rows and columns is equal to each
+         other.}
+    \code{responses}{It is an integer that specifies the number of continuous
+        variables the model output before the ordinal function is applied. See Note 2.}
 }
 
 \value{
@@ -94,5 +98,6 @@ The output is a list with the following items:
 \note{
 
 1. NA values are usually a result of some parameter combination falling outside of what the model implementation can handle. It is best handled outside of the PSP routine, e.g. during the inequality matrix construction. For example, if NA is detected in the matrix, change all values to 99 before returning the output.
+2. Ideally, responses and dimensionality should be the same, but we can imagine a scenario where the dimensionality of the inequality matrix will be smaller than the number of responses. For example, when continuous variables compressed into a more compact format via clustering. 
 
 }

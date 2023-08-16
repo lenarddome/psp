@@ -129,7 +129,7 @@ vec MatchJumpDists(cube updated_ordinal, cube predicted) {
       }
     }
   }
-  return(matches);
+  return(matches + 1); // add one as c++ starts from 0
 }
 
 // create local csv file for storing coordinates
@@ -163,8 +163,8 @@ void WriteFile(int iteration, mat evaluation, vec matches,
 }
 
 // [[Rcpp::export]]
-List pspGlobal(Function model, List control, bool save = false,
-               std::string path = ".", bool quiet = false) {
+List pspGlobal(Function model, Function discretize, List control, bool save = false,
+               std::string path = ".", std::string extension = ".csv", bool quiet = false) {
   // setup environment
   bool parameter_filled = false;
   int iteration = 0;
@@ -196,15 +196,16 @@ List pspGlobal(Function model, List control, bool save = false,
   if (dimensions != lower.n_elem || dimensions != upper.n_elem) {
     stop("init, lower and upper must have the same length.");
   }
-  int stimuli = as<int>(control["stimuli_dimensions"]);
+  int dimensionality = as<int>(control["dimensionality"]);
+  int response_length = as<int>(control["responses"]);
   rowvec counts(1, fill::ones);  // keeps track of the population of ordinal regions
-  cube ordinal;  // stores all evaluations of fn on jumping_distribution
   cube filtered; // stores all unique predictions
   cube storage;  //  stores all unique ordinal patterns
-  CharacterVector names = as<CharacterVector>(control["param_names"]);
-  if (names.size() != dimensions) {
+  CharacterVector parameter_names = as<CharacterVector>(control["parameter_names"]);
+  if (parameter_names.size() != dimensions) {
     stop("Length of param_names must equal to the number of dimensions");
   }
+  CharacterVector stimuli_names = as<CharacterVector>(control["stimuli_names"]);
   List out;
 
   // seed has to be set at the global R level
@@ -212,25 +213,24 @@ List pspGlobal(Function model, List control, bool save = false,
   Rcpp::Environment base_env("package:base");
   Rcpp::Function set_seed_r = base_env["set.seed"];
 
-  // // evaluate first parameter set
-  // NumericMatrix teatime = model(init);
-  // const mat& evaluate = as<mat>(teatime);
-  // int stimuli = evaluate.n_rows;
-  // // last evaluated parameters
+  // evaluate first parameter sets
   mat last_eval = init;
   mat jumping_distribution = init;
+  mat continuous(jumping_distribution.n_rows, response_length);
 
-  // // add output to storages
-  // storage = join_slices(storage, evaluate);
 
-  cube first_ordinal(stimuli, stimuli, jumping_distribution.n_rows);
+  // create first ordinal storage
+  cube ordinal(dimensionality, dimensionality, jumping_distribution.n_rows);
 
 
   // evaluate jumping distributions
   for (uword i = 0; i < jumping_distribution.n_rows; i++) {
-    NumericMatrix teatime = model(jumping_distribution.row(i));
+    NumericVector probabilities = model(jumping_distribution.row(i));
+    NumericMatrix teatime = discretize(probabilities);
+    const rowvec& responses = as<rowvec>(probabilities);
+    continuous.row(i) = responses;
     const mat& evaluate = as<mat>(teatime);
-    first_ordinal.slice(i) = evaluate;
+    ordinal.slice(i) = evaluate;
   }
 
   // compare ordinal patterns to stored ones and update list
@@ -247,10 +247,11 @@ List pspGlobal(Function model, List control, bool save = false,
   ////////////////////////////////////////////////////////////////
 
   if (save) {
-    CreateFile(names, path);
-    WriteFile(0, conv_to<mat>::from(init),
-              vec(1, fill::value(0)),
-              path);
+    vec match = MatchJumpDists(storage, ordinal);
+    CreateFile(parameter_names, path + "_parameters" + extension);
+    CreateFile(stimuli_names, path + "_probabilities" + extension);
+    WriteFile(0, jumping_distribution, match, path + "_parameters" + extension);
+    WriteFile(0, continuous, match, path + "_probabilities" + extension);
   }
 
   // run parameter space partitioning until parameter is filled
@@ -272,11 +273,13 @@ List pspGlobal(Function model, List control, bool save = false,
     jumping_distribution = jumping_distribution + last_eval.rows(underpopulated);
     jumping_distribution = ClampParameters(jumping_distribution, lower, upper);
     // allocate cube for ordinal predictions
-    cube ordinal(stimuli, stimuli, jumping_distribution.n_rows);
+    ordinal.resize(dimensionality, dimensionality, jumping_distribution.n_rows);
+    continuous.resize(jumping_distribution.n_rows, response_length);
 
     // evaluate jumping distributions
     for (uword i = 0; i < jumping_distribution.n_rows; i++) {
-      NumericMatrix teatime = model(jumping_distribution.row(i));
+      NumericVector probabilities = model(jumping_distribution.row(i));
+      NumericMatrix teatime = discretize(probabilities);
       const mat& evaluate = as<mat>(teatime);
       ordinal.slice(i) = evaluate;
     }
@@ -299,7 +302,8 @@ List pspGlobal(Function model, List control, bool save = false,
     if (save) {
       // index locations of currently found patterns in storage
       vec match = MatchJumpDists(storage, ordinal);
-      WriteFile(iteration, jumping_distribution, match, path);
+      WriteFile(iteration, jumping_distribution, match, path + "_parameters" + extension);
+      WriteFile(0, continuous, match, path + "_probabilities" + extension);
     }
 
     // check if either of the parameter_filled thresholds is reached
