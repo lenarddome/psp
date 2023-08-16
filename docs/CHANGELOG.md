@@ -3,8 +3,17 @@
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
+Our versioning convenvtions are based on [Semantic Versioning](https://semver.org/).
 
 ## [Unreleased]
+
+## v1.0.0
+
+This release introduces breaking changes to the API.
+
+- 6d51dcef6af95699fd0064585dfd6b6745b90807 :boom: separated model evaluation functions from discretization functions
+- 6d51dcef6af95699fd0064585dfd6b6745b90807 :sparkles: allowed to save model outputs (continuous variables) to disk
+- d407392b9bc2f909e5f086790235ba50645537a6 :sparkles: allowed to define multiple starting points for the sampling
 
 ## v0.5.8
 

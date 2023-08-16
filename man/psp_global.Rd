@@ -68,10 +68,6 @@ of \code{PSP}. A \code{PSP} object is a list with the following items:
 
 }
 
-\seealso{
-  \code{\link{psp_control}}.
-}
-
 \keyword{computational modelling; parameter space; model evaluation}
 
 \references{

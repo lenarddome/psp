@@ -12,23 +12,25 @@ Rcpp::Rostream<false>& Rcpp::Rcerr = Rcpp::Rcpp_cerr_get();
 #endif
 
 // pspGlobal
-List pspGlobal(Function model, List control, bool save, std::string path, bool quiet);
-RcppExport SEXP _psp_pspGlobal(SEXP modelSEXP, SEXP controlSEXP, SEXP saveSEXP, SEXP pathSEXP, SEXP quietSEXP) {
+List pspGlobal(Function model, Function discretize, List control, bool save, std::string path, std::string extension, bool quiet);
+RcppExport SEXP _psp_pspGlobal(SEXP modelSEXP, SEXP discretizeSEXP, SEXP controlSEXP, SEXP saveSEXP, SEXP pathSEXP, SEXP extensionSEXP, SEXP quietSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< Function >::type model(modelSEXP);
+    Rcpp::traits::input_parameter< Function >::type discretize(discretizeSEXP);
     Rcpp::traits::input_parameter< List >::type control(controlSEXP);
     Rcpp::traits::input_parameter< bool >::type save(saveSEXP);
     Rcpp::traits::input_parameter< std::string >::type path(pathSEXP);
+    Rcpp::traits::input_parameter< std::string >::type extension(extensionSEXP);
     Rcpp::traits::input_parameter< bool >::type quiet(quietSEXP);
-    rcpp_result_gen = Rcpp::wrap(pspGlobal(model, control, save, path, quiet));
+    rcpp_result_gen = Rcpp::wrap(pspGlobal(model, discretize, control, save, path, extension, quiet));
     return rcpp_result_gen;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_psp_pspGlobal", (DL_FUNC) &_psp_pspGlobal, 5},
+    {"_psp_pspGlobal", (DL_FUNC) &_psp_pspGlobal, 7},
     {NULL, NULL, 0}
 };
 
