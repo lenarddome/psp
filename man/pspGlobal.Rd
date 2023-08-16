@@ -8,19 +8,36 @@
 }
 
 \usage{
-pspGlobal(model, control, save = FALSE, path = ".", quiet = FALSE)
+pspGlobal(model, discretize, control, save = FALSE, path = ".",
+          extension = ".csv", quiet = FALSE)
 }
 
 \arguments{
-  \item{model}{The ordinal function. It should take a numeric vector (parameter set)
-      as its argument, and return an inequality matrix (Dome & Wills, n.d.) in a \code{matrix} format with `type=double`. NA values are note allowed, see Note 2.}
-  \item{control}{A \code{list()} of control arguments that tunes the behaviour of the parameter space partitioning routine. See Details for more information on what to include.}
-  \item{save}{if \code{save = TRUE}, all evaluated parameters will be saved to disk. The deafult is \code{FALSE}.}
-  \item{path}{If `save = TRUE`, the path to the file that will store all evaluated parameters. The default path is the current working directory.}
-  \item{quiet}{If \code{FALSE} (default), print the number of the current iteration. If \code{TRUE}, do not print anything.}
+  \item{model}{ It should take a numeric vector (parameter set)
+   as its argument, and return a numeric vector of continuous variables.}
+  \item{discretize}{The inequality matrix constructor. It should take a numberic
+   vector of probabilities. It must return a matrix in a \code{matrix} format
+   with `type=double`. NA values are note allowed, see Note 1.}
+  \item{control}{A \code{list()} of control arguments that tunes the behaviour
+   of the parameter space partitioning routine. See Details for more information
+   on what to include.}
+  \item{save}{if \code{save = TRUE}, all evaluated parameters will be saved to
+   disk. The deafult is \code{FALSE}.}
+  \item{path}{If `save = TRUE`, the path to the file that will store all
+   evaluated parameters and continuous model outputs. The default path is the
+   current working directory. Evaluated parameters and continuous model outputs
+   are save separately, see Details.}
+  \item{extension}{If `save = TRUE`, the extension of the file that will store
+   all evaluated parameters and continuous model outputs. The default extension
+   is \code{.csv}.}
+  \item{quiet}{If \code{FALSE} (default), print the number of the current
+   iteration. If \code{TRUE}, do not print anything.}
 }
 
 \details{
+
+    \bold{Overview:}
+
     This function implements the Parameter Space Partitioning algorithm
     desribed by Pitt et al. (2006). The brief overview of the algorithm is as follows:
 
@@ -32,13 +49,16 @@ pspGlobal(model, control, save = FALSE, path = ".", quiet = FALSE)
 
     1. Pick a random jumping distribution from for each ordinal pattern from the
     sampling region defined by a hypershere with a center of the last recorded
-    parameter set for a given pattern. Clamp parameter values with their respective lower and upper bounds.
+    parameter set for a given pattern. Clamp parameter values with their
+    respective lower and upper bounds.
 
     2. Evaluate model on all new parameter sets.
 
     3. Record new patterns and their corresponding parameter sets. If the
     parameter sets returns an already discovered pattern, add parameter set
     to their records. Return to Step 1.
+
+    \bold{Tuning the behaviour of the algorithm via \code{control}:}
 
     This behaviour is further tuned by `control`, which needs to contain a list of the following values:
 
@@ -63,7 +83,16 @@ pspGlobal(model, control, save = FALSE, path = ".", quiet = FALSE)
          other.}
     \code{responses}{It is an integer that specifies the number of continuous
         variables the model output before the ordinal function is applied. See Note 2.}
-}
+
+    \strong{Saving files to disk:}
+
+    The evaluated parameter sets and their corresponding continuous model outputs
+    are saved to disk if \code{save = TRUE}. The evaluated parameter sets are saved in
+    a file with the name \code{path_parameters} and the extension specified,
+    whereas continuous model outputs are saved in a file with the name \code{path_continuous}
+    and the extension specified.
+
+    }
 
 \value{
 
