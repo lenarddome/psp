@@ -249,9 +249,9 @@ List pspGlobal(Function model, Function discretize, List control, bool save = fa
   if (save) {
     vec match = MatchJumpDists(storage, ordinal);
     CreateFile(parameter_names, path + "_parameters" + extension);
-    CreateFile(stimuli_names, path + "_probabilities" + extension);
+    CreateFile(stimuli_names, path + "_continuous" + extension);
     WriteFile(0, jumping_distribution, match, path + "_parameters" + extension);
-    WriteFile(0, continuous, match, path + "_probabilities" + extension);
+    WriteFile(0, continuous, match, path + "_continuous" + extension);
   }
 
   // run parameter space partitioning until parameter is filled
@@ -303,7 +303,7 @@ List pspGlobal(Function model, Function discretize, List control, bool save = fa
       // index locations of currently found patterns in storage
       vec match = MatchJumpDists(storage, ordinal);
       WriteFile(iteration, jumping_distribution, match, path + "_parameters" + extension);
-      WriteFile(0, continuous, match, path + "_probabilities" + extension);
+      WriteFile(0, continuous, match, path + "_continuous" + extension);
     }
 
     // check if either of the parameter_filled thresholds is reached
