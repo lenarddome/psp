@@ -65,22 +65,33 @@ pspGlobal(model, discretize, control, save = FALSE, path = ".",
     \code{population}{The number of parameter sets in each ordinal region,
         which serves as a threshold above which pspGlobal will not generate
         a new jumping distribution for a given ordinal pattern.}
+
     \code{iterations}{The number of global iterations. It has to be an integer. If emph{population} is not set or the regions have population less then the upper bound on their size, the function will stop after the set number of \emph{iterations}.}
+
     \code{lower, upper}{Vectors specifiying the lower and upper boundaries of
         the parameter space for each parameter. The i-th element of lower and
         upper bounds applies to the i-th parameter.}
+
     \code{init}{A marix of parameters to use as the first jumping distribution. 
         Each row contains the parameter set, whereas columns correspond to 
         freely varying paarameters of the model.}
+
     \code{radius}{The radius of the hypershere with n-dimensions to sample from.
         Must be of type double. If you are unsure what to set here, set it to 1.}
+
     \code{parameter_names}{A character vector that includes the names of each parameter.
         The order of elements should correspond to the order of parameter columns in
         init.}
+
+    \code{stimuli_names}{A character vector that includes the names of each continuous
+        model output. The order of elements should correspond to the order of
+        continuous model output in function model.}
+
     \code{dimensionality}{A single integer that specifies the number of
          dimensions for the inequality matrix. The inequality matrix is a strict
          upper triangular matrix. The number of rows and columns is equal to each
          other.}
+
     \code{responses}{It is an integer that specifies the number of continuous
         variables the model output before the ordinal function is applied. See Note 2.}
 

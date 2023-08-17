@@ -280,6 +280,8 @@ List pspGlobal(Function model, Function discretize, List control, bool save = fa
     for (uword i = 0; i < jumping_distribution.n_rows; i++) {
       NumericVector probabilities = model(jumping_distribution.row(i));
       NumericMatrix teatime = discretize(probabilities);
+      const rowvec& responses = as<rowvec>(probabilities);
+      continuous.row(i) = responses;
       const mat& evaluate = as<mat>(teatime);
       ordinal.slice(i) = evaluate;
     }
@@ -303,7 +305,7 @@ List pspGlobal(Function model, Function discretize, List control, bool save = fa
       // index locations of currently found patterns in storage
       vec match = MatchJumpDists(storage, ordinal);
       WriteFile(iteration, jumping_distribution, match, path + "_parameters" + extension);
-      WriteFile(0, continuous, match, path + "_continuous" + extension);
+      WriteFile(iteration, continuous, match, path + "_continuous" + extension);
     }
 
     // check if either of the parameter_filled thresholds is reached
