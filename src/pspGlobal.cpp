@@ -305,7 +305,7 @@ List pspGlobal(Function model, Function discretize, List control, bool save = fa
       // index locations of currently found patterns in storage
       vec match = MatchJumpDists(storage, ordinal);
       WriteFile(iteration, jumping_distribution, match, path + "_parameters" + extension);
-      WriteFile(0, continuous, match, path + "_continuous" + extension);
+      WriteFile(iteration, continuous, match, path + "_continuous" + extension);
     }
 
     // check if either of the parameter_filled thresholds is reached
