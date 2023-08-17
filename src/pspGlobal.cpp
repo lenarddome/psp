@@ -280,6 +280,8 @@ List pspGlobal(Function model, Function discretize, List control, bool save = fa
     for (uword i = 0; i < jumping_distribution.n_rows; i++) {
       NumericVector probabilities = model(jumping_distribution.row(i));
       NumericMatrix teatime = discretize(probabilities);
+      const rowvec& responses = as<rowvec>(probabilities);
+      continuous.row(i) = responses;
       const mat& evaluate = as<mat>(teatime);
       ordinal.slice(i) = evaluate;
     }
