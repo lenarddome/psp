@@ -1,5 +1,5 @@
 \name{psp-package}
-\alias{psp}
+\alias{psp-package}
 \docType{package}
 \title{
 
