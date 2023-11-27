@@ -21,8 +21,8 @@ pspGlobal(model, discretize, control, save = FALSE, path = ".",
   \item{control}{A \code{list()} of control arguments that tunes the behaviour
    of the parameter space partitioning routine. See Details for more information
    on what to include.}
-  \item{save}{if \code{save = TRUE}, all evaluated parameters will be saved to
-   disk. The deafult is \code{FALSE}.}
+  \item{save}{if \code{save = TRUE}, all evaluated parameters and continuous
+  model outputs will be saved to disk. The deafult is \code{FALSE}.}
   \item{path}{If `save = TRUE`, the path to the file that will store all
    evaluated parameters and continuous model outputs. The default path is the
    current working directory. Evaluated parameters and continuous model outputs
@@ -62,38 +62,23 @@ pspGlobal(model, discretize, control, save = FALSE, path = ".",
 
     This behaviour is further tuned by `control`, which needs to contain a list of the following values:
 
-    \code{population}{The number of parameter sets in each ordinal region,
-        which serves as a threshold above which pspGlobal will not generate
-        a new jumping distribution for a given ordinal pattern.}
+    \code{population}{The number of parameter sets in each ordinal region, which serves as a threshold above which pspGlobal will not generate a new jumping distribution for a given ordinal pattern.}
 
-    \code{iterations}{The number of global iterations. It has to be an integer. If emph{population} is not set or the regions have population less then the upper bound on their size, the function will stop after the set number of \emph{iterations}.}
+    \code{iterations}{The number of global iterations. It has to be an integer. If \emph{population} is not set or the regions have population less then the upper bound on their size, the function will stop after the set number of \emph{iterations}.}
 
-    \code{lower, upper}{Vectors specifiying the lower and upper boundaries of
-        the parameter space for each parameter. The i-th element of lower and
-        upper bounds applies to the i-th parameter.}
+    \code{lower, upper}{Vectors specifiying the lower and upper boundaries of the parameter space for each parameter. The i-th element of lower and upper bounds applies to the i-th parameter.}
 
-    \code{init}{A marix of parameters to use as the first jumping distribution. 
-        Each row contains the parameter set, whereas columns correspond to 
-        freely varying paarameters of the model.}
+    \code{init}{A marix of parameters to use as the first jumping distribution. Each row contains the parameter set, whereas columns correspond to freely varying paarameters of the model.}
 
-    \code{radius}{The radius of the hypershere with n-dimensions to sample from.
-        Must be of type double. If you are unsure what to set here, set it to 1.}
+    \code{radius}{The radius of the hypershere with n-dimensions to sample from. Must be of type double. If you are unsure what to set here, set it to 1.}
 
-    \code{parameter_names}{A character vector that includes the names of each parameter.
-        The order of elements should correspond to the order of parameter columns in
-        init.}
+    \code{parameter_names}{A character vector that includes the names of each parameter. The order of elements should correspond to the order of parameter columns in init.}
 
-    \code{stimuli_names}{A character vector that includes the names of each continuous
-        model output. The order of elements should correspond to the order of
-        continuous model output in function model.}
+    \code{stimuli_names}{A character vector that includes the names of each continuous model output. The order of elements should correspond to the order of continuous model output in function model.}
 
-    \code{dimensionality}{A single integer that specifies the number of
-         dimensions for the inequality matrix. The inequality matrix is a strict
-         upper triangular matrix. The number of rows and columns is equal to each
-         other.}
+    \code{dimensionality}{A single integer that specifies the number of dimensions for the inequality matrix. The inequality matrix is a strict upper triangular matrix. The number of rows and columns is equal to each other.}
 
-    \code{responses}{It is an integer that specifies the number of continuous
-        variables the model output before the ordinal function is applied. See Note 2.}
+    \code{responses}{It is an integer that specifies the number of continuous variables the model output before the ordinal function is applied. See Note 2.}
 
     \strong{Saving files to disk:}
 
@@ -116,8 +101,7 @@ The output is a list with the following items:
     population of their corresponding region - the number of parameter sets
     discovered to produce the ordinal pattern.}
 
-    \item{iterations}{Number of iterations completed before reaching set
-    threshold.}
+    \item{iterations}{Number of iterations completed before reaching set threshold.}
 
 }
 
