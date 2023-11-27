@@ -8,7 +8,7 @@ Our versioning convenvtions are based on [Semantic Versioning](https://semver.or
 ## [Unreleased]
 
 - 69ed02814ca5a53f773ce13f2ad8faf441ec05c6 :ambulance: continuous model output is not updated after first iteration
-- :memo: update package documentation to fix typo
+- 67fa59df93853e9a786286ee2024fb2ef9b1babe :memo: update package documentation to fix typo
 
 ## v1.0.0
 
