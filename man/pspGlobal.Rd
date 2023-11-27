@@ -62,23 +62,19 @@ pspGlobal(model, discretize, control, save = FALSE, path = ".",
 
     This behaviour is further tuned by `control`, which needs to contain a list of the following values:
 
-    \code{population}{The number of parameter sets in each ordinal region, which serves as a threshold above which pspGlobal will not generate a new jumping distribution for a given ordinal pattern.}
+    \itemize{
 
-    \code{iterations}{The number of global iterations. It has to be an integer. If \emph{population} is not set or the regions have population less then the upper bound on their size, the function will stop after the set number of \emph{iterations}.}
+    \item \code{population} The number of parameter sets in each ordinal region, which serves as a threshold above which pspGlobal will not generate a new jumping distribution for a given ordinal pattern. It has to be an integer.
+    \item \code{iterations} The number of global iterations. It has to be an integer. If \emph{population} is not set or the regions have population less then the upper bound on their size, the function will stop after the set number of \emph{iterations}. If \emph{population} is set, the function will stop after the set number of \emph{iterations} or when all regions have population greater than or equal to \emph{population}, whichever comes first.
+    \item \code{lower, upper} Vectors specifiying the lower and upper boundaries of the parameter space for each parameter. The i-th element of lower and upper bounds applies to the i-th parameter. If the parameter is not bounded, set the lower and upper bound to -Inf and Inf respectively.
+    \item \code{init} A marix of parameters to use as the first jumping distribution. Each row contains the parameter set, whereas columns correspond to freely varying paarameters of the model. The number of columns must be equal to the number of parameters in the model. The number of rows is arbitrary.
+    \item \code{radius} The radius of the hypershere with n-dimensions to sample from. Must be of type double. If you are unsure what to set here, set it to 1. 
+    \item \code{parameter_names} A character vector that includes the names of each parameter. The order of elements should correspond to the order of parameter columns in init.
+    \item \code{stimuli_names} A character vector that includes the names of each continuous model output. The order of elements should correspond to the order of continuous model output in function model.
+    \item \code{dimensionality} A single integer that specifies the number of dimensions for the inequality matrix. The inequality matrix is a strict upper triangular matrix. The number of rows and columns is equal to each other.
+    \item \code{responses} It is an integer that specifies the number of continuous variables the model output before the ordinal function is applied. See Note 2.
 
-    \code{lower, upper}{Vectors specifiying the lower and upper boundaries of the parameter space for each parameter. The i-th element of lower and upper bounds applies to the i-th parameter.}
-
-    \code{init}{A marix of parameters to use as the first jumping distribution. Each row contains the parameter set, whereas columns correspond to freely varying paarameters of the model.}
-
-    \code{radius}{The radius of the hypershere with n-dimensions to sample from. Must be of type double. If you are unsure what to set here, set it to 1.}
-
-    \code{parameter_names}{A character vector that includes the names of each parameter. The order of elements should correspond to the order of parameter columns in init.}
-
-    \code{stimuli_names}{A character vector that includes the names of each continuous model output. The order of elements should correspond to the order of continuous model output in function model.}
-
-    \code{dimensionality}{A single integer that specifies the number of dimensions for the inequality matrix. The inequality matrix is a strict upper triangular matrix. The number of rows and columns is equal to each other.}
-
-    \code{responses}{It is an integer that specifies the number of continuous variables the model output before the ordinal function is applied. See Note 2.}
+    }
 
     \strong{Saving files to disk:}
 
@@ -109,13 +105,11 @@ The output is a list with the following items:
 
 \references{
 
-    Dome, L. (n.d.) psp: an n-dimensional parameter space partitioning tool to explore model behaviour. \emph{Manuscript in preparation}.
+    Dome, L., Wills, A. J. (2023) g-distance: On the comparison of model and human heterogeneity. PsyArxiv. \doi{10.31234/osf.io/ygmcj}.
 
-    Dome, L., Wills, A. J. (n.d.) g-distance: Prediction, accommodation, and \emph{a priori} likelihood in formal psychological theorizing. \emph{Manuscript in preparation}.
+    Pitt, M. A., Kim, W., Navarro, D. J., & Myung, J. I. (2006). Global model analysis by parameter space partitioning. Psychological Review, 113(1), 57. \doi{10.1037/0033-295X.113.1.57}.
 
-    Pitt, M. A., Kim, W., Navarro, D. J., & Myung, J. I. (2006). Global model analysis by parameter space partitioning. Psychological Review, 113(1), 57.
-
-    Weisstein, Eric W. "Hypersphere Point Picking." From MathWorld--A Wolfram Web Resource. https://mathworld.wolfram.com/HyperspherePointPicking.html
+    Weisstein, Eric W. "Hypersphere Point Picking." From MathWorld--A Wolfram Web Resource. \href{https://mathworld.wolfram.com/HyperspherePointPicking.html}{https://mathworld.wolfram.com/HyperspherePointPicking.html}. Accessed 2021-09-30.
 
 }
 
