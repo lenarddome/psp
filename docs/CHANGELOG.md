@@ -5,7 +5,7 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/)
 Our versioning convenvtions are based on [Semantic Versioning](https://semver.org/).
 
-## [Unreleased]
+## v1.0.2
 
 - 69ed02814ca5a53f773ce13f2ad8faf441ec05c6 :ambulance: continuous model output is not updated after first iteration
 - 67fa59df93853e9a786286ee2024fb2ef9b1babe :memo: update package documentation to fix typo

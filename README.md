@@ -20,15 +20,17 @@ A BibTeX entry for LaTeX users is
   @Manual{,
     title = {psp: Parameter Space Partitioning MCMC for Global Model Evaluation},
     author = {Lenard Dome and {Andy Wills}},
-    year = {2021},
-    note = {R package version 0.1},
+    year = {2023},
+    note = {R package version 1.0.2},
     url = {https://CRAN.R-project.org/package=psp},
   }
 ```
 
-## Support
+## Disclaimer
 
-<a href="https://www.buymeacoffee.com/lenarddome" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/default-yellow.png" alt="Buy Me A Coffee" height="57"></a>
+This package only recieves maintenance updates.
+It is not actively developed.
+If you would like to contribute, please contact me (@lenarddome).
 
 ## Install
 
