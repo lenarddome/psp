@@ -48,7 +48,7 @@ devtools::install_github("lenarddome/psp")
 
 ## About `psp`
 
-- [A short intro and manual](https://lenarddome.github.io/software/psp/)
+- [A short intro and manual](https://lenarddome.com/software/psp/)
 - [A brief blog post](https://www.andywills.info/2021-06-23-psp/)
 
 ## Philosophy
