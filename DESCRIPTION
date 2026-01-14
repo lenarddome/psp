@@ -8,7 +8,7 @@ Authors@R: c(person("Lenard", "Dome",
                    role = c("aut", "cre")),
              person("Andy Wills", role = c("aut")))
 Description: Implements an n-dimensional parameter space partitioning algorithm for evaluating the global behaviour of formal computational models as described by Pitt, Kim, Navarro and Myung (2006) <doi:10.1037/0033-295X.113.1.57>.
-License: GPL (>= 3) + file LICENSE
+License: GPL (>= 3)
 URL: https://github.com/lenarddome/psp
 BugReports: https://github.com/lenarddome/psp/issues
 Imports: Rcpp (>= 1.0.8.3),
