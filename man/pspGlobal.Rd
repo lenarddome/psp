@@ -101,8 +101,6 @@ The output is a list with the following items:
 
 }
 
-\keyword{computational modelling; parameter space partitioning; model evaluation}
-
 \references{
 
     Dome, L., Wills, A. J. (2023) g-distance: On the comparison of model and human heterogeneity. PsyArxiv. \doi{10.31234/osf.io/ygmcj}.

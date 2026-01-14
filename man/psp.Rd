@@ -17,8 +17,6 @@ Please cite the package in publications. Use \code{citation("psp")}.
 
 }
 
-\keyword{computational modelling; parameter space partitioning; model evaluation}
-
 \author{
 
     Lenard Dome

@@ -68,8 +68,6 @@ of \code{PSP}. A \code{PSP} object is a list with the following items:
 
 }
 
-\keyword{computational modelling; parameter space; model evaluation}
-
 \references{
 
     Pitt, M. A., Kim, W., Navarro, D. J., & Myung, J. I. (2006). Global model analysis by parameter space partitioning. Psychological Review, 113(1), 57.
