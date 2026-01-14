@@ -2,6 +2,7 @@
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
 #include <fstream>
+#include <limits>
 
 // [[Rcpp::depends(RcppArmadillo)]]
 using namespace Rcpp;
@@ -174,16 +175,20 @@ List pspGlobal(Function model, Function discretize, List control, bool save = fa
   int max_iteration = as<int>(control["iterations"]);
   int population = as<int>(control["population"]);
 
-  if (!max_iteration) {
-    max_iteration = datum::inf;
-  }
+  const int kIntMax = std::numeric_limits<int>::max();
+  const bool iteration_unbounded = (max_iteration == 0);
+  const bool population_unbounded = (population == 0);
 
-  if (!population) {
-    population =  datum::inf;
-  }
-
-  if (population == datum::inf && max_iteration == datum::inf) {
+  if (iteration_unbounded && population_unbounded) {
     stop("A resonable threshold must be set by either adjusting iteration or population.");
+  }
+
+  if (iteration_unbounded) {
+    max_iteration = kIntMax;
+  }
+
+  if (population_unbounded) {
+    population = kIntMax;
   }
 
   double radius  = as<double>(control["radius"]);
