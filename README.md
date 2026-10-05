@@ -12,7 +12,7 @@ Parameter Space Partitioning MCMC for Global Model Evaluation (Pitt, Kim, Navarr
 
 To cite package ‘psp’ in publications use:
 
-  Lenard Dome and Andy Wills (2021). psp: Parameter Space Partitioning MCMC for Global Model Evaluation. R package version 0.1. https://CRAN.R-project.org/package=psp
+  Lenard Dome and Andy Wills (2026). psp: Parameter Space Partitioning MCMC for Global Model Evaluation. R package version 1.0.6. https://CRAN.R-project.org/package=psp
 
 A BibTeX entry for LaTeX users is
 
@@ -20,8 +20,8 @@ A BibTeX entry for LaTeX users is
   @Manual{,
     title = {psp: Parameter Space Partitioning MCMC for Global Model Evaluation},
     author = {Lenard Dome and {Andy Wills}},
-    year = {2023},
-    note = {R package version 1.0.2},
+    year = {2026},
+    note = {R package version 1.0.6},
     url = {https://CRAN.R-project.org/package=psp},
   }
 ```

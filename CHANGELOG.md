@@ -7,6 +7,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [1.0.6] - 2026-10-05
+
 Sampling results differ from 1.0.5 for the same seed, because the fixes below change the path the sampler takes.
 
 ### Added
@@ -88,7 +90,8 @@ Released on [CRAN](https://cran.r-project.org/package=psp). This version introdu
 - `pspGlobal` recruited unique inequality matrices more than once ([5693543](https://github.com/lenarddome/psp/commit/56935439c4cbc4ba69b62f5ccfb5702c52e8f1d7)).
 - Population parameters had no effect ([5693543](https://github.com/lenarddome/psp/commit/56935439c4cbc4ba69b62f5ccfb5702c52e8f1d7), [7648f47](https://github.com/lenarddome/psp/commit/7648f47fd3081f2837af2556c12c476b15916bd3)).
 
-[Unreleased]: https://github.com/lenarddome/psp/compare/v1.0.5...HEAD
+[Unreleased]: https://github.com/lenarddome/psp/compare/v1.0.6...HEAD
+[1.0.6]: https://github.com/lenarddome/psp/compare/v1.0.5...v1.0.6
 [1.0.5]: https://github.com/lenarddome/psp/compare/v1.0.2...v1.0.5
 [1.0.2]: https://github.com/lenarddome/psp/compare/v1.0.0...v1.0.2
 [1.0.0]: https://github.com/lenarddome/psp/compare/v0.5.8...v1.0.0
