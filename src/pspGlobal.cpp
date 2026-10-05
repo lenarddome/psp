@@ -1,6 +1,7 @@
 // Copyright 2022 <Lenard Dome> [legal/copyright]
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
+#include <cstring>
 #include <fstream>
 #include <limits>
 #include <string>
@@ -35,6 +36,75 @@ void ClampParameters(mat &jumping_distribution, const colvec &lower, const colve
   {
     jumping_distribution.col(i).clamp(lower[i], upper[i]);
   }
+}
+
+// everything the evaluation loop reads and writes; plain data only, because an
+// R error inside the loop jumps straight out of it without running destructors
+struct EvaluationBatch
+{
+  SEXP model;
+  SEXP discretize;
+  const double *jumping; // rows x dimensions, column-major
+  int rows;
+  int dimensions;
+  int responses;
+  int dimensionality;
+  double *continuous; // rows x responses, column-major
+  double *ordinal;    // dimensionality x dimensionality x rows
+};
+
+// evaluates model and discretize on every row of the batch
+// runs inside a single Rcpp::unwindProtect instead of one per R call,
+// because every protected call costs a setjmp, which is a syscall on macOS
+SEXP EvaluateBatch(void *data)
+{
+  const EvaluationBatch *batch = static_cast<EvaluationBatch *>(data);
+  const int cells = batch->dimensionality * batch->dimensionality;
+  SEXP model_call = PROTECT(Rf_lang2(batch->model, R_NilValue));
+  SEXP discretize_call = PROTECT(Rf_lang2(batch->discretize, R_NilValue));
+  for (int i = 0; i < batch->rows; i++)
+  {
+    SEXP parameters = PROTECT(Rf_allocVector(REALSXP, batch->dimensions));
+    for (int k = 0; k < batch->dimensions; k++)
+    {
+      REAL(parameters)[k] = batch->jumping[i + k * batch->rows];
+    }
+    SETCADR(model_call, parameters);
+    SEXP responses = PROTECT(Rf_eval(model_call, R_GlobalEnv));
+    if (!Rf_isNumeric(responses))
+    {
+      Rf_error("model must return a numeric vector, not %s",
+               Rf_type2char(TYPEOF(responses)));
+    }
+    if (Rf_xlength(responses) != batch->responses)
+    {
+      Rf_error("model returned %d values, but control$responses is %d",
+               (int)Rf_xlength(responses), batch->responses);
+    }
+    responses = PROTECT(Rf_coerceVector(responses, REALSXP));
+    for (int k = 0; k < batch->responses; k++)
+    {
+      batch->continuous[i + k * batch->rows] = REAL(responses)[k];
+    }
+
+    SETCADR(discretize_call, responses);
+    SEXP pattern = PROTECT(Rf_eval(discretize_call, R_GlobalEnv));
+    if (!Rf_isMatrix(pattern) || !Rf_isNumeric(pattern))
+    {
+      Rf_error("discretize must return a numeric matrix");
+    }
+    if (Rf_nrows(pattern) != batch->dimensionality ||
+        Rf_ncols(pattern) != batch->dimensionality)
+    {
+      Rf_error("discretize returned a %d x %d matrix, but control$dimensionality is %d",
+               Rf_nrows(pattern), Rf_ncols(pattern), batch->dimensionality);
+    }
+    pattern = PROTECT(Rf_coerceVector(pattern, REALSXP));
+    std::memcpy(batch->ordinal + (R_xlen_t)i * cells, REAL(pattern), cells * sizeof(double));
+    UNPROTECT(5);
+  }
+  UNPROTECT(2);
+  return (R_NilValue);
 }
 
 // hash key of an ordinal matrix: two matrices share a key if they are identical,
@@ -205,13 +275,10 @@ List pspGlobal(Function model, Function discretize, List control, bool save = fa
   auto evaluate = [&](const mat &jumping) {
     ordinal.set_size(dimensionality, dimensionality, jumping.n_rows);
     continuous.set_size(jumping.n_rows, response_length);
-    for (uword i = 0; i < jumping.n_rows; i++)
-    {
-      NumericVector probabilities = model(jumping.row(i));
-      NumericMatrix teatime = discretize(probabilities);
-      continuous.row(i) = as<rowvec>(probabilities);
-      ordinal.slice(i) = as<mat>(teatime);
-    }
+    EvaluationBatch batch = {model, discretize, jumping.memptr(),
+                             (int)jumping.n_rows, dimensions, response_length,
+                             dimensionality, continuous.memptr(), ordinal.memptr()};
+    Rcpp::unwindProtect(&EvaluateBatch, &batch);
   };
 
   // evaluate first parameter sets
