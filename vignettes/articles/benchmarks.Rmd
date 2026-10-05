@@ -1,0 +1,542 @@
+---
+title: "Benchmarks"
+description: >
+  Speed, correctness and region discovery of pspGlobal in psp 1.0.6
+  compared with 1.0.5, measured per commit on one machine.
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = FALSE)
+
+# the results live in benchmarks/results at the root of the repository
+find_root <- function(path = getwd()) {
+  while (!file.exists(file.path(path, "DESCRIPTION"))) {
+    parent <- dirname(path)
+    if (parent == path) stop("Cannot find the package root above ", getwd())
+    path <- parent
+  }
+  path
+}
+results <- file.path(find_root(), "benchmarks", "results")
+read <- function(name) read.csv(file.path(results, paste0(name, ".csv")))
+med <- function(x) as.numeric(median(x))
+num <- function(x, digits = 0) formatC(x, format = "f", digits = digits, big.mark = ",")
+
+old_build <- "1.0.5"
+new_build <- "cf77c56"
+measured <- list(
+  machine = "Apple M2 Pro, 10 cores, 16 GB, macOS 27.0.1",
+  r = "R 4.6.1, single-threaded",
+  compiler = "Apple clang 21.0.0, -O2",
+  packages = "Rcpp 1.1.2, RcppArmadillo 15.6.0.1",
+  date = "5 October 2026"
+)
+
+## time per run
+workloads <- read("workloads")
+runs <- function(build, key) workloads[workloads$build == build & workloads$workload == key, ]
+workload_rows <- list(
+  list(key = "test model, pop 10", label = "Test-suite model",
+       detail = "100 regions, 5 parameters, population 10"),
+  list(key = "100 regions, pop 20, cap 1500", label = "100 regions",
+       detail = "cheap model, population 20, cap 1,500"),
+  list(key = "300 regions, 100 iterations", label = "300 regions",
+       detail = "cheap model, 100 iterations"),
+  list(key = "300 regions, 100 iterations, save", label = "300 regions, saving",
+       detail = "the same with save = TRUE"),
+  list(key = "1000 regions, 100 iterations", label = "1,000 regions",
+       detail = "cheap model, 100 iterations")
+)
+workload_data <- lapply(workload_rows, function(w) {
+  list(label = w$label, detail = w$detail, seeds = nrow(runs(new_build, w$key)),
+       old = med(runs(old_build, w$key)$seconds), new = med(runs(new_build, w$key)$seconds))
+})
+capped_old <- runs(old_build, workload_rows[[2]]$key)
+capped_new <- runs(new_build, workload_rows[[2]]$key)
+
+## time per evaluation with a near-free model
+overhead <- read("overhead")
+overhead_data <- lapply(c(old_build, "fe188ef", "ee4e8b7", new_build), function(b) {
+  d <- overhead[overhead$build == b, ]
+  list(label = b, old = b == old_build, total = med(d$total_us),
+       callbacks = med(d$callbacks_us), difference = med(d$framework_us),
+       evaluations = med(d$evaluations))
+})
+callbacks_us <- med(overhead$callbacks_us)
+
+## cost of saving
+save <- read("save")
+save_rows <- list(
+  list(build = old_build, label = "1.0.5", detail = "ostream, 6 digits", old = TRUE),
+  list(build = "fe188ef", label = "fe188ef", detail = "ostream, 15 digits", old = FALSE),
+  list(build = "ee4e8b7", label = "ee4e8b7", detail = "ostream, 15 digits", old = FALSE),
+  list(build = new_build, label = "cf77c56, to_chars", detail = "exact, shortest form", old = FALSE),
+  list(build = "cf77c56-fallback", label = "cf77c56, fallback", detail = "exact, %.17g", old = FALSE)
+)
+save_data <- lapply(save_rows, function(s) {
+  d <- save[save$build == s$build, ]
+  list(label = s$label, detail = s$detail, old = s$old, value = med(d$save_us), mb = med(d$mb))
+})
+save_old <- save_data[[1]]
+save_new <- save_data[[4]]
+save_fallback <- save_data[[5]]
+
+## regions found
+discovery <- read("discovery")
+discovery_data <- lapply(c(old_build, new_build), function(b) {
+  d <- discovery[discovery$build == b, ]
+  list(label = if (b == old_build) "1.0.5" else "1.0.6", old = b == old_build,
+       runs = lapply(seq_len(nrow(d)), function(i) list(
+         seed = d$seed[i], regions = d$regions[i], evaluations = d$evaluations[i],
+         iterations = d$iterations[i], filled = isTRUE(as.logical(d$filled[i])))),
+       median = list(regions = med(d$regions), evaluations = med(d$evaluations)))
+})
+unfilled <- tapply(!as.logical(discovery$filled), discovery$build, sum)
+
+chart_data <- list(workloads = workload_data, overhead = overhead_data,
+                   callbacks_us = callbacks_us, save = save_data, discovery = discovery_data)
+
+html_table <- function(df, align = NULL) {
+  knitr::kable(df, format = "html", align = align, table.attr = 'class="table"',
+               escape = FALSE, row.names = FALSE)
+}
+```
+
+```{=html}
+<style>
+.pb-figures { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1rem; margin: 1.5rem 0 2rem; }
+.pb-figure { border-top: 2px solid var(--bs-link-color); padding-top: 0.5rem; display: grid; gap: 0.2rem; align-content: start; }
+.pb-figure .pb-label { font-size: 0.875rem; color: var(--bs-secondary-color); }
+.pb-figure .pb-value { font-size: 1.75rem; font-weight: 600; line-height: 1.15; color: var(--bs-body-color); }
+.pb-figure .pb-from { font-size: 0.8125rem; color: var(--bs-secondary-color); }
+@media (max-width: 576px) { .pb-figures { grid-template-columns: 1fr; } }
+.pb-chart { border: 1px solid var(--bs-border-color); border-radius: var(--bs-border-radius); padding: 1rem 1rem 0.5rem; margin: 1rem 0 1.5rem; }
+.pb-chart-head { display: flex; flex-wrap: wrap; justify-content: space-between; gap: 0.25rem 1rem; align-items: baseline; margin-bottom: 0.5rem; }
+.pb-chart-title { font-weight: 600; }
+.pb-legend { display: flex; flex-wrap: wrap; gap: 0.25rem 1rem; font-size: 0.875rem; color: var(--bs-secondary-color); }
+.pb-legend span { display: inline-flex; align-items: center; gap: 0.4rem; }
+.pb-key { width: 10px; height: 10px; border-radius: 50%; display: inline-block; }
+.pb-key.pb-old-bg { background: var(--bs-gray-600); }
+.pb-key.pb-new-bg { background: var(--bs-link-color); }
+.pb-plot { position: relative; min-width: 0; }
+.pb-plot svg { display: block; width: 100%; height: auto; overflow: visible; }
+.pb-plot text { font-family: var(--bs-body-font-family); fill: var(--bs-secondary-color); }
+.pb-plot .pb-tick { font-family: var(--bs-font-monospace); font-size: 11px; fill: var(--bs-secondary-color); }
+.pb-plot .pb-val { font-family: var(--bs-font-monospace); font-size: 12px; fill: var(--bs-body-color); }
+.pb-plot .pb-name { font-size: 13px; fill: var(--bs-body-color); }
+.pb-plot .pb-note { font-size: 11px; fill: var(--bs-secondary-color); }
+.pb-plot .pb-grid { stroke: var(--bs-border-color-translucent); stroke-width: 1; }
+.pb-plot .pb-axis { stroke: var(--bs-border-color); stroke-width: 1; }
+.pb-plot .pb-connector { stroke: var(--bs-border-color); stroke-width: 2; stroke-linecap: round; }
+.pb-plot .pb-ref { stroke: var(--bs-secondary-color); stroke-width: 1; }
+.pb-plot .pb-old { fill: var(--bs-gray-600); }
+.pb-plot .pb-new { fill: var(--bs-link-color); }
+.pb-plot .pb-ring { stroke: var(--bs-body-bg); stroke-width: 2; }
+.pb-plot .pb-hollow-old { fill: var(--bs-body-bg); stroke: var(--bs-gray-600); stroke-width: 1.5; }
+.pb-plot .pb-hollow-new { fill: var(--bs-body-bg); stroke: var(--bs-link-color); stroke-width: 1.5; }
+.pb-plot .pb-hit { fill: transparent; }
+.pb-tip { position: absolute; pointer-events: none; background: var(--bs-body-color); color: var(--bs-body-bg); font-size: 0.8125rem; line-height: 1.4; padding: 0.4rem 0.6rem; border-radius: var(--bs-border-radius); transform: translate(-50%, calc(-100% - 10px)); white-space: nowrap; z-index: 2; }
+.pb-tip .pb-num { font-family: var(--bs-font-monospace); }
+.pb-caption { font-size: 0.875rem; color: var(--bs-secondary-color); margin: 0.5rem 0; }
+.pb-chart details { border-top: 1px solid var(--bs-border-color-translucent); padding: 0.5rem 0; }
+.pb-chart summary { font-size: 0.875rem; color: var(--bs-secondary-color); cursor: pointer; width: fit-content; }
+.pb-chart .table { font-size: 0.875rem; margin: 0.5rem 0 0; }
+</style>
+```
+
+psp 1.0.6 fixes the sampler's centre bookkeeping and removes almost all of the time `pspGlobal()` spends outside your model. This page measures each change against 1.0.5 on the same machine. The results and the scripts that produced them are in [`benchmarks/`](https://github.com/lenarddome/psp/tree/main/benchmarks) on GitHub.
+
+```{r figures, results = "asis"}
+figure <- function(label, value, from) {
+  sprintf('<div class="pb-figure"><div class="pb-label">%s</div><div class="pb-value">%s</div><div class="pb-from">%s</div></div>',
+          label, value, from)
+}
+cat("```{=html}\n<div class=\"pb-figures\">",
+    figure("Time per evaluation, near-free model",
+           paste(num(overhead_data[[4]]$total, 1), "µs"),
+           paste("was", num(overhead_data[[1]]$total), "µs in 1.0.5")),
+    figure("100-region run",
+           paste(num(workload_data[[2]]$new, 3), "s"),
+           paste("was", num(workload_data[[2]]$old, 1), "s, stopped at the cap")),
+    figure("Cost of saving, per evaluation",
+           paste(num(save_new$value), "µs"),
+           paste("was", num(save_old$value), "µs in 1.0.5")),
+    "</div>\n```\n", sep = "\n")
+```
+
+## Time per run
+
+Each workload ran 3 to 10 times with different seeds; dots show the median wall-clock time of one complete `pspGlobal()` run. The cheap toy models make the package's own overhead visible. With the test-suite model, most of the time is the model itself.
+
+```{=html}
+<div class="pb-chart">
+  <div class="pb-chart-head">
+    <div class="pb-chart-title">Median seconds per run, log scale</div>
+    <div class="pb-legend"><span><i class="pb-key pb-old-bg"></i>1.0.5</span><span><i class="pb-key pb-new-bg"></i>1.0.6</span></div>
+  </div>
+  <div class="pb-plot" id="pb-workloads"></div>
+  <p class="pb-caption">The 100-region run in 1.0.5 never filled its regions and stopped at the 1,500-iteration cap; 1.0.6 fills them and stops on its own.</p>
+  <details><summary>Show the data</summary>
+```
+
+```{r workloads-table, results = "asis"}
+cat(html_table(data.frame(
+  Workload = sapply(workload_data, `[[`, "label"),
+  Seeds = sapply(workload_data, `[[`, "seeds"),
+  `1.0.5 (s)` = num(sapply(workload_data, `[[`, "old"), 3),
+  `1.0.6 (s)` = num(sapply(workload_data, `[[`, "new"), 3),
+  `Speed-up` = paste0(num(sapply(workload_data, function(w) w$old / w$new), 1), "×"),
+  check.names = FALSE
+), align = "lrrrr"))
+```
+
+```{=html}
+  </details>
+</div>
+```
+
+## Where the overhead went
+
+To isolate the package's own cost, this test uses a model that does almost nothing: it returns its parameters, and `discretize` bins them into 1,024 grid cells. Calling those two R functions from a plain R loop takes `r num(callbacks_us, 1)` µs per evaluation, marked by the vertical line. Anything to the right of it is time `pspGlobal()` adds. From `ee4e8b7` on, the remaining gap is within measurement noise.
+
+```{=html}
+<div class="pb-chart">
+  <div class="pb-chart-head">
+    <div class="pb-chart-title">Time per evaluation with a near-free model, log scale</div>
+  </div>
+  <div class="pb-plot" id="pb-overhead"></div>
+  <p class="pb-caption">Median of 3 runs of 150 iterations each, about 1,024 patterns. The difference column subtracts two timings, so values near zero are noise.</p>
+  <details><summary>Show the data</summary>
+```
+
+```{r overhead-table, results = "asis"}
+cat(html_table(data.frame(
+  Build = sapply(overhead_data, `[[`, "label"),
+  Evaluations = num(sapply(overhead_data, `[[`, "evaluations")),
+  `Total per evaluation (µs)` = num(sapply(overhead_data, `[[`, "total"), 2),
+  `R calls alone (µs)` = num(sapply(overhead_data, `[[`, "callbacks"), 2),
+  `Difference (µs)` = num(sapply(overhead_data, `[[`, "difference"), 2),
+  check.names = FALSE
+), align = "lrrrr"))
+```
+
+```{=html}
+  </details>
+</div>
+```
+
+The three code commits:
+
+- `fe188ef` fix: one hash-table pass replaces five pairwise loops over every stored pattern, and fixes the centre bug.
+- `ee4e8b7` perf: one error-protected block per iteration instead of one per R call, which removes two `setjmp` system calls per call on macOS.
+- `cf77c56` perf: `std::to_chars` for saved csv rows. It only affects `save = TRUE`, shown below.
+
+## The centre bug
+
+Each region is explored from the last point that produced its pattern. In 1.0.5, `LastEvaluatedParameters` added a row for every stored pattern that was *not* seen in an iteration, instead of for every new one. Rows then stopped lining up with patterns, and new regions were explored from a point in another region.
+
+The table comes from an instrumented copy of 1.0.5 on a 300-region model. For each iteration count, it shows how many stored centres actually produce their own pattern.
+
+```{r centres}
+centres <- data.frame(iterations = c(3, 5, 10, 25, 100), patterns = c(19, 26, 48, 145, 300),
+                      rows = c(32, 56, 167, 920, 7890), correct = c(10, 15, 25, 92, 300))
+knitr::kable(data.frame(
+  Iterations = centres$iterations,
+  `Patterns found` = centres$patterns,
+  `Centre matrix rows` = num(centres$rows),
+  `Centres that produce their own pattern` = sprintf("%d of %d (%.0f%%)", centres$correct,
+    centres$patterns, 100 * centres$correct / centres$patterns),
+  check.names = FALSE
+), align = "rrrr")
+```
+
+Wrong centres cost model evaluations, and sometimes stopped a run from finishing at all. On the 100-region workload, every 1.0.5 run hit its 1,500-iteration cap with regions still unfilled, after a median of `r num(med(capped_old$evaluations))` model evaluations. 1.0.6 filled every region after a median of `r num(med(capped_new$evaluations))`.
+
+## Saving to disk
+
+With `save = TRUE`, every evaluation writes its parameters and its model outputs, here 300 values, to csv. 1.0.5 wrote 6 significant digits; 1.0.6 writes the shortest text that reads back as exactly the same number. Fast formatting with `std::to_chars` needs macOS 13.3 or later, or libstdc++ 11 or later. Other platforms fall back to `%.17g`, which is exact but slower.
+
+Full precision has two costs. The files are `r num(save_new$mb / save_old$mb, 1)` times larger than 1.0.5's 6-digit files (`r num(save_new$mb)` MB against `r num(save_old$mb)` MB in this workload). Without `std::to_chars`, saving is also `r round(100 * (save_fallback$value / save_old$value - 1))`% slower than in 1.0.5.
+
+```{=html}
+<div class="pb-chart">
+  <div class="pb-chart-head">
+    <div class="pb-chart-title">Extra time per evaluation with save = TRUE (µs)</div>
+  </div>
+  <div class="pb-plot" id="pb-save"></div>
+  <p class="pb-caption">300 regions, 100 iterations, median of 3 seeds. The save cost is the run time with saving minus the same seeded run without it.</p>
+  <details><summary>Show the data</summary>
+```
+
+```{r save-table, results = "asis"}
+cat(html_table(data.frame(
+  Build = sapply(save_data, `[[`, "label"),
+  Formatting = sapply(save_data, `[[`, "detail"),
+  `Saving adds (µs per evaluation)` = num(sapply(save_data, `[[`, "value"), 1),
+  `Files (MB)` = num(sapply(save_data, `[[`, "mb"), 1),
+  check.names = FALSE
+), align = "llrr"))
+```
+
+```{=html}
+  </details>
+</div>
+```
+
+## Finding regions
+
+Faster is only useful if the search still finds the regions. These are 30 runs per build on a 50-region model with 3 parameters, population 10, radius 0.3 and a 500-iteration cap. 1.0.6 finds slightly more regions per run, with about a quarter of the model evaluations.
+
+```{=html}
+<div class="pb-chart">
+  <div class="pb-chart-head">
+    <div class="pb-chart-title">Regions found per run, out of 50</div>
+    <div class="pb-legend"><span><i class="pb-key pb-old-bg"></i>1.0.5</span><span><i class="pb-key pb-new-bg"></i>1.0.6</span></div>
+  </div>
+  <div class="pb-plot" id="pb-regions"></div>
+</div>
+<div class="pb-chart">
+  <div class="pb-chart-head">
+    <div class="pb-chart-title">Model evaluations per run</div>
+    <div class="pb-legend"><span><i class="pb-key pb-old-bg"></i>1.0.5</span><span><i class="pb-key pb-new-bg"></i>1.0.6</span></div>
+  </div>
+  <div class="pb-plot" id="pb-evaluations"></div>
+```
+
+```{r discovery-caption, results = "asis"}
+cat(sprintf('```{=html}\n<p class="pb-caption">One dot per seed, grouped to the nearest 100. Hollow dots are runs that hit the 500-iteration cap without filling every region: %d of 30 runs in 1.0.5, %d of 30 in 1.0.6.</p>\n<details><summary>Show the data</summary>\n```\n',
+            unfilled[[old_build]], unfilled[[new_build]]))
+runs_table <- discovery[discovery$build %in% c(old_build, new_build), ]
+cat(html_table(data.frame(
+  Build = ifelse(runs_table$build == old_build, "1.0.5", "1.0.6"),
+  Seed = runs_table$seed,
+  Regions = runs_table$regions,
+  Evaluations = num(runs_table$evaluations),
+  Iterations = runs_table$iterations,
+  Filled = ifelse(as.logical(runs_table$filled), "yes", "no")
+), align = "lrrrrl"))
+```
+
+```{=html}
+  </details>
+</div>
+```
+
+PSP never guarantees finding every region. It only finds regions it can reach before every found region is full. The settings below change that, measured on the same model with 30 seeds each.
+
+```{r settings}
+knitr::kable(data.frame(
+  Settings = c("1 start, population 10, radius 0.3", "10 random starts, population 10",
+               "1 start, population 30", "1 start, population 10, radius 0.5",
+               "10 random starts, population 30", "3 pooled runs of 10 starts, population 10"),
+  `Regions found per run` = c("45–50, median 49", "44–50, median 49", "49–50, median 50",
+                              "48–50, median 50", "49–50, median 50", "49–50, median 50"),
+  `Runs that found all 50` = paste(c(11, 8, 29, 24, 27, 29), "of 30"),
+  `Median evaluations` = num(c(665, 649, 1908, 874, 1874, 1957)),
+  check.names = FALSE
+), align = "llrr")
+```
+
+Raising `population` helps most. A larger `radius` is cheaper, but in a real model it can jump over small regions. Pooling independent runs is a useful completeness check: if a second run finds a pattern the first missed, the first wasn't complete. The [tutorial](tutorial.html) shows how.
+
+## How this was measured
+
+```{r environment}
+knitr::kable(data.frame(
+  Environment = c("Machine", "R", "Compiler", "Packages", "Builds", "Date"),
+  ` ` = c(measured$machine, measured$r, measured$compiler, measured$packages,
+          "1.0.5 (b055424) and the three code commits merged in pull request #6; the fallback build is cf77c56 compiled for macOS 11",
+          measured$date),
+  check.names = FALSE
+))
+```
+
+```{r definitions}
+knitr::kable(data.frame(
+  Workload = c("Test-suite model", "100 regions", "300 and 1,000 regions", "Overhead", "Discovery"),
+  Model = c("the model from tests/testthat/test_psp_cpp.R: distances to 100 points, 5 parameters",
+            "cheap Voronoi model: squared distance to 100 random centres, 5 parameters",
+            "the same cheap model with 300 or 1,000 centres",
+            "returns its parameters; discretize bins them into 1,024 grid cells",
+            "cheap Voronoi model, 50 centres, 3 parameters"),
+  Settings = c("population 10, radius 1, cap 1,000, 10 starting points, 10 seeds",
+               "population 20, radius 0.3, cap 1,500, one start at 0.5, 5 seeds",
+               "100 iterations, population never reached, radius 0.3, 3 seeds",
+               "150 iterations, 3 repeats",
+               "population 10, radius 0.3, cap 500, 30 seeds")
+))
+```
+
+Times are single-threaded `system.time()` elapsed seconds with `quiet = TRUE`, and each build ran in its own R process. Commits `ee4e8b7` and `cf77c56` produce bit-identical samples to `fe188ef` for the same seed, so their differences are pure speed. 1.0.5 samples differently because of the bug fixes.
+
+All numbers come from one machine. Linux and Windows were not measured; the `setjmp` saving in `ee4e8b7` is mostly specific to macOS. To re-measure, install each build of psp into its own library and run, for each one:
+
+```sh
+Rscript benchmarks/benchmark.R <library> <label> | tail -n +2 >> benchmarks/results/workloads.csv
+Rscript benchmarks/experiments.R <library> <label> overhead,save,discovery
+```
+
+Then rebuild the website; this page reads `benchmarks/results/` when it is built.
+
+```{r chart-data, results = "asis"}
+cat("```{=html}\n<script type=\"application/json\" id=\"pb-data\">",
+    jsonlite::toJSON(chart_data, auto_unbox = TRUE, digits = 6),
+    "</script>\n```\n", sep = "")
+```
+
+```{=html}
+<script>
+(function () {
+  const DATA = JSON.parse(document.getElementById("pb-data").textContent);
+  const NS = "http://www.w3.org/2000/svg";
+  const fmt = (x, d = 2) => Number(x).toLocaleString("en-GB", { minimumFractionDigits: d, maximumFractionDigits: d });
+  const fmtInt = (x) => Math.round(x).toLocaleString("en-GB");
+  const el = (tag, attrs, parent) => {
+    const n = document.createElementNS(NS, tag);
+    for (const [k, v] of Object.entries(attrs || {})) n.setAttribute(k, v);
+    if (parent) parent.appendChild(n);
+    return n;
+  };
+  const text = (parent, x, y, s, attrs) => { const t = el("text", Object.assign({ x, y }, attrs || {}), parent); t.textContent = s; return t; };
+  const bar = (x0, y, w, h) => `M${x0},${y} H${x0 + w - 4} a4,4 0 0 1 4,4 V${y + h - 4} a4,4 0 0 1 -4,4 H${x0} Z`;
+
+  function tooltip(plot) {
+    const tip = document.createElement("div");
+    tip.className = "pb-tip"; tip.hidden = true; plot.appendChild(tip);
+    return {
+      bind(node, html) {
+        node.addEventListener("pointermove", (e) => {
+          const r = plot.getBoundingClientRect();
+          tip.innerHTML = html; tip.hidden = false;
+          tip.style.left = Math.min(Math.max(e.clientX - r.left, 90), r.width - 90) + "px";
+          tip.style.top = (e.clientY - r.top) + "px";
+        });
+        node.addEventListener("pointerleave", () => { tip.hidden = true; });
+      }
+    };
+  }
+  function canvas(id, W, H, aria) {
+    const plot = document.getElementById(id);
+    const svg = el("svg", { viewBox: `0 0 ${W} ${H}`, role: "img", "aria-label": aria });
+    plot.replaceChildren(svg);
+    return { svg, tip: tooltip(plot) };
+  }
+  const logScale = (lo, hi, a, b) => (v) => a + (Math.log10(v) - Math.log10(lo)) / (Math.log10(hi) - Math.log10(lo)) * (b - a);
+
+  // time per run: dumbbells on a log axis
+  (function () {
+    const rows = DATA.workloads, W = 680, labelW = 200, right = 64, rowH = 46, top = 8, bottom = 30;
+    const H = top + rows.length * rowH + bottom;
+    const x = logScale(0.005, 20, labelW, W - right);
+    const { svg, tip } = canvas("pb-workloads", W, H, "Median seconds per run for each workload, 1.0.5 against 1.0.6");
+    for (const t of [0.01, 0.1, 1, 10]) {
+      el("line", { x1: x(t), x2: x(t), y1: top, y2: H - bottom, class: "pb-grid" }, svg);
+      text(svg, x(t), H - 10, `${t} s`, { class: "pb-tick", "text-anchor": "middle" });
+    }
+    rows.forEach((r, i) => {
+      const cy = top + i * rowH + rowH / 2;
+      text(svg, 0, cy - 2, r.label, { class: "pb-name" });
+      text(svg, 0, cy + 14, r.detail, { class: "pb-note" });
+      el("line", { x1: x(r.old), x2: x(r.new), y1: cy, y2: cy, class: "pb-connector" }, svg);
+      el("circle", { cx: x(r.old), cy, r: 5.5, class: "pb-old pb-ring" }, svg);
+      el("circle", { cx: x(r.new), cy, r: 5.5, class: "pb-new pb-ring" }, svg);
+      const speed = r.old / r.new;
+      text(svg, W - right + 12, cy + 4, `${speed >= 10 ? fmtInt(speed) : fmt(speed, 1)}×`, { class: "pb-val" });
+      tip.bind(el("rect", { x: 0, y: cy - rowH / 2, width: W, height: rowH, class: "pb-hit" }, svg),
+        `<b>${r.label}</b><br>1.0.5: <span class="pb-num">${fmt(r.old, 3)} s</span><br>1.0.6: <span class="pb-num">${fmt(r.new, 3)} s</span><br>${fmt(speed, 1)}× faster`);
+    });
+  })();
+
+  // time per evaluation: bars on a log axis, with the cost of the R calls marked
+  (function () {
+    const rows = DATA.overhead, W = 680, labelW = 110, right = 70, rowH = 40, top = 22, bottom = 30;
+    const H = top + rows.length * rowH + bottom;
+    const x = logScale(1, 100, labelW, W - right);
+    const { svg, tip } = canvas("pb-overhead", W, H, "Time per evaluation with a near-free model, by commit");
+    for (const t of [1, 2, 5, 10, 20, 50, 100]) {
+      el("line", { x1: x(t), x2: x(t), y1: top, y2: H - bottom, class: "pb-grid" }, svg);
+      text(svg, x(t), H - 10, `${t} µs`, { class: "pb-tick", "text-anchor": "middle" });
+    }
+    const ref = DATA.callbacks_us;
+    el("line", { x1: x(ref), x2: x(ref), y1: top - 6, y2: H - bottom, class: "pb-ref" }, svg);
+    text(svg, x(ref) + 6, top - 9, `model + discretize alone: ${fmt(ref, 1)} µs`, { class: "pb-note" });
+    rows.forEach((r, i) => {
+      const y = top + i * rowH + 10, w = Math.max(x(r.total) - labelW, 2);
+      text(svg, 0, y + 14, r.label, { class: "pb-name", "font-family": r.old ? null : "var(--bs-font-monospace)" });
+      el("path", { d: bar(labelW, y, w, 20), class: r.old ? "pb-old" : "pb-new" }, svg);
+      text(svg, labelW + w + 8, y + 15, `${fmt(r.total, r.total >= 10 ? 1 : 2)} µs`, { class: "pb-val" });
+      tip.bind(el("rect", { x: 0, y: y - 8, width: W, height: rowH, class: "pb-hit" }, svg),
+        `<b>${r.label}</b><br><span class="pb-num">${fmt(r.total, 2)} µs</span> per evaluation<br>pspGlobal's share: about <span class="pb-num">${fmt(Math.max(r.difference, 0), 2)} µs</span>`);
+    });
+    el("line", { x1: labelW, x2: labelW, y1: top, y2: H - bottom, class: "pb-axis" }, svg);
+  })();
+
+  // cost of saving: bars on a linear axis
+  (function () {
+    const rows = DATA.save, W = 680, labelW = 170, right = 70, rowH = 40, top = 6, bottom = 30;
+    const H = top + rows.length * rowH + bottom, hi = 120;
+    const x = (v) => labelW + v / hi * (W - labelW - right);
+    const { svg, tip } = canvas("pb-save", W, H, "Extra time per evaluation when saving, by build");
+    for (const t of [0, 20, 40, 60, 80, 100, 120]) {
+      el("line", { x1: x(t), x2: x(t), y1: top, y2: H - bottom, class: t === 0 ? "pb-axis" : "pb-grid" }, svg);
+      text(svg, x(t), H - 10, `${t}`, { class: "pb-tick", "text-anchor": "middle" });
+    }
+    rows.forEach((r, i) => {
+      const y = top + i * rowH + 10, w = Math.max(x(r.value) - labelW, 2);
+      text(svg, 0, y + 9, r.label, { class: "pb-name" });
+      text(svg, 0, y + 24, r.detail, { class: "pb-note" });
+      el("path", { d: bar(labelW, y, w, 20), class: r.old ? "pb-old" : "pb-new" }, svg);
+      text(svg, labelW + w + 8, y + 15, `${fmt(r.value, 0)} µs`, { class: "pb-val" });
+      tip.bind(el("rect", { x: 0, y: y - 8, width: W, height: rowH, class: "pb-hit" }, svg),
+        `<b>${r.label}</b><br>saving adds <span class="pb-num">${fmt(r.value, 1)} µs</span> per evaluation<br>files: <span class="pb-num">${fmt(r.mb, 1)} MB</span>`);
+    });
+  })();
+
+  // regions found and evaluations: one dot per seed, stacked by value
+  function strip(id, key, opts) {
+    const builds = DATA.discovery;
+    const tallest = Math.max(...builds.map((b) => {
+      const counts = {};
+      b.runs.forEach((r) => { const k = opts.bin(r[key]); counts[k] = (counts[k] || 0) + 1; });
+      return Math.max(...Object.values(counts));
+    }));
+    const W = 680, labelW = 104, right = 12, rowH = Math.max(64, tallest * 10 + 34), top = 8, bottom = 30;
+    const H = top + builds.length * rowH + bottom;
+    const x = (v) => labelW + (v - opts.lo) / (opts.hi - opts.lo) * (W - labelW - right);
+    const { svg, tip } = canvas(id, W, H, opts.aria);
+    for (const t of opts.ticks) {
+      el("line", { x1: x(t), x2: x(t), y1: top, y2: H - bottom, class: "pb-grid" }, svg);
+      text(svg, x(t), H - 10, opts.tickFmt(t), { class: "pb-tick", "text-anchor": "middle" });
+    }
+    builds.forEach((b, i) => {
+      const base = top + (i + 1) * rowH - 10;
+      text(svg, 0, base - 18, b.label, { class: "pb-name" });
+      text(svg, 0, base - 2, opts.medianLabel(b.median[key]), { class: "pb-note" });
+      el("line", { x1: labelW, x2: W - right, y1: base + 6, y2: base + 6, class: "pb-axis" }, svg);
+      const stacks = {};
+      [...b.runs].sort((p, q) => p[key] - q[key]).forEach((r) => {
+        const bin = opts.bin(r[key]);
+        const n = (stacks[bin] = (stacks[bin] || 0) + 1) - 1;
+        const cx = x(opts.binCenter(bin)), cy = base - n * 10;
+        const cls = r.filled ? `${b.old ? "pb-old" : "pb-new"} pb-ring` : (b.old ? "pb-hollow-old" : "pb-hollow-new");
+        el("circle", { cx, cy, r: 4, class: cls }, svg);
+        tip.bind(el("circle", { cx, cy, r: 7, class: "pb-hit" }, svg),
+          `<b>${b.label}, seed ${r.seed}</b><br>${r.regions} regions · <span class="pb-num">${fmtInt(r.evaluations)}</span> evaluations<br>${r.iterations} iterations${r.filled ? "" : " (hit the cap, not filled)"}`);
+      });
+    });
+  }
+  strip("pb-regions", "regions", {
+    lo: 37.5, hi: 50.5, ticks: [38, 40, 42, 44, 46, 48, 50], tickFmt: (t) => t,
+    bin: (v) => v, binCenter: (v) => v, medianLabel: (m) => `median ${m}`,
+    aria: "Regions found per run for 1.0.5 and 1.0.6"
+  });
+  const maxEval = Math.max(...DATA.discovery.flatMap((b) => b.runs.map((r) => r.evaluations)));
+  const hi = Math.ceil(maxEval / 1000) * 1000, ticks = [];
+  for (let t = 0; t <= hi; t += 1000) ticks.push(t);
+  strip("pb-evaluations", "evaluations", {
+    lo: 0, hi, ticks, tickFmt: fmtInt, bin: (v) => Math.round(v / 100), binCenter: (b) => b * 100,
+    medianLabel: (m) => `median ${fmtInt(m)}`, aria: "Model evaluations per run for 1.0.5 and 1.0.6"
+  });
+})();
+</script>
+```

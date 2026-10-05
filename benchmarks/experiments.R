@@ -1,4 +1,4 @@
-# Runs the experiments behind the benchmark report that benchmark.R does not
+# Runs the experiments behind the benchmarks article that benchmark.R does not
 # cover: the time pspGlobal adds per evaluation, the cost of save = TRUE, and
 # how many regions a run finds.
 #

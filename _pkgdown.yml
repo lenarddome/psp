@@ -11,7 +11,7 @@ navbar:
   components:
     benchmarks:
       text: Benchmarks
-      href: benchmarks/index.html
+      href: articles/benchmarks.html
     changelog:
       text: Changelog
       href: CHANGELOG.html

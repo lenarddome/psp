@@ -15,3 +15,4 @@
 ^.vscode/
 ^benchmarks$
 ^_site$
+^vignettes/articles$
