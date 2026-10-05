@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
-- A package website at <https://lenarddome.com/psp/>, built with pkgdown and deployed to GitHub Pages, with a benchmark report comparing 1.0.6 to 1.0.5.
+- A package website at <https://lenarddome.com/psp/>, built with pkgdown and deployed to GitHub Pages, with a tutorial that partitions the parameter space of prospect theory and a benchmark report comparing 1.0.6 to 1.0.5.
 - The benchmark results and the scripts that produce them in `benchmarks/`.
 
 ### Changed

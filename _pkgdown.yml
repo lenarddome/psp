@@ -3,12 +3,16 @@ destination: _site
 
 template:
   bootstrap: 5
+  math-rendering: katex
 
 navbar:
   structure:
-    left: [reference, benchmarks, changelog]
+    left: [tutorial, reference, benchmarks, changelog]
     right: [search, github]
   components:
+    tutorial:
+      text: Tutorial
+      href: articles/tutorial.html
     benchmarks:
       text: Benchmarks
       href: articles/benchmarks.html
