@@ -1,12 +1,24 @@
 // Copyright 2022 <Lenard Dome> [legal/copyright]
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
+#include <charconv>
+#include <cstdio>
 #include <cstring>
 #include <fstream>
 #include <limits>
 #include <string>
 #include <unordered_map>
 #include <vector>
+
+// std::to_chars for doubles needs libstdc++ 11 or libc++ on macOS 13.3 and later
+#if defined(_LIBCPP_VERSION)
+#if defined(_LIBCPP_AVAILABILITY_HAS_TO_CHARS_FLOATING_POINT) && \
+    _LIBCPP_AVAILABILITY_HAS_TO_CHARS_FLOATING_POINT
+#define PSP_HAS_TO_CHARS 1
+#endif
+#elif defined(__cpp_lib_to_chars)
+#define PSP_HAS_TO_CHARS 1
+#endif
 
 using namespace Rcpp;
 using namespace arma;
@@ -184,11 +196,21 @@ struct PatternStore
   }
 };
 
+// writes the shortest text that reads back as exactly the same double
+// and returns the end of the written text; out needs room for 32 characters
+char *FormatDouble(char *out, double value)
+{
+#ifdef PSP_HAS_TO_CHARS
+  return (std::to_chars(out, out + 32, value).ptr);
+#else
+  return (out + std::snprintf(out, 32, "%.17g", value));
+#endif
+}
+
 // create local csv file for storing coordinates
 void CreateFile(std::ofstream &outFile, CharacterVector names, std::string path_to_file)
 {
   outFile.open(path_to_file.c_str());
-  outFile.precision(std::numeric_limits<double>::digits10);
   outFile << "iteration,";
   for (R_xlen_t i = 0; i < names.size(); i++)
   {
@@ -200,14 +222,20 @@ void CreateFile(std::ofstream &outFile, CharacterVector names, std::string path_
 // writes rows to csv file
 void WriteFile(std::ofstream &outFile, int iteration, const mat &evaluation, const uvec &ids)
 {
+  // each row is formatted into one buffer and written in a single call
+  std::vector<char> line((evaluation.n_cols + 2) * 32);
   for (uword i = 0; i < evaluation.n_rows; i++)
   {
-    outFile << iteration << ",";
+    char *end = line.data();
+    end += std::snprintf(end, 32, "%d,", iteration);
     for (uword k = 0; k < evaluation.n_cols; k++)
     {
-      outFile << evaluation(i, k) << ",";
+      end = FormatDouble(end, evaluation(i, k));
+      *end++ = ',';
     }
-    outFile << ids(i) + 1 << ",\n"; // add one as c++ starts from 0
+    // add one as c++ starts from 0
+    end += std::snprintf(end, 32, "%u,\n", (unsigned int)ids(i) + 1);
+    outFile.write(line.data(), end - line.data());
   }
 }
 

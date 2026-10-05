@@ -92,6 +92,30 @@ test_that("saved files record full-precision values and correct pattern ids", {
   }
 })
 
+test_that("saved parameters and model outputs keep full double precision", {
+  # 1 + 20 * eps prints as 1 at 15 significant digits, 20 units in the last place off
+  values <- c(1 + 20 * .Machine$double.eps, 1 / 3, pi * 1e5)
+  path <- file.path(tempdir(), "psp_exact")
+  pspGlobal(
+    model = function(par) values,
+    discretize = function(x) matrix(1, 2, 2),
+    control = list(
+      iterations = 1, population = 1000, radius = 0.1,
+      lower = rep(0, 3), upper = rep(2, 3), init = matrix(values[1:3] / 1e5, 1, 3),
+      parameter_names = c("a", "b", "c"), stimuli_names = c("a", "b", "c"),
+      dimensionality = 2, responses = 3
+    ),
+    save = TRUE, path = path, quiet = TRUE
+  )
+  saved <- read_psp_output(path)
+  # R's own parser can be one or two units in the last place off on some platforms
+  ulps <- function(x, y) abs(x - y) / (.Machine$double.eps * abs(y))
+  expect_lte(max(ulps(unlist(saved$parameters[1, c("a", "b", "c")]), values / 1e5)), 2)
+  for (i in seq_len(nrow(saved$continuous))) {
+    expect_lte(max(ulps(unlist(saved$continuous[i, c("a", "b", "c")]), values)), 2)
+  }
+})
+
 test_that("stored ordinal patterns are unique and counted", {
   vor <- voronoi_model(regions = 40, dimensions = 3)
   set.seed(6)
