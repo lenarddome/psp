@@ -1,11 +1,12 @@
 // Copyright 2022 <Lenard Dome> [legal/copyright]
 // [[Rcpp::depends(RcppArmadillo)]]
 #include <RcppArmadillo.h>
-#include <algorithm>
 #include <fstream>
 #include <limits>
+#include <string>
+#include <unordered_map>
+#include <vector>
 
-// [[Rcpp::depends(RcppArmadillo)]]
 using namespace Rcpp;
 using namespace arma;
 
@@ -28,178 +29,115 @@ mat HyperPoints(int counts, int dimensions, double radius)
 }
 
 // constrain new jumping distributions within given parameter bounds
-mat ClampParameters(mat jumping_distribution, colvec lower, colvec upper)
+void ClampParameters(mat &jumping_distribution, const colvec &lower, const colvec &upper)
 {
-  for (int i = 0; i < upper.n_elem; i++)
+  for (uword i = 0; i < upper.n_elem; i++)
   {
     jumping_distribution.col(i).clamp(lower[i], upper[i]);
   }
-  return (jumping_distribution);
 }
 
-// returns the unique slices of a cube (a 3D array)
-uvec FindUniqueSlices(cube predictions)
+// hash key of an ordinal matrix: two matrices share a key if they are identical,
+// with -0 folded into 0 and every NaN folded into the same NaN
+std::string PatternKey(const mat &pattern)
 {
-  vec predictions_filter(predictions.n_slices, fill::zeros);
-  // filter the same predictions
-  for (uword x = 0; x < predictions.n_slices; x++)
+  std::string key(pattern.n_elem * sizeof(double), '\0');
+  double *out = reinterpret_cast<double *>(&key[0]);
+  for (uword i = 0; i < pattern.n_elem; i++)
   {
-    vec current = vectorise(predictions.slice(x));
-    for (uword y = x + 1; y < predictions.n_slices; y++)
-    {
-      vec base = vectorise(predictions.slice(y));
-      uvec result = (base == current);
-      if (all(result == 1))
-        predictions_filter(x) += 1;
-    }
+    out[i] = std::isnan(pattern[i]) ? std::numeric_limits<double>::quiet_NaN()
+                                    : pattern[i] + 0.0;
   }
-  // remove multiple predictions for the comparisons
-  uvec inclusion = find(predictions_filter == 0);
-  return (inclusion);
+  return (key);
 }
 
-// compare two cubes of inequality matrices
-// returns the complete list of unique ordinal matrices
-cube OrdinalCompare(cube discovered, cube predicted)
+// all discovered ordinal patterns with their populations and the last
+// parameters that produced them (the centres of the next jumping distributions)
+struct PatternStore
 {
+  std::unordered_map<std::string, uword> index;
+  std::vector<mat> patterns;
+  std::vector<double> counts;
+  std::vector<rowvec> centres;
 
-  // no discovered patterns yet; just return current predictions
-  if (discovered.n_slices == 0)
+  // registers every evaluation and returns the pattern id of each one
+  uvec Update(const cube &ordinal, const mat &jumping)
   {
-    return (predicted);
-  }
-
-  cube drawer(discovered);
-  mat index(predicted.n_slices, discovered.n_slices);
-
-  // carry out the comparisons
-  for (int x = 0; x < predicted.n_slices; x++)
-  {
-    mat current = predicted.slice(x);
-    for (int y = 0; y < discovered.n_slices; y++)
+    uvec ids(ordinal.n_slices);
+    for (uword i = 0; i < ordinal.n_slices; i++)
     {
-      mat base = discovered.slice(y);
-      umat result = (base == current);
-      index(x, y) = any(vectorise(result) == 0);
-    }
-    if (all(index.row(x) == 1))
-    {
-      cube update = join_slices(drawer, current);
-      drawer = update;
-    }
-  }
-  return (drawer);
-}
-
-// returns the last evaluated parameters in all chains in the MCMC
-mat LastEvaluatedParameters(cube discovered, cube predicted, mat jumping, mat centers)
-{
-  mat parameters(centers);
-  mat index(discovered.n_slices, predicted.n_slices);
-  // create index matrix
-  for (uword x = 0; x < discovered.n_slices; x++)
-  {
-    mat current = discovered.slice(x);
-    for (uword y = 0; y < predicted.n_slices; y++)
-    {
-      mat base = predicted.slice(y);
-      umat result = (base == current);
-      index(x, y) = any(vectorise(result) == 0);
-    }
-    if (all(index.row(x)))
-    {
-      //  if there is a new region, appeng params to centers
-      parameters.insert_rows(parameters.n_rows, jumping.rows(find(index.row(x) == 1, 1, "last")));
-    }
-    else
-    {
-      // if there is an old region in predicted, update center
-      parameters.row(x) = jumping.rows(find(index.row(x) == 0, 1, "last"));
-    }
-    // replace old centers with new ones
-  }
-  return (parameters);
-}
-
-// count ordinal patterns
-rowvec CountOrdinal(cube updated_ordinal, cube predicted, rowvec counts)
-{
-  rowvec new_counts(updated_ordinal.n_slices, fill::zeros);
-  const uword shared = std::min<uword>(counts.n_elem, updated_ordinal.n_slices);
-  if (shared > 0)
-  {
-    new_counts.head(shared) = counts.head(shared);
-  }
-  for (uword x = 0; x < updated_ordinal.n_slices; x++)
-  {
-    mat current = updated_ordinal.slice(x);
-    for (uword y = 0; y < predicted.n_slices; y++)
-    {
-      mat base = predicted.slice(y);
-      umat result = (base == current);
-      if (all(vectorise(result) == 1))
+      const mat &current = ordinal.slice(i);
+      auto found = index.emplace(PatternKey(current), patterns.size());
+      uword id = found.first->second;
+      if (found.second)
       {
-        new_counts[x] += 1;
+        patterns.push_back(current);
+        counts.push_back(0);
+        centres.push_back(jumping.row(i));
       }
+      counts[id] += 1;
+      centres[id] = jumping.row(i);
+      ids(i) = id;
     }
+    return (ids);
   }
-  return (new_counts);
-}
 
-// match jumping distributions to ordinal ordinal_patterns
-// returns a column uvec of slice IDs corresponding to each set in jumping_distribution
-vec MatchJumpDists(cube updated_ordinal, cube predicted)
-{
-  mat index(updated_ordinal.n_slices, predicted.n_slices);
-  vec matches(predicted.n_slices, fill::zeros);
-  for (uword x = 0; x < updated_ordinal.n_slices; x++)
+  uvec Underpopulated(double population) const
   {
-    mat current = updated_ordinal.slice(x);
-    for (uword y = 0; y < predicted.n_slices; y++)
+    std::vector<uword> out;
+    for (uword k = 0; k < counts.size(); k++)
     {
-      mat base = predicted.slice(y);
-      umat result = (base == current);
-      if (all(vectorise(result) == 1))
-      {
-        matches(y) = x;
-      }
+      if (counts[k] < population)
+        out.push_back(k);
     }
+    return (conv_to<uvec>::from(out));
   }
-  return (matches + 1); // add one as c++ starts from 0
-}
+
+  mat Centres(const uvec &which) const
+  {
+    mat out(which.n_elem, centres[0].n_elem);
+    for (uword i = 0; i < which.n_elem; i++)
+    {
+      out.row(i) = centres[which(i)];
+    }
+    return (out);
+  }
+
+  cube Patterns() const
+  {
+    cube out(patterns[0].n_rows, patterns[0].n_cols, patterns.size());
+    for (uword k = 0; k < patterns.size(); k++)
+    {
+      out.slice(k) = patterns[k];
+    }
+    return (out);
+  }
+};
 
 // create local csv file for storing coordinates
-void CreateFile(CharacterVector names, std::string path_to_file)
+void CreateFile(std::ofstream &outFile, CharacterVector names, std::string path_to_file)
 {
-  std::ofstream outFile(path_to_file.c_str());
+  outFile.open(path_to_file.c_str());
+  outFile.precision(std::numeric_limits<double>::digits10);
   outFile << "iteration,";
-  for (uword i = 0; i < names.size(); i++)
+  for (R_xlen_t i = 0; i < names.size(); i++)
   {
-    outFile << names[i];
-    outFile << +",";
+    outFile << names[i] << ",";
   }
   outFile << "pattern,\n";
 }
 
 // writes rows to csv file
-void WriteFile(int iteration, mat evaluation, vec matches,
-               std::string path_to_file)
+void WriteFile(std::ofstream &outFile, int iteration, const mat &evaluation, const uvec &ids)
 {
-  // open file stream connection
-  std::ofstream outFile(path_to_file.c_str(), std::ios::app);
-  int rows = evaluation.n_rows;
-  int columns = evaluation.n_cols;
-  for (uword i = 0; i < rows; i++)
+  for (uword i = 0; i < evaluation.n_rows; i++)
   {
-    outFile << iteration;
-    outFile << ",";
-    for (uword k = 0; k < columns; k++)
+    outFile << iteration << ",";
+    for (uword k = 0; k < evaluation.n_cols; k++)
     {
-      outFile << evaluation(i, k);
-      outFile << ",";
+      outFile << evaluation(i, k) << ",";
     }
-    outFile << matches(i);
-    outFile << ",\n";
+    outFile << ids(i) + 1 << ",\n"; // add one as c++ starts from 0
   }
 }
 
@@ -210,7 +148,6 @@ List pspGlobal(Function model, Function discretize, List control, bool save = fa
   // setup environment
   bool parameter_filled = false;
   int iteration = 0;
-  uvec underpopulated = {0};
 
   // import thresholds from control
   int max_iteration = as<int>(control["iterations"]);
@@ -242,71 +179,58 @@ List pspGlobal(Function model, Function discretize, List control, bool save = fa
   colvec upper = as<colvec>(control["upper"]);
   int dimensions = init.n_cols;
   // do some basic error checks
-  if (dimensions != lower.n_elem || dimensions != upper.n_elem)
+  if (dimensions != (int)lower.n_elem || dimensions != (int)upper.n_elem)
   {
     stop("init, lower and upper must have the same length.");
   }
   int dimensionality = as<int>(control["dimensionality"]);
   int response_length = as<int>(control["responses"]);
-  rowvec counts(1, fill::ones); // keeps track of the population of ordinal regions
-  cube filtered;                // stores all unique predictions
-  cube storage;                 //  stores all unique ordinal patterns
   CharacterVector parameter_names = as<CharacterVector>(control["parameter_names"]);
   if (parameter_names.size() != dimensions)
   {
     stop("Length of param_names must equal to the number of dimensions");
   }
   CharacterVector stimuli_names = as<CharacterVector>(control["stimuli_names"]);
-  List out;
 
   // seed has to be set at the global R level
   // see Documentation about the sampling
   Rcpp::Environment base_env("package:base");
   Rcpp::Function set_seed_r = base_env["set.seed"];
 
-  // evaluate first parameter sets
-  mat last_eval = init;
-  mat jumping_distribution = init;
-  mat continuous(jumping_distribution.n_rows, response_length);
-
-  // create first ordinal storage
-  cube ordinal(dimensionality, dimensionality, jumping_distribution.n_rows);
+  PatternStore store;
+  cube ordinal;
+  mat continuous;
 
   // evaluate jumping distributions
-  for (uword i = 0; i < jumping_distribution.n_rows; i++)
-  {
-    NumericVector probabilities = model(jumping_distribution.row(i));
-    NumericMatrix teatime = discretize(probabilities);
-    const rowvec &responses = as<rowvec>(probabilities);
-    continuous.row(i) = responses;
-    const mat &evaluate = as<mat>(teatime);
-    ordinal.slice(i) = evaluate;
-  }
+  auto evaluate = [&](const mat &jumping) {
+    ordinal.set_size(dimensionality, dimensionality, jumping.n_rows);
+    continuous.set_size(jumping.n_rows, response_length);
+    for (uword i = 0; i < jumping.n_rows; i++)
+    {
+      NumericVector probabilities = model(jumping.row(i));
+      NumericMatrix teatime = discretize(probabilities);
+      continuous.row(i) = as<rowvec>(probabilities);
+      ordinal.slice(i) = as<mat>(teatime);
+    }
+  };
 
-  // compare ordinal patterns to stored ones and update list
-  uvec include = FindUniqueSlices(ordinal);
+  // evaluate first parameter sets
+  mat jumping_distribution = init;
+  evaluate(jumping_distribution);
+  uvec match = store.Update(ordinal, jumping_distribution);
+  uvec underpopulated = store.Underpopulated(population);
 
-  // update last evaluated parameters
-  last_eval = LastEvaluatedParameters(storage, ordinal.slices(include),
-                                      jumping_distribution.rows(include),
-                                      last_eval);
-
-  storage = OrdinalCompare(storage, ordinal.slices(include));
-  counts = CountOrdinal(storage, ordinal, counts);
-
-  ////////////////////////////////////////////////////////////////
-
+  std::ofstream parameters_file, continuous_file;
   if (save)
   {
-    vec match = MatchJumpDists(storage, ordinal);
-    CreateFile(parameter_names, path + "_parameters" + extension);
-    CreateFile(stimuli_names, path + "_continuous" + extension);
-    WriteFile(0, jumping_distribution, match, path + "_parameters" + extension);
-    WriteFile(0, continuous, match, path + "_continuous" + extension);
+    CreateFile(parameters_file, parameter_names, path + "_parameters" + extension);
+    CreateFile(continuous_file, stimuli_names, path + "_continuous" + extension);
+    WriteFile(parameters_file, 0, jumping_distribution, match);
+    WriteFile(continuous_file, 0, continuous, match);
   }
 
   // run parameter space partitioning until parameter is filled
-  while (!parameter_filled)
+  while (!parameter_filled && underpopulated.n_elem > 0)
   {
     // update iteration
     iteration += 1;
@@ -321,60 +245,32 @@ List pspGlobal(Function model, Function discretize, List control, bool save = fa
     set_seed_r(pool);
 
     // generate new jumping distributions from ordinal patterns with counts < population
-    mat jumping_distribution = HyperPoints(underpopulated.n_elem,
-                                           dimensions, radius);
-    jumping_distribution = jumping_distribution + last_eval.rows(underpopulated);
-    jumping_distribution = ClampParameters(jumping_distribution, lower, upper);
-    // allocate cube for ordinal predictions
-    ordinal.resize(dimensionality, dimensionality, jumping_distribution.n_rows);
-    continuous.resize(jumping_distribution.n_rows, response_length);
+    jumping_distribution = HyperPoints(underpopulated.n_elem, dimensions, radius) +
+                           store.Centres(underpopulated);
+    ClampParameters(jumping_distribution, lower, upper);
+    evaluate(jumping_distribution);
 
-    // evaluate jumping distributions
-    for (uword i = 0; i < jumping_distribution.n_rows; i++)
-    {
-      NumericVector probabilities = model(jumping_distribution.row(i));
-      NumericMatrix teatime = discretize(probabilities);
-      const rowvec &responses = as<rowvec>(probabilities);
-      continuous.row(i) = responses;
-      const mat &evaluate = as<mat>(teatime);
-      ordinal.slice(i) = evaluate;
-    }
-
-    // compare ordinal patterns to stored ones and update list
-    uvec include = FindUniqueSlices(ordinal);
-
-    // update last evaluated parameters
-    last_eval = LastEvaluatedParameters(storage, ordinal.slices(include),
-                                        jumping_distribution.rows(include),
-                                        last_eval);
-
-    storage = OrdinalCompare(storage, ordinal.slices(include));
-
-    // update counts of ordinal patterns
-    counts = CountOrdinal(storage, ordinal, counts);
-    underpopulated = find(counts < population);
+    // update ordinal patterns, their counts and centres
+    match = store.Update(ordinal, jumping_distribution);
+    underpopulated = store.Underpopulated(population);
 
     // write data to disk
     if (save)
     {
-      // index locations of currently found patterns in storage
-      vec match = MatchJumpDists(storage, ordinal);
-      WriteFile(iteration, jumping_distribution, match, path + "_parameters" + extension);
-      WriteFile(iteration, continuous, match, path + "_continuous" + extension);
+      WriteFile(parameters_file, iteration, jumping_distribution, match);
+      WriteFile(continuous_file, iteration, continuous, match);
     }
 
     // check if either of the parameter_filled thresholds is reached
     if (iteration == max_iteration || underpopulated.n_elem == 0)
     {
-      parameter_filled = TRUE;
+      parameter_filled = true;
     }
   }
 
   // compile output including ordinal patterns and their frequencies
-  out = Rcpp::List::create(
-      Rcpp::Named("ordinal_patterns") = storage,
-      Rcpp::Named("ordinal_counts") = counts,
-      Rcpp::Named("iterations") = iteration);
-
-  return (out);
+  return (Rcpp::List::create(
+      Rcpp::Named("ordinal_patterns") = store.Patterns(),
+      Rcpp::Named("ordinal_counts") = rowvec(store.counts),
+      Rcpp::Named("iterations") = iteration));
 }
