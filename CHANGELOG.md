@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - A package website at <https://lenarddome.com/psp/>, built with pkgdown and deployed to GitHub Pages, with a benchmark report comparing 1.0.6 to 1.0.5.
 - The benchmark results and the scripts that produce them in `benchmarks/`.
 
+### Changed
+
+- The `pspGlobal()` documentation cites the published version of g-distance (Dome & Wills, 2025, *Psychological Review*) instead of the preprint.
+
 ## [1.0.6] - 2026-10-05
 
 Sampling results differ from 1.0.5 for the same seed, because the fixes below change the path the sampler takes.
