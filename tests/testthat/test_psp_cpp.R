@@ -43,7 +43,7 @@ out2 <- pspGlobal(
     dimensionality = 2,
     responses = 100
   ),
-  quiet = FALSE, save = FALSE
+  quiet = TRUE, save = FALSE
 )
 
 test_that("PSP finds all 100 regions in a 5 parameter model", {
@@ -79,7 +79,7 @@ out3 <- pspGlobal(
     dimensionality = 2,
     responses = 100
   ),
-  quiet = FALSE, save = FALSE
+  quiet = TRUE, save = FALSE
 )
 
 test_that("PSP iteration threshold terminates algorithm succesfully", {

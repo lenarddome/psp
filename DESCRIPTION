@@ -1,7 +1,7 @@
 Package: psp
 Title: Parameter Space Partitioning MCMC for Global Model Evaluation
-Version: 1.0.5
-Date: 2026-01-15
+Version: 1.0.6
+Date: 2026-10-05
 Maintainer: Lenard Dome <lenarddome@gmail.com>
 Authors@R: c(person("Lenard", "Dome",
                    email = "lenarddome@gmail.com",

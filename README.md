@@ -12,7 +12,7 @@ Parameter Space Partitioning MCMC for Global Model Evaluation (Pitt, Kim, Navarr
 
 To cite package ‘psp’ in publications use:
 
-  Lenard Dome and Andy Wills (2021). psp: Parameter Space Partitioning MCMC for Global Model Evaluation. R package version 0.1. https://CRAN.R-project.org/package=psp
+  Lenard Dome and Andy Wills (2026). psp: Parameter Space Partitioning MCMC for Global Model Evaluation. R package version 1.0.6. https://CRAN.R-project.org/package=psp
 
 A BibTeX entry for LaTeX users is
 
@@ -20,8 +20,8 @@ A BibTeX entry for LaTeX users is
   @Manual{,
     title = {psp: Parameter Space Partitioning MCMC for Global Model Evaluation},
     author = {Lenard Dome and {Andy Wills}},
-    year = {2023},
-    note = {R package version 1.0.2},
+    year = {2026},
+    note = {R package version 1.0.6},
     url = {https://CRAN.R-project.org/package=psp},
   }
 ```
@@ -78,3 +78,21 @@ We use [Google’s R Style Guide](https://google.github.io/styleguide/Rguide.htm
   - Files use camelCase.
   - File names must not contain spaces.
 - Apply the same conventions to C++ code as well. While we do not militantly adhere to this, study [Google's C++ Style Guide](https://google.github.io/styleguide/cppguide.html).
+
+## Branch naming convention
+
+A git branch should start with a category. Pick one of these: feature, bugfix, hotfix, or test.
+
+* `feature` is for adding, refactoring or removing a feature
+* `bugfix` is for fixing a bug
+* `hotfix` is for changing code with a temporary solution and/or without following the usual process (usually because of an emergency)
+* `test` is for experimenting outside of an issue/ticket
+
+See this [link](https://dev.to/couchcamote/git-branching-name-convention-cch) for some great description of the naming convention.
+
+## Commit message conventions
+
+Please follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary) guidelines for commit messages.
+Feel free to use gitmoji for commit messages, but insert them at the end of the problem description.
+See this [link](https://gitmoji.dev/) for more information.
+
