@@ -7,6 +7,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- A package website at <https://lenarddome.com/psp/>, built with pkgdown and deployed to GitHub Pages, with a benchmark report comparing 1.0.6 to 1.0.5.
+- The benchmark results and the scripts that produce them in `benchmarks/`.
+
 ## [1.0.6] - 2026-10-05
 
 Sampling results differ from 1.0.5 for the same seed, because the fixes below change the path the sampler takes.
