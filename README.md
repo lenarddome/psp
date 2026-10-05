@@ -78,3 +78,21 @@ We use [Google’s R Style Guide](https://google.github.io/styleguide/Rguide.htm
   - Files use camelCase.
   - File names must not contain spaces.
 - Apply the same conventions to C++ code as well. While we do not militantly adhere to this, study [Google's C++ Style Guide](https://google.github.io/styleguide/cppguide.html).
+
+## Branch naming convention
+
+A git branch should start with a category. Pick one of these: feature, bugfix, hotfix, or test.
+
+* `feature` is for adding, refactoring or removing a feature
+* `bugfix` is for fixing a bug
+* `hotfix` is for changing code with a temporary solution and/or without following the usual process (usually because of an emergency)
+* `test` is for experimenting outside of an issue/ticket
+
+See this [link](https://dev.to/couchcamote/git-branching-name-convention-cch) for some great description of the naming convention.
+
+## Commit message conventions
+
+Please follow the [Conventional Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary) guidelines for commit messages.
+Feel free to use gitmoji for commit messages, but insert them at the end of the problem description.
+See this [link](https://gitmoji.dev/) for more information.
+
