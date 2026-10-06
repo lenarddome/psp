@@ -324,11 +324,11 @@ Before a long run, time one evaluation:
 
 one_evaluation <- system.time(model(rep(0.5, 4)))[["elapsed"]]
 one_evaluation
-#> [1] 0.05
+#> [1] 0.08
 ```
 
 Each evaluation simulates 30 learners working through 16 blocks, about
-0.05 seconds here. The cost of a run is roughly the number of patterns
+0.08 seconds here. The cost of a run is roughly the number of patterns
 times `population` times that, plus the evaluations that land in
 patterns that are already full. Patterns are unknown before you search,
 so a short pilot run is the best estimate: with `population = 20` and
