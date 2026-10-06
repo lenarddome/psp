@@ -1,0 +1,170 @@
+![psp logo](reference/figures/logo.png)
+
+psp logo
+
+Parameter Space Partitioning MCMC for Global Model Evaluation (Pitt,
+Kim, Navarro & Myung, 2006).
+
+[CRAN page of psp](https://CRAN.R-project.org/package=psp)
+
+To cite package ‘psp’ in publications use:
+
+Lenard Dome and Andy Wills (2026). psp: Parameter Space Partitioning
+MCMC for Global Model Evaluation. R package version 1.0.6.
+<https://CRAN.R-project.org/package=psp>
+
+A BibTeX entry for LaTeX users is
+
+      @Manual{,
+        title = {psp: Parameter Space Partitioning MCMC for Global Model Evaluation},
+        author = {Lenard Dome and {Andy Wills}},
+        year = {2026},
+        note = {R package version 1.0.6},
+        url = {https://CRAN.R-project.org/package=psp},
+      }
+
+## Disclaimer
+
+This package only recieves maintenance updates. It is not actively
+developed. If you would like to contribute, please contact me
+(@lenarddome).
+
+## Install
+
+For the stable version
+
+``` r
+
+install.packages("psp")
+```
+
+For the developmental version:
+
+``` r
+
+devtools::install_github("lenarddome/psp")
+```
+
+## About `psp`
+
+- [Package website, with reference and
+  benchmarks](https://lenarddome.com/psp/)
+- [A short intro and manual](https://lenarddome.com/software/psp/)
+- [A brief blog post](https://www.andywills.info/2021-06-23-psp/)
+
+## Philosophy
+
+A big influence on this implementation is an instantiation of the Open
+Models Initiative, [catlearn](https://github.com/ajwills72/catlearn).
+Watch the talk of [Andy Wills: “The OpenModels
+project”](https://youtu.be/SfqkqEYagJU) from Open Research Working Group
+(ORWG) virtual meeting 08/09/20.
+
+The project’s architecture is also influenced by
+[DEoptim](https://github.com/ArdiaD/DEoptim). `DEoptim` implements a
+Differential Evolutionary Optimization algorithm formodel-fitting.
+
+We are completely open-source and free. Anyone can contribute. If you
+would like to raise an issue or contribute code, use Github, message or
+email me (@lenarddome).
+
+## Code Style
+
+We use [Google’s R Style
+Guide](https://google.github.io/styleguide/Rguide.html) with some extra
+caveats:
+
+- Do not use `roxygen`. Write your documentation from scratch as an
+  Rdocumentation file. It is desirable to avoid writing test units for
+  converting your comments to documentation.
+- We have a 100 characters per line policy. You are still encouraged to
+  keep line lengths to 80 characters, but sometimes going over 80 can be
+  better than the alternative.
+- Use TODO, FIXME, HACK, BUG, WARNING, NOTE comments for code that is
+  temporary, a short-term solution, or good-enough but not perfect.
+  - TODO comments must adhere to the following format:
+    `## TODO: change this to use matrix operations`.
+- Use spaces!
+  - Good practice:
+    `if (makeup == TRUE) list(variable = runif(100), id = rep(letters, 5)[1:100])`.
+  - Bad practice:
+    `if(makeup==TRUE) list(variable=runif(100),id=rep(letters,5)[1:100])`.
+- Do not number your files. File naming conventions are pretty
+  straightforward:
+  - Files are prefixed by their relation to groups of functions. For
+    example, the prefix `psp` means that the file contains function
+    relevant for the parameter space partitioning routines.
+  - Files use camelCase.
+  - File names must not contain spaces.
+- Apply the same conventions to C++ code as well. While we do not
+  militantly adhere to this, study [Google’s C++ Style
+  Guide](https://google.github.io/styleguide/cppguide.html).
+
+## Branch naming convention
+
+A git branch should start with a category. Pick one of these: feature,
+bugfix, hotfix, or test.
+
+- `feature` is for adding, refactoring or removing a feature
+- `bugfix` is for fixing a bug
+- `hotfix` is for changing code with a temporary solution and/or without
+  following the usual process (usually because of an emergency)
+- `test` is for experimenting outside of an issue/ticket
+
+See this
+[link](https://dev.to/couchcamote/git-branching-name-convention-cch) for
+some great description of the naming convention.
+
+## Commit message conventions
+
+Please follow the [Conventional
+Commits](https://www.conventionalcommits.org/en/v1.0.0/#summary)
+guidelines for commit messages. Feel free to use gitmoji for commit
+messages, but insert them at the end of the problem description. See
+this [link](https://gitmoji.dev/) for more information.
+
+# Package index
+
+## Parameter space partitioning
+
+- [`pspGlobal()`](https://lenarddome.com/psp/reference/pspGlobal.md) :
+  Parameter Space Partitioning
+
+## Package
+
+- [`psp-package`](https://lenarddome.com/psp/reference/psp.md) :
+  Parameter Space Partitioning MCMC for Global Model Evaluation
+
+## Deprecated
+
+Superseded by
+[`pspGlobal()`](https://lenarddome.com/psp/reference/pspGlobal.md) and
+scheduled for removal.
+
+- [`psp_global()`](https://lenarddome.com/psp/reference/psp_global.md) :
+  Parameter Space Partitioning
+- [`psp_control()`](https://lenarddome.com/psp/reference/psp_control.md)
+  : Control the behaviour of the psp_global implementation
+
+# Articles
+
+### All vignettes
+
+- [Benchmarks](https://lenarddome.com/psp/articles/benchmarks.md):
+
+  Speed, correctness and region discovery of pspGlobal in psp 1.0.6
+  compared with 1.0.5, measured per commit on one machine.
+
+- [Recipe: ALCOVE and the six category
+  structures](https://lenarddome.com/psp/articles/recipe-alcove.md):
+
+  Partition a slow learning model with four parameters: define patterns
+  that allow ties, plan and save a long run, read a partition you cannot
+  plot directly, and check that the conclusions hold up.
+
+- [Tutorial: what can prospect theory
+  predict?](https://lenarddome.com/psp/articles/tutorial.md):
+
+  A worked example of parameter space partitioning: map every pattern of
+  choices prospect theory can make on four classic bets, and check
+  whether the pattern people actually choose is among them.
