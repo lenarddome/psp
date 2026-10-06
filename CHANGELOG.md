@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - A package website at <https://lenarddome.com/psp/>, built with pkgdown and deployed to GitHub Pages, with a tutorial that partitions the parameter space of prospect theory and a benchmark report comparing 1.0.6 to 1.0.5.
 - The benchmark results and the scripts that produce them in `benchmarks/`.
+- A recipe that partitions ALCOVE's parameter space on the six Shepard, Hovland and Jenkins (1961) problems, following Pitt et al. (2006), with the scripts and saved results it reads in `vignettes/articles/alcove/`.
 
 ### Changed
 

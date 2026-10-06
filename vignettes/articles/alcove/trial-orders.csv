@@ -1,0 +1,161 @@
+"trial_order","order","parameter_sets","iterations"
+11,"I < II < (III, IV, V, VI)",53,1307
+11,"(I, II, III, IV, V, VI)",1320,1307
+11,"(I, II) < (III, IV, V, VI)",55,1307
+11,"I < IV < III < V < II < VI",383,1307
+11,"I < II < (III, IV, V) < VI",256,1307
+11,"I < IV < (II, III) < V < VI",178,1307
+11,"(I, II, III, IV, V) < VI",141,1307
+11,"I < (II, III, IV, V, VI)",400,1307
+11,"I < (II, III, IV) < V < VI",269,1307
+11,"I < IV < III < (II, V) < VI",167,1307
+11,"I < (II, III, IV, V) < VI",303,1307
+11,"I < IV < III < V < (II, VI)",676,1307
+11,"I < (III, IV) < II < V < VI",61,1307
+11,"I < IV < III < II < V < VI",272,1307
+11,"I < (III, IV) < V < (II, VI)",116,1307
+11,"I < II < (III, IV) < V < VI",126,1307
+11,"I < (III, IV) < (II, V, VI)",97,1307
+11,"I < IV < III < (II, V, VI)",50,1307
+11,"I < (II, IV) < III < V < VI",128,1307
+11,"I < IV < (II, III, V) < VI",99,1307
+11,"I < (III, IV, V) < (II, VI)",209,1307
+11,"I < (III, IV) < (II, V) < VI",101,1307
+11,"I < (III, IV) < V < II < VI",59,1307
+11,"I < II < IV < III < V < VI",57,1307
+11,"I < IV < II < III < V < VI",54,1307
+11,"I < (II, IV) < (III, V) < VI",116,1307
+11,"I < II < IV < (III, V) < VI",134,1307
+11,"I < IV < (III, V) < II < VI",125,1307
+11,"I < (III, IV, V) < II < VI",50,1307
+11,"I < IV < II < (III, V) < VI",84,1307
+11,"I < IV < (III, V) < (II, VI)",50,1307
+11,"(I, III, IV) < II < V < VI",72,1307
+11,"(I, II, III, IV) < V < VI",99,1307
+11,"(I, IV) < III < II < V < VI",50,1307
+22,"I < II < (III, IV, V, VI)",104,2000
+22,"(I, II) < (III, IV, V, VI)",59,2000
+22,"(I, II, III, IV, V, VI)",2301,2000
+22,"I < II < (III, IV, V) < VI",217,2000
+22,"I < II < IV < III < V < VI",52,2000
+22,"I < II < (III, IV) < V < VI",157,2000
+22,"I < (II, IV) < III < V < VI",193,2000
+22,"I < IV < III < V < II < VI",569,2000
+22,"I < IV < (II, III) < V < VI",251,2000
+22,"I < IV < III < V < (II, VI)",867,2000
+22,"I < (III, IV) < V < (II, VI)",104,2000
+22,"I < (II, III, IV, V, VI)",678,2000
+22,"I < (II, III, IV) < V < VI",229,2000
+22,"I < IV < II < III < V < VI",134,2000
+22,"I < IV < (II, III, V) < VI",173,2000
+22,"I < (II, III, IV, V) < VI",285,2000
+22,"I < IV < III < (II, V) < VI",173,2000
+22,"I < (III, IV) < (II, V) < VI",134,2000
+22,"I < II < IV < (III, V) < VI",343,2000
+22,"I < IV < II < (III, V) < VI",339,2000
+22,"I < IV < (III, V) < II < VI",421,2000
+22,"I < (II, IV) < (III, V) < VI",313,2000
+22,"I < (III, IV, V) < (II, VI)",116,2000
+22,"I < (III, IV) < V < II < VI",77,2000
+22,"I < (III, IV, V) < II < VI",55,2000
+22,"I < (III, IV) < (II, V, VI)",47,2000
+22,"I < IV < III < (II, V, VI)",85,2000
+22,"I < II < IV < (III, V, VI)",79,2000
+22,"I < (III, IV) < II < V < VI",67,2000
+22,"I < IV < III < II < V < VI",221,2000
+22,"(I, II, III, IV, V) < VI",205,2000
+22,"I < IV < (III, V) < (II, VI)",133,2000
+22,"I < II < IV < V < (III, VI)",55,2000
+22,"I < II < IV < V < III < VI",68,2000
+22,"I < (II, IV) < V < III < VI",123,2000
+22,"I < IV < II < V < III < VI",50,2000
+22,"I < IV < (II, III, V, VI)",37,2000
+22,"(I, III, IV) < II < V < VI",142,2000
+22,"(I, II, III, IV) < V < VI",87,2000
+22,"(I, IV) < III < II < V < VI",50,2000
+33,"(I, II) < (III, IV, V, VI)",90,2000
+33,"(I, II, III, IV, V, VI)",1828,2000
+33,"I < II < (III, IV, V, VI)",190,2000
+33,"I < IV < III < V < II < VI",380,2000
+33,"I < (II, III, IV, V) < VI",307,2000
+33,"I < II < (III, IV, V) < VI",188,2000
+33,"I < II < (III, IV) < V < VI",168,2000
+33,"I < IV < (II, III) < V < VI",202,2000
+33,"I < (II, III, IV, V, VI)",671,2000
+33,"I < IV < III < (II, V, VI)",51,2000
+33,"I < (II, III, IV) < V < VI",390,2000
+33,"I < IV < III < V < (II, VI)",584,2000
+33,"I < II < IV < (III, V) < VI",551,2000
+33,"I < IV < III < (II, V) < VI",140,2000
+33,"I < IV < III < II < V < VI",255,2000
+33,"I < IV < (II, III, V) < VI",227,2000
+33,"I < IV < II < III < V < VI",62,2000
+33,"I < (II, IV) < (III, V) < VI",417,2000
+33,"I < II < IV < III < V < VI",69,2000
+33,"I < (II, IV) < III < V < VI",163,2000
+33,"I < IV < (III, V) < II < VI",346,2000
+33,"I < IV < II < (III, V) < VI",340,2000
+33,"I < (III, IV) < V < (II, VI)",124,2000
+33,"I < (III, IV, V) < II < VI",62,2000
+33,"(I, II, III, IV, V) < VI",526,2000
+33,"I < (III, IV, V) < (II, VI)",162,2000
+33,"I < (III, IV) < (II, V) < VI",101,2000
+33,"I < IV < (III, V) < (II, VI)",127,2000
+33,"I < (III, IV) < V < II < VI",50,2000
+33,"I < (III, IV) < II < V < VI",58,2000
+33,"I < (III, IV) < (II, V, VI)",42,2000
+33,"(I, II, III, IV) < V < VI",84,2000
+33,"(I, III, IV) < II < V < VI",175,2000
+33,"(I, IV) < III < II < V < VI",63,2000
+33,"I < II < (III, IV) < (V, VI)",90,2000
+33,"(I, III, IV) < (II, V) < VI",50,2000
+33,"I < (II, III, IV) < (V, VI)",50,2000
+33,"I < II < IV < V < III < VI",70,2000
+33,"I < II < IV < V < (III, VI)",53,2000
+33,"I < (II, IV) < V < III < VI",115,2000
+33,"I < II < IV < (III, V, VI)",81,2000
+33,"I < IV < II < V < III < VI",51,2000
+44,"(I, II, III, IV, V, VI)",2176,2000
+44,"(I, II) < (III, IV, V, VI)",76,2000
+44,"I < IV < (II, III, V) < VI",113,2000
+44,"I < II < (III, IV, V, VI)",356,2000
+44,"I < IV < II < III < V < VI",53,2000
+44,"I < II < (III, IV, V) < VI",454,2000
+44,"I < (II, III, IV, V) < VI",364,2000
+44,"I < (III, IV, V) < (II, VI)",224,2000
+44,"I < IV < (II, III) < V < VI",516,2000
+44,"I < II < (III, IV) < V < VI",242,2000
+44,"I < (II, III, IV) < V < VI",738,2000
+44,"I < (II, IV) < III < V < VI",167,2000
+44,"I < (II, III, IV, V, VI)",696,2000
+44,"I < IV < III < (II, V) < VI",294,2000
+44,"I < IV < (III, V) < II < VI",106,2000
+44,"I < IV < III < V < (II, VI)",785,2000
+44,"I < (III, IV) < V < II < VI",58,2000
+44,"I < (II, IV) < (III, V) < VI",290,2000
+44,"I < IV < III < V < II < VI",451,2000
+44,"I < IV < III < (II, V, VI)",112,2000
+44,"I < IV < II < (III, V) < VI",195,2000
+44,"I < (III, IV) < (II, V) < VI",59,2000
+44,"I < (III, IV) < V < (II, VI)",119,2000
+44,"I < II < IV < III < V < VI",167,2000
+44,"I < IV < (III, V) < (II, VI)",76,2000
+44,"I < II < IV < (III, V) < VI",644,2000
+44,"I < IV < III < II < V < VI",551,2000
+44,"I < (II, IV) < V < III < VI",101,2000
+44,"I < (III, IV, V) < II < VI",51,2000
+44,"I < (III, IV) < (II, V, VI)",31,2000
+44,"I < II < IV < V < III < VI",55,2000
+44,"I < II < IV < (III, V, VI)",146,2000
+44,"I < II < (III, IV) < (V, VI)",381,2000
+44,"I < IV < (II, III, V, VI)",55,2000
+44,"I < II < IV < III < (V, VI)",50,2000
+44,"I < (II, III, IV) < (V, VI)",67,2000
+44,"I < IV < II < V < III < VI",50,2000
+44,"I < II < IV < V < (III, VI)",58,2000
+44,"I < (III, IV) < II < V < VI",50,2000
+44,"(I, II, III, IV) < V < VI",404,2000
+44,"(I, II, III, IV, V) < VI",285,2000
+44,"(I, III, IV) < II < V < VI",193,2000
+44,"(I, IV) < III < II < V < VI",181,2000
+44,"(I, IV) < (II, III) < V < VI",10,2000

@@ -7,12 +7,17 @@ template:
 
 navbar:
   structure:
-    left: [tutorial, reference, benchmarks, changelog]
+    left: [tutorial, recipes, reference, benchmarks, changelog]
     right: [search, github]
   components:
     tutorial:
       text: Tutorial
       href: articles/tutorial.html
+    recipes:
+      text: Recipes
+      menu:
+      - text: "ALCOVE: a slow model with four parameters"
+        href: articles/recipe-alcove.html
     benchmarks:
       text: Benchmarks
       href: articles/benchmarks.html
