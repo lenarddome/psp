@@ -7,27 +7,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-### Added
-
-- A package website at <https://lenarddome.com/psp/>, built with pkgdown and deployed to GitHub Pages, with a tutorial that partitions the parameter space of prospect theory and a benchmark report comparing 1.0.6 to 1.0.5.
-- The benchmark results and the scripts that produce them in `benchmarks/`.
-- A recipe that partitions ALCOVE's parameter space on the six Shepard, Hovland and Jenkins (1961) problems, following Pitt et al. (2006), with the scripts and saved results it reads in `vignettes/articles/alcove/`.
-
-### Changed
-
-- The `pspGlobal()` documentation cites the published version of g-distance (Dome & Wills, 2025, *Psychological Review*) instead of the preprint.
-
-## [1.0.6] - 2026-10-05
+## [1.0.6] - 2026-10-06
 
 Sampling results differ from 1.0.5 for the same seed, because the fixes below change the path the sampler takes.
 
 ### Added
 
+- A package website at <https://lenarddome.com/psp/>, built with pkgdown and deployed to GitHub Pages, with a tutorial that partitions the parameter space of prospect theory and a benchmark report comparing 1.0.6 to 1.0.5.
+- The benchmark results and the scripts that produce them in `benchmarks/`.
+- A recipe that partitions ALCOVE's parameter space on the six Shepard, Hovland and Jenkins (1961) problems, following Pitt et al. (2006), with the scripts and saved results it reads in `vignettes/articles/alcove/`.
 - `benchmarks/benchmark.R` for comparing the speed of two builds of the package.
 - Tests for the sampler's invariants (centres, counts, saved output, pattern identity, control validation) and for the contract with `model` and `discretize`.
 
 ### Changed
 
+- The `pspGlobal()` documentation cites the published version of g-distance (Dome & Wills, 2025, *Psychological Review*) instead of the preprint.
 - `pspGlobal` matches ordinal patterns with a hash table in a single pass instead of five pairwise comparison loops over every stored pattern, and no longer copies the stored patterns on every iteration.
 - `model` and `discretize` are called through one error-protected block per iteration instead of one per call, which removes two `setjmp` system calls per evaluation on macOS.
 - Output files are opened once per run instead of on every write, and each row is written in a single call.
