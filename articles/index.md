@@ -14,6 +14,11 @@
   that allow ties, plan and save a long run, read a partition you cannot
   plot directly, and check that the conclusions hold up.
 
+- [Recipes](https://lenarddome.com/psp/articles/recipes.md):
+
+  Worked analyses of real models with psp, each showing techniques you
+  can reuse for your own.
+
 - [Tutorial: what can prospect theory
   predict?](https://lenarddome.com/psp/articles/tutorial.md):
 

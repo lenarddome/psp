@@ -9,7 +9,7 @@
 ## Citation
 
 Source:
-[`DESCRIPTION`](https://github.com/lenarddome/psp/blob/v1.0.6/DESCRIPTION)
+[`DESCRIPTION`](https://github.com/lenarddome/psp/blob/main/DESCRIPTION)
 
 Dome L, Andy Wills (2026). *psp: Parameter Space Partitioning MCMC for
 Global Model Evaluation*. R package version 1.0.6,

@@ -4,8 +4,9 @@ pkgdown_sha: ~
 articles:
   articles/benchmarks: benchmarks.html
   articles/recipe-alcove: recipe-alcove.html
+  articles/recipes: recipes.html
   articles/tutorial: tutorial.html
-last_built: 2026-10-06T07:52Z
+last_built: 2026-10-06T08:14Z
 urls:
   reference: https://lenarddome.com/psp/reference
   article: https://lenarddome.com/psp/articles
