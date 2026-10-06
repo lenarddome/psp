@@ -1,0 +1,32 @@
+/* Wider pages, so the figures in the articles have room, and a narrower
+   table of contents beside them. */
+@media (min-width: 1200px) {
+  .container {
+    max-width: 1440px;
+  }
+}
+
+@media (min-width: 768px) {
+  .row > main.col-md-9 {
+    flex: 0 0 auto;
+    width: 81%;
+  }
+
+  .row > aside.col-md-3 {
+    flex: 0 0 auto;
+    width: 19%;
+    font-size: 0.9rem;
+  }
+}
+
+/* code a little smaller than the running text */
+pre,
+pre code {
+  font-size: 0.82rem;
+}
+
+p code,
+li code,
+td code {
+  font-size: 0.85em;
+}
