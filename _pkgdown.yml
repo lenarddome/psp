@@ -15,9 +15,7 @@ navbar:
       href: articles/tutorial.html
     recipes:
       text: Recipes
-      menu:
-      - text: "ALCOVE: a slow model with four parameters"
-        href: articles/recipe-alcove.html
+      href: articles/recipes.html
     benchmarks:
       text: Benchmarks
       href: articles/benchmarks.html
