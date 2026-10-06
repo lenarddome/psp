@@ -59,14 +59,14 @@ run <- function(workload, model, discretize, control, seeds, save = FALSE) {
     time <- system.time(
       out <- pspGlobal(model, discretize, control, save = save, path = path, quiet = TRUE)
     )[["elapsed"]]
-    cat(sprintf("%s,%s,%d,%.4f,%d,%d,%d,%d\n", label, workload, seed, time,
+    cat(sprintf("\"%s\",\"%s\",%d,%.4f,%d,%d,%d,%d\n", label, workload, seed, time,
                 out$iterations, dim(out$ordinal_patterns)[3],
                 as.integer(sum(out$ordinal_counts)),
                 as.integer(all(out$ordinal_counts >= control$population))))
   }
 }
 
-cat("build,workload,seed,seconds,iterations,patterns,evaluations,filled\n")
+cat("\"build\",\"workload\",\"seed\",\"seconds\",\"iterations\",\"patterns\",\"evaluations\",\"filled\"\n")
 run("test model, pop 10", test_model, test_discretize, test_control, 1:10)
 v <- voronoi(100)
 run("100 regions, pop 20, cap 1500", v$model, v$discretize, v$control(1500, 20), 1:5)

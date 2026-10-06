@@ -103,7 +103,7 @@ The output is a list with the following items:
 
 \references{
 
-    Dome, L., Wills, A. J. (2023) g-distance: On the comparison of model and human heterogeneity. PsyArxiv. \doi{10.31234/osf.io/ygmcj}.
+    Dome, L., & Wills, A. J. (2025). g-Distance: On the comparison of model and human heterogeneity. Psychological Review, 132(3), 632-655. \doi{10.1037/rev0000550}.
 
     Pitt, M. A., Kim, W., Navarro, D. J., & Myung, J. I. (2006). Global model analysis by parameter space partitioning. Psychological Review, 113(1), 57. \doi{10.1037/0033-295X.113.1.57}.
 

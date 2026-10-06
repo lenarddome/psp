@@ -7,21 +7,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## [1.0.6] - 2026-10-05
+## [1.0.6] - 2026-10-06
 
 Sampling results differ from 1.0.5 for the same seed, because the fixes below change the path the sampler takes.
 
 ### Added
 
+- A package website at <https://lenarddome.com/psp/>, built with pkgdown and deployed to GitHub Pages, with a tutorial that partitions the parameter space of prospect theory and a benchmark report comparing 1.0.6 to 1.0.5.
+- The benchmark results and the scripts that produce them in `benchmarks/`.
+- A recipe that partitions ALCOVE's parameter space on the six Shepard, Hovland and Jenkins (1961) problems, following Pitt et al. (2006), with the scripts and saved results it reads in `vignettes/articles/alcove/`.
 - `benchmarks/benchmark.R` for comparing the speed of two builds of the package.
 - Tests for the sampler's invariants (centres, counts, saved output, pattern identity, control validation) and for the contract with `model` and `discretize`.
 
 ### Changed
 
+- The `pspGlobal()` documentation cites the published version of g-distance (Dome & Wills, 2025, *Psychological Review*) instead of the preprint.
 - `pspGlobal` matches ordinal patterns with a hash table in a single pass instead of five pairwise comparison loops over every stored pattern, and no longer copies the stored patterns on every iteration.
 - `model` and `discretize` are called through one error-protected block per iteration instead of one per call, which removes two `setjmp` system calls per evaluation on macOS.
 - Output files are opened once per run instead of on every write, and each row is written in a single call.
-- Saved csv values are formatted with `std::to_chars` where the compiler supports it (macOS 13.3 or later, libstdc++ 11 or later), which makes `save = TRUE` about 7 times faster; other platforms use `%.17g`.
+- Saved csv values are formatted with `std::to_chars` where the compiler supports it (macOS 13.3 or later, libstdc++ 11 or later), which makes writing them about 5 times faster than in 1.0.5. Other platforms use `%.17g`, which is about 45% slower than 1.0.5 because it writes full precision.
 - `model` output of the wrong length or type, and `discretize` output that is not a `dimensionality` x `dimensionality` numeric matrix, now stop with a message that names the problem instead of an Armadillo error.
 
 ### Fixed
@@ -30,7 +34,7 @@ Sampling results differ from 1.0.5 for the same seed, because the fixes below ch
 - The first ordinal pattern was counted one extra time.
 - The first iteration only proposed from the first pattern instead of from every underpopulated pattern found by `init`.
 - Identical ordinal patterns containing `NaN` were stored as a new pattern on every evaluation.
-- Saved csv files rounded parameters and model outputs to 6 significant digits; they are now written with full double precision.
+- Saved csv files rounded parameters and model outputs to 6 significant digits; they are now written with full double precision, which makes the files about 2.7 times larger.
 
 ## [1.0.5] - 2026-01-15
 

@@ -75,3 +75,5 @@ vcpkg_installed/
 # test output & cache
 Testing/
 .cache/
+# pkgdown site, built and deployed by .github/workflows/pkgdown.yaml
+_site/

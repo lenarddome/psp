@@ -1,0 +1,39 @@
+url: https://lenarddome.com/psp/
+destination: _site
+
+template:
+  bootstrap: 5
+  math-rendering: katex
+
+navbar:
+  structure:
+    left: [tutorial, recipes, reference, benchmarks, changelog]
+    right: [search, github]
+  components:
+    tutorial:
+      text: Tutorial
+      href: articles/tutorial.html
+    recipes:
+      text: Recipes
+      menu:
+      - text: "ALCOVE: a slow model with four parameters"
+        href: articles/recipe-alcove.html
+    benchmarks:
+      text: Benchmarks
+      href: articles/benchmarks.html
+    changelog:
+      text: Changelog
+      href: CHANGELOG.html
+
+reference:
+- title: Parameter space partitioning
+  contents:
+  - pspGlobal
+- title: Package
+  contents:
+  - psp-package
+- title: Deprecated
+  desc: Superseded by `pspGlobal()` and scheduled for removal.
+  contents:
+  - psp_global
+  - psp_control

@@ -1,7 +1,7 @@
-![](./docs/logo.png)
+![psp logo](man/figures/logo.png)
 
 [![R-CMD-check](https://github.com/lenarddome/psp/actions/workflows/main.yml/badge.svg)](https://github.com/lenarddome/psp/actions/workflows/main.yml)
-[![](https://cranlogs.r-pkg.org/badges/grand-total/psp)](https://cran.r-project.org/package=psp)
+[![CRAN downloads](https://cranlogs.r-pkg.org/badges/grand-total/psp)](https://cran.r-project.org/package=psp)
 ![GitHub release (latest SemVer including pre-releases)](https://img.shields.io/github/v/release/lenarddome/psp?include_prereleases)
 ![CRAN/METACRAN](https://img.shields.io/cran/v/psp)
 ![CRAN/METACRAN](https://img.shields.io/cran/l/psp)
@@ -48,6 +48,7 @@ devtools::install_github("lenarddome/psp")
 
 ## About `psp`
 
+- [Package website, with reference and benchmarks](https://lenarddome.com/psp/)
 - [A short intro and manual](https://lenarddome.com/software/psp/)
 - [A brief blog post](https://www.andywills.info/2021-06-23-psp/)
 
