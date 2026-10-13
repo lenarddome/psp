@@ -21,7 +21,7 @@ navbar:
       href: articles/benchmarks.html
     changelog:
       text: Changelog
-      href: CHANGELOG.html
+      href: news/index.html
 
 reference:
 - title: Parameter space partitioning
