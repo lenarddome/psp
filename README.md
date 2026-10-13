@@ -26,12 +26,6 @@ A BibTeX entry for LaTeX users is
   }
 ```
 
-## Disclaimer
-
-This package only recieves maintenance updates.
-It is not actively developed.
-If you would like to contribute, please contact me (@lenarddome).
-
 ## Install
 
 For the stable version
