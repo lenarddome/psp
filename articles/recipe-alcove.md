@@ -324,7 +324,7 @@ Before a long run, time one evaluation:
 
 one_evaluation <- system.time(model(rep(0.5, 4)))[["elapsed"]]
 one_evaluation
-#> [1] 0.081
+#> [1] 0.084
 ```
 
 Each evaluation simulates 30 learners working through 16 blocks, about
