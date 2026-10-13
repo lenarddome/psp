@@ -23,12 +23,6 @@ A BibTeX entry for LaTeX users is
         url = {https://CRAN.R-project.org/package=psp},
       }
 
-## Disclaimer
-
-This package only recieves maintenance updates. It is not actively
-developed. If you would like to contribute, please contact me
-(@lenarddome).
-
 ## Install
 
 For the stable version
